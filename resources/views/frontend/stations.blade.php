@@ -4,13 +4,15 @@
 @section('meta_description', 'Explore our state-of-the-art washing stations in Rwanda where our specialty coffee is processed with care.')
 
 @section('content')
-<!-- Page Header -->
-<div class="page-header" style="background-image: linear-gradient(rgba(28, 10, 0, 0.7), rgba(28, 10, 0, 0.7)), url('https://images.unsplash.com/photo-1447933632117-02a0a14246ad?q=80&w=2000&auto=format&fit=crop');">
-    <div class="container fade-in">
-        <h1 class="page-title">{{ __('messages.our_stations') }}</h1>
-        <p class="page-subtitle">{{ __('messages.slogan') }}</p>
+<section class="page-hero fade-in">
+    <div class="container">
+        <div class="page-hero-card">
+            <div class="page-hero-kicker">GMAC Coffee</div>
+            <h1 class="page-hero-title">{{ __('messages.our_stations') }}</h1>
+            <p class="page-hero-subtitle">{{ __('messages.slogan') }}</p>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="container py-6">
     @forelse($stations as $index => $station)
@@ -79,21 +81,6 @@
 
 @push('scripts')
 <style>
-    .page-header {
-        height: 350px;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-        margin-top: -80px;
-        padding-top: 80px;
-    }
-    
-    .page-title { font-size: 3.5rem; color: white !important; }
-    
     .station-block {
         display: grid;
         grid-template-columns: 1fr 1.2fr;
@@ -115,7 +102,7 @@
         width: 100%;
         height: 450px;
         object-fit: cover;
-        border-radius: 12px;
+        border-radius: var(--radius-card);
     }
     
     .station-placeholder {
@@ -127,7 +114,7 @@
         justify-content: center;
         font-size: 5rem;
         color: var(--clr-gold);
-        border-radius: 12px;
+        border-radius: var(--radius-card);
     }
     
     .station-mini-gallery {

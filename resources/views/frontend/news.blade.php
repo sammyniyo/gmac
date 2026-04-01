@@ -4,13 +4,15 @@
 @section('meta_description', 'The latest updates, harvest news, and community events from GMAC Coffee and the Rwandan coffee industry.')
 
 @section('content')
-<!-- Page Header -->
-<div class="page-header" style="background-image: linear-gradient(rgba(28, 10, 0, 0.7), rgba(28, 10, 0, 0.7)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2000&auto=format&fit=crop');">
-    <div class="container fade-in">
-        <h1 class="page-title">{{ __('messages.gallery') }}</h1>
-        <p class="page-subtitle">{{ __('messages.slogan') }}</p>
+<section class="page-hero fade-in">
+    <div class="container">
+        <div class="page-hero-card">
+            <div class="page-hero-kicker">GMAC Coffee</div>
+            <h1 class="page-hero-title">{{ __('messages.news') }}</h1>
+            <p class="page-hero-subtitle">Updates, harvest stories, and community events.</p>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="container py-6">
     <div class="news-listing fade-in">
@@ -52,24 +54,6 @@
 
 @push('scripts')
 <style>
-    .page-header {
-        height: 350px;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-        margin-top: -80px;
-        padding-top: 80px;
-    }
-    
-    .page-title {
-        font-size: 3.5rem;
-        color: white !important;
-    }
-    
     .news-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -77,8 +61,9 @@
     }
     
     .news-card {
-        background: var(--clr-white);
-        border-radius: 12px;
+        background: rgba(255,255,255,0.82);
+        border: 1px solid rgba(10, 26, 18, 0.08);
+        border-radius: var(--radius-card);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
         transition: transform var(--transition-base), box-shadow var(--transition-base);

@@ -4,6 +4,7 @@ return [
     'home' => 'Home',
     'history' => 'Our History',
     'products' => 'Our Coffee',
+    'nav_shop' => 'Shop',
     'news' => 'News & Events',
     'gallery' => 'Gallery',
     'stations' => 'Washing Stations',

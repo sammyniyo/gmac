@@ -4,13 +4,15 @@
 @section('meta_description', 'A visual journey through our coffee farms, washing stations, and processing facilities in Rwanda.')
 
 @section('content')
-<!-- Page Header -->
-<div class="page-header" style="background-image: linear-gradient(rgba(28, 10, 0, 0.6), rgba(28, 10, 0, 0.6)), url('https://images.unsplash.com/photo-1501333190117-7437fa05868f?q=80&w=2000&auto=format&fit=crop');">
-    <div class="container fade-in">
-        <h1 class="page-title">{{ __('messages.gallery') }}</h1>
-        <p class="page-subtitle">{{ __('messages.slogan') }}</p>
+<section class="page-hero fade-in">
+    <div class="container">
+        <div class="page-hero-card">
+            <div class="page-hero-kicker">GMAC Coffee</div>
+            <h1 class="page-hero-title">{{ __('messages.gallery') }}</h1>
+            <p class="page-hero-subtitle">A visual journey through our farms, stations, and processing.</p>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="container py-6">
     <div class="gallery-wrapper fade-in">
@@ -47,24 +49,6 @@
 
 @push('scripts')
 <style>
-    .page-header {
-        height: 350px;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-        margin-top: -80px;
-        padding-top: 80px;
-    }
-    
-    .page-title {
-        font-size: 3.5rem;
-        color: white !important;
-    }
-    
     /* Masonry Layout */
     .masonry-grid {
         display: grid;
@@ -75,10 +59,11 @@
     
     .gallery-card {
         position: relative;
-        border-radius: 8px;
+        border-radius: var(--radius-card);
         overflow: hidden;
         margin-bottom: 1.5rem;
         cursor: pointer;
+        border: 1px solid rgba(10, 26, 18, 0.08);
         box-shadow: var(--shadow-sm);
         transition: transform var(--transition-base), box-shadow var(--transition-base);
     }
@@ -101,7 +86,7 @@
     .gallery-overlay {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(to top, rgba(28, 10, 0, 0.8), transparent);
+        background: linear-gradient(to top, rgba(10, 26, 18, 0.70), transparent);
         display: flex;
         align-items: flex-end;
         padding: 1.5rem;

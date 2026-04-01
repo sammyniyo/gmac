@@ -4,13 +4,15 @@
 @section('meta_description', 'Browse our premium selection of Rwandan green and roasted coffee beans. Sustainably sourced and expertly processed.')
 
 @section('content')
-<!-- Page Header -->
-<div class="page-header" style="background-image: linear-gradient(rgba(28, 10, 0, 0.6), rgba(28, 10, 0, 0.6)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2000&auto=format&fit=crop');">
-    <div class="container fade-in">
-        <h1 class="page-title">{{ __('messages.products') }}</h1>
-        <p class="page-subtitle">{{ __('messages.slogan') }}</p>
+<section class="page-hero fade-in">
+    <div class="container">
+        <div class="page-hero-card">
+            <div class="page-hero-kicker">GMAC Coffee</div>
+            <h1 class="page-hero-title">{{ __('messages.products') }}</h1>
+            <p class="page-hero-subtitle">{{ __('messages.slogan') }}</p>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="container py-6">
     <!-- Category Filter -->
@@ -62,30 +64,6 @@
 
 @push('scripts')
 <style>
-    .page-header {
-        height: 350px;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-        margin-top: -80px;
-        padding-top: 80px;
-    }
-    
-    .page-title {
-        font-size: 3.5rem;
-        margin-bottom: 0.5rem;
-        color: white !important;
-    }
-    
-    .page-subtitle {
-        font-size: 1.2rem;
-        color: var(--clr-cream);
-    }
-    
     .filter-wrapper {
         text-align: center;
     }
@@ -99,19 +77,20 @@
     }
     
     .filter-btn {
-        background: transparent;
-        border: 2px solid var(--clr-gold);
-        color: var(--clr-gold);
-        padding: 0.6rem 1.5rem;
-        border-radius: 30px;
-        font-weight: 500;
+        background: rgba(255,255,255,0.7);
+        border: 1px solid rgba(31, 157, 106, 0.22);
+        color: rgba(10,26,18,0.88);
+        padding: 0.65rem 1rem;
+        border-radius: 999px;
+        font-weight: 700;
         cursor: pointer;
         transition: all var(--transition-base);
     }
     
     .filter-btn:hover, .filter-btn.active {
-        background: var(--clr-gold);
-        color: white;
+        background: rgba(31, 157, 106, 0.16);
+        border-color: rgba(31, 157, 106, 0.35);
+        color: rgba(10,26,18,0.92);
     }
     
     .product-grid {
@@ -167,7 +146,7 @@
     .product-overlay {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(28, 10, 0, 0.4);
+        background: rgba(10, 26, 18, 0.35);
         display: flex;
         align-items: center;
         justify-content: center;

@@ -6,8 +6,8 @@
 @section('content')
 <div class="container py-4">
     <nav class="breadcrumb mb-2 fade-in">
-        <a href="{{ url('/') }}">{{ __('messages.home') }}</a> / 
-        <a href="{{ url('/products') }}">{{ __('messages.products') }}</a> / 
+        <a href="{{ LaravelLocalization::localizeUrl(url('/')) }}">{{ __('messages.home') }}</a> / 
+        <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}">{{ __('messages.products') }}</a> / 
         <span class="active">{{ $product->name }}</span>
     </nav>
 
@@ -67,7 +67,7 @@
             <div class="detail-cta mt-4 p-2 bg-alt rounded">
                 <h3 class="subsection-title mb-1">Interested in this coffee?</h3>
                 <p class="mb-2">We provide wholesale and retail options. Contact us for bulk pricing and availability.</p>
-                <a href="{{ url('/contact?product=' . urlencode($product->name)) }}" class="btn btn-primary">Enquire Now</a>
+                <a href="{{ LaravelLocalization::localizeUrl(url('/contact?product=' . urlencode($product->name))) }}" class="btn btn-primary">Enquire Now</a>
             </div>
         </div>
     </div>
@@ -137,7 +137,7 @@
     }
     
     .main-image-wrapper {
-        border-radius: 12px;
+        border-radius: var(--radius-card);
         overflow: hidden;
         box-shadow: var(--shadow-md);
         background: var(--clr-bg-alt);
@@ -169,7 +169,7 @@
     .thumb-wrapper {
         flex: 0 0 100px;
         height: 100px;
-        border-radius: 8px;
+        border-radius: 14px;
         overflow: hidden;
         cursor: pointer;
         border: 2px solid transparent;
@@ -187,9 +187,9 @@
     }
     
     .detail-title {
-        font-size: 3rem;
+        font-size: 2.6rem;
         margin-top: 0.5rem;
-        color: var(--clr-deep-espresso);
+        color: var(--clr-text-main);
     }
     
     .detail-price {
@@ -200,10 +200,9 @@
     }
     
     .subsection-title {
-        font-size: 1.25rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        border-bottom: 2px solid var(--clr-gold);
+        font-size: 1.1rem;
+        letter-spacing: 0.4px;
+        border-bottom: 2px solid rgba(31,157,106,0.55);
         display: inline-block;
         margin-bottom: 1.5rem;
     }
@@ -230,7 +229,7 @@
     .mr-1 { margin-right: 0.25rem; }
     .p-2 { padding: 2rem; }
     .p-1 { padding: 1rem; }
-    .rounded { border-radius: 12px; }
+    .rounded { border-radius: var(--radius-card); }
     .font-bold { font-weight: 700; }
     
     @media (max-width: 992px) {

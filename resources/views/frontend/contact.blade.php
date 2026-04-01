@@ -4,13 +4,15 @@
 @section('meta_description', 'Get in touch with GMAC Coffee for wholesale inquiries, partnership opportunities, or general coffee talk.')
 
 @section('content')
-<!-- Page Header -->
-<div class="page-header" style="background-image: linear-gradient(rgba(28, 10, 0, 0.7), rgba(28, 10, 0, 0.7)), url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=2000&auto=format&fit=crop');">
-    <div class="container fade-in">
-        <h1 class="page-title">{{ __('messages.contact_us') }}</h1>
-        <p class="page-subtitle">{{ __('messages.get_in_touch') }}</p>
+<section class="page-hero fade-in">
+    <div class="container">
+        <div class="page-hero-card">
+            <div class="page-hero-kicker">GMAC Coffee</div>
+            <h1 class="page-hero-title">{{ __('messages.contact_us') }}</h1>
+            <p class="page-hero-subtitle">{{ __('messages.get_in_touch') }}</p>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="container py-6">
     <div class="contact-grid fade-in">
@@ -50,9 +52,15 @@
             <div class="social-box mt-4">
                 <h4 class="mb-1">Follow Our Journey</h4>
                 <div class="flex gap-1">
-                    <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="social-link"><i class="fa-brands fa-twitter"></i></a>
+                    @if($fb = \App\Models\Setting::where('key', 'social_facebook')->value('value'))
+                        <a href="{{ $fb }}" class="social-link" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    @endif
+                    @if($ig = \App\Models\Setting::where('key', 'social_instagram')->value('value'))
+                        <a href="{{ $ig }}" class="social-link" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    @endif
+                    @if($tw = \App\Models\Setting::where('key', 'social_twitter')->value('value'))
+                        <a href="{{ $tw }}" class="social-link" target="_blank" rel="noopener" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -65,7 +73,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('contact.submit') }}" method="POST" class="contact-form">
+            <form action="{{ route('contact.send') }}" method="POST" class="contact-form">
                 @csrf
                 <div class="form-row">
                     <div class="form-group">
@@ -88,14 +96,14 @@
                     <textarea id="message" name="message" class="form-control" rows="6" required placeholder="..."></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-2 w-full py-1">{{ __('messages.send_message') }}</button>
+                <button type="submit" class="btn btn-primary mt-2 w-full">{{ __('messages.send_message') }}</button>
             </form>
         </div>
     </div>
 </div>
 
 <!-- Map Section -->
-<section class="map-section mt-4 h-400 fade-in">
+<section class="map-section mt-4 fade-in">
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127593.425946979!2d30.0163351239868!3d-1.930190112443048!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca4258ed8e797%3A0xf32b36a5411d0bc8!2sKigali%2C%20Rwanda!5e0!3m2!1sen!2s!4v1711311545631!5m2!1sen!2s" width="100%" height="450" style="border:0; filter: grayscale(1) invert(0.9) opacity(0.8);" allowfullscreen="" loading="lazy"></iframe>
 </section>
 
@@ -103,21 +111,6 @@
 
 @push('scripts')
 <style>
-    .page-header {
-        height: 350px;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-        margin-top: -80px;
-        padding-top: 80px;
-    }
-    
-    .page-title { font-size: 3.5rem; color: white !important; }
-    
     .contact-grid {
         display: grid;
         grid-template-columns: 1fr 1.5fr;
@@ -130,12 +123,14 @@
         gap: 1.5rem;
         margin-bottom: 2rem;
         padding: 1.5rem;
-        background: var(--clr-bg-alt);
-        border-radius: 8px;
+        background: rgba(255,255,255,0.72);
+        border: 1px solid rgba(10, 26, 18, 0.08);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-sm);
         transition: transform 0.3s;
     }
     
-    [data-theme='dark'] .contact-card { background: rgba(255,255,255,0.05); }
+    [data-theme='dark'] .contact-card { background: rgba(246,251,248,0.06); border-color: rgba(246,251,248,0.10); }
     
     .contact-card:hover { transform: translateX(10px); }
     
@@ -156,9 +151,11 @@
     .card-text p { color: var(--clr-text-muted); font-size: 0.95rem; }
     
     .contact-form-wrapper {
-        background: var(--clr-white);
+        background: rgba(255,255,255,0.82);
+        border: 1px solid rgba(10, 26, 18, 0.08);
         padding: 3rem;
-        border-radius: 12px;
+        border-radius: 24px;
+        box-shadow: var(--shadow-md);
     }
     
     .form-row {
@@ -174,20 +171,7 @@
         margin-bottom: 0.5rem;
     }
     
-    .form-control {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background: var(--clr-bg-light);
-        color: var(--clr-text-main);
-        outline: none;
-        transition: border-color 0.3s;
-    }
-    
-    .form-control:focus {
-        border-color: var(--clr-gold);
-    }
+    /* form-control styles come from resources/css/frontend.css */
     
     .alert-success {
         background: #e6fffa;
@@ -198,7 +182,6 @@
     }
     
     .w-full { width: 100%; }
-    .py-1 { padding: 1rem 0; }
     
     @media (max-width: 992px) {
         .contact-grid { grid-template-columns: 1fr; gap: 3rem; }

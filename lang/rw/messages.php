@@ -4,6 +4,7 @@ return [
     'home' => 'Ahabanza',
     'history' => 'Amateka Yacu',
     'products' => 'Ikawa Yacu',
+    'nav_shop' => 'Gura',
     'news' => 'Amakuru',
     'gallery' => 'Amafoto',
     'stations' => 'Inganda Zitonora',

@@ -12,12 +12,14 @@ Route::group([
 ], function() {
     Route::get('/', [FrontendController::class, 'index'])->name('home');
     Route::get('/history', [FrontendController::class, 'history'])->name('history');
+    Route::get('/shop', [FrontendController::class, 'shop'])->name('shop');
     Route::get('/products', [FrontendController::class, 'products'])->name('products');
     Route::get('/products/{product:slug}', [FrontendController::class, 'productDetail'])->name('products.show');
     Route::get('/news', [FrontendController::class, 'news'])->name('news');
     Route::get('/news/{post:slug}', [FrontendController::class, 'newsDetail'])->name('news.show');
     Route::get('/gallery', [FrontendController::class, 'gallery'])->name('gallery');
     Route::get('/washing-stations', [FrontendController::class, 'stations'])->name('stations');
+    Route::get('/team', [FrontendController::class, 'team'])->name('team');
     Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
     Route::post('/contact/send', [FrontendController::class, 'sendContact'])->name('contact.send');
 });

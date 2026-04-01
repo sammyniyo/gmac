@@ -15,6 +15,11 @@ use App\Models\Subscriber;
 
 class FrontendController extends Controller
 {
+    public function index()
+    {
+        return $this->home();
+    }
+
     public function home()
     {
         $slides = HeroSlide::where('is_active', true)->orderBy('order')->get();
@@ -39,6 +44,19 @@ class FrontendController extends Controller
         $categories = \App\Models\ProductCategory::orderBy('name')->get();
         $products = Product::where('is_active', true)->with('category')->orderBy('order')->get();
         return view('frontend.products', compact('products', 'categories'));
+    }
+
+    public function shop()
+    {
+        $categories = \App\Models\ProductCategory::orderBy('name')->get();
+        $products = Product::where('is_active', true)->with('category')->orderBy('order')->get();
+        return view('frontend.shop', compact('products', 'categories'));
+    }
+
+    public function productDetail(Product $product)
+    {
+        abort_unless($product->is_active, 404);
+        return view('frontend.product_detail', compact('product'));
     }
 
     public function product($slug)
@@ -71,9 +89,40 @@ class FrontendController extends Controller
         return view('frontend.stations', compact('stations'));
     }
 
+    public function team()
+    {
+        $team = [
+            [
+                'name' => 'Leadership',
+                'role' => 'Management',
+                'bio' => 'Building a sustainable coffee value chain from Rwanda to the world.',
+                'photo' => null,
+            ],
+            [
+                'name' => 'Processing Team',
+                'role' => 'Quality & Operations',
+                'bio' => 'Careful processing, consistent quality, and traceable lots.',
+                'photo' => null,
+            ],
+            [
+                'name' => 'Field Team',
+                'role' => 'Farm Support',
+                'bio' => 'Partnering with farmers to improve yields, quality, and livelihoods.',
+                'photo' => null,
+            ],
+        ];
+
+        return view('frontend.team', compact('team'));
+    }
+
     public function contact()
     {
         return view('frontend.contact');
+    }
+
+    public function sendContact(Request $request)
+    {
+        return $this->submitContact($request);
     }
 
     public function submitContact(Request $request)

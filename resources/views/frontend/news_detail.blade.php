@@ -19,7 +19,7 @@
                     {{ $post->published_at ? $post->published_at->format('F d, Y') : $post->created_at->format('F d, Y') }}
                 </span>
             </div>
-            <h1 class="page-title detail-h1">{{ $post->title }}</h1>
+            <h1 class="detail-h1">{{ $post->title }}</h1>
             <div class="title-separator mx-auto mt-2"></div>
         </header>
 
@@ -89,7 +89,7 @@
 @push('scripts')
 <style>
     .detail-h1 {
-        font-size: 3.5rem;
+        font-size: 3.1rem;
         line-height: 1.1;
         margin-top: 1rem;
         color: var(--clr-deep-espresso) !important;
@@ -111,7 +111,7 @@
     .post-full-image {
         width: 100%;
         height: auto;
-        border-radius: 12px;
+        border-radius: var(--radius-card);
         box-shadow: var(--shadow-md);
     }
     
@@ -123,7 +123,7 @@
         justify-content: center;
         font-size: 5rem;
         color: var(--clr-gold);
-        border-radius: 12px;
+        border-radius: var(--radius-card);
     }
     
     .news-text-body {

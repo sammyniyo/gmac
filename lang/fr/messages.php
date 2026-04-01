@@ -4,6 +4,7 @@ return [
     'home' => 'Accueil',
     'history' => 'Notre Histoire',
     'products' => 'Notre Café',
+    'nav_shop' => 'Boutique',
     'news' => 'Actualités',
     'gallery' => 'Galerie',
     'stations' => 'Stations de Lavage',
