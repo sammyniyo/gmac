@@ -130,14 +130,14 @@
     .history-pillars.card,
     .history-values.card {
         padding: 2.25rem;
-        border-top: 4px solid rgba(31, 157, 106, 0.75);
+        border-top: 3px solid var(--clr-gold);
     }
 
     [data-theme="dark"] .history-story.card,
     [data-theme="dark"] .history-timeline.card,
     [data-theme="dark"] .history-pillars.card,
     [data-theme="dark"] .history-values.card {
-        border-top-color: rgba(111, 224, 179, 0.75);
+        border-top-color: var(--clr-gold-light);
     }
 
     .history-h3 {
@@ -153,7 +153,7 @@
     }
 
     [data-theme="dark"] .history-story__body p {
-        color: rgba(199, 214, 205, 0.92);
+        color: rgba(220, 200, 180, 0.85);
     }
 
     .history-list {
@@ -165,7 +165,7 @@
     }
 
     [data-theme="dark"] .history-list {
-        color: rgba(199, 214, 205, 0.92);
+        color: rgba(220, 200, 180, 0.85);
     }
 
     .history-side {
@@ -187,13 +187,13 @@
         align-items: start;
         padding: 0.85rem 0.85rem;
         border-radius: 16px;
-        background: rgba(31, 157, 106, 0.06);
-        border: 1px solid rgba(31, 157, 106, 0.12);
+        background: rgba(201, 150, 63, 0.06);
+        border: 1px solid rgba(201, 150, 63, 0.14);
     }
 
     [data-theme="dark"] .timeline-item {
-        background: rgba(246, 251, 248, 0.06);
-        border-color: rgba(246, 251, 248, 0.10);
+        background: rgba(246, 240, 230, 0.06);
+        border-color: rgba(246, 240, 230, 0.10);
     }
 
     .timeline-year {
@@ -211,7 +211,7 @@
     }
 
     [data-theme="dark"] .timeline-body {
-        color: rgba(199, 214, 205, 0.92);
+        color: rgba(220, 200, 180, 0.85);
     }
 
     .pillars {
@@ -222,26 +222,26 @@
     .pillar {
         padding: 1rem 1.1rem;
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.55);
-        border: 1px solid rgba(10, 26, 18, 0.08);
+        background: rgba(255, 255, 255, 0.65);
+        border: 1px solid rgba(13, 9, 7, 0.07);
     }
 
     [data-theme="dark"] .pillar {
-        background: rgba(246, 251, 248, 0.05);
-        border-color: rgba(246, 251, 248, 0.10);
+        background: rgba(246, 240, 230, 0.05);
+        border-color: rgba(246, 240, 230, 0.10);
     }
 
     .pillar-kicker {
-        font-weight: 900;
-        letter-spacing: 0.18em;
+        font-weight: 700;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
         font-size: 0.72rem;
-        color: rgba(10, 26, 18, 0.62);
+        color: var(--clr-gold);
         margin-bottom: 0.35rem;
     }
 
     [data-theme="dark"] .pillar-kicker {
-        color: rgba(199, 214, 205, 0.92);
+        color: var(--clr-gold-light);
     }
 
     .pillar-text {
@@ -267,14 +267,14 @@
     .values-list li {
         padding: 0.75rem 0.9rem;
         border-radius: 14px;
-        background: rgba(31, 157, 106, 0.06);
-        border: 1px solid rgba(31, 157, 106, 0.12);
+        background: rgba(201, 150, 63, 0.06);
+        border: 1px solid rgba(201, 150, 63, 0.14);
     }
 
-    [data-theme="dark"] .values-list { color: rgba(199, 214, 205, 0.92); }
+    [data-theme="dark"] .values-list { color: rgba(220, 200, 180, 0.85); }
     [data-theme="dark"] .values-list li {
-        background: rgba(246, 251, 248, 0.06);
-        border-color: rgba(246, 251, 248, 0.10);
+        background: rgba(246, 240, 230, 0.06);
+        border-color: rgba(246, 240, 230, 0.10);
     }
 
     @media (max-width: 900px) {

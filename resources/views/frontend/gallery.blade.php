@@ -63,7 +63,7 @@
         overflow: hidden;
         margin-bottom: 1.5rem;
         cursor: pointer;
-        border: 1px solid rgba(10, 26, 18, 0.08);
+        border: 1px solid rgba(13, 9, 7, 0.07);
         box-shadow: var(--shadow-sm);
         transition: transform var(--transition-base), box-shadow var(--transition-base);
     }
@@ -86,7 +86,7 @@
     .gallery-overlay {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(to top, rgba(10, 26, 18, 0.70), transparent);
+        background: linear-gradient(to top, rgba(13, 9, 7, 0.75), transparent);
         display: flex;
         align-items: flex-end;
         padding: 1.5rem;

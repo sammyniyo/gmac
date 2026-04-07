@@ -120,40 +120,48 @@
     
     .contact-card {
         display: flex;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        background: rgba(255,255,255,0.72);
-        border: 1px solid rgba(10, 26, 18, 0.08);
+        gap: 1.4rem;
+        margin-bottom: 1.5rem;
+        padding: 1.4rem;
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(13, 9, 7, 0.07);
         border-radius: var(--radius-card);
         box-shadow: var(--shadow-sm);
-        transition: transform 0.3s;
+        transition: transform 0.28s, box-shadow 0.28s, border-color 0.28s;
     }
-    
-    [data-theme='dark'] .contact-card { background: rgba(246,251,248,0.06); border-color: rgba(246,251,248,0.10); }
-    
-    .contact-card:hover { transform: translateX(10px); }
-    
+
+    [data-theme='dark'] .contact-card {
+        background: rgba(246, 240, 230, 0.05);
+        border-color: rgba(246, 240, 230, 0.10);
+    }
+
+    .contact-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+        border-color: rgba(201, 150, 63, 0.22);
+    }
+
     .card-icon {
-        width: 50px;
-        height: 50px;
-        background: var(--clr-gold);
-        color: white;
-        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--clr-gold) 0%, #daa83f 100%);
+        color: #fff;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(201, 150, 63, 0.28);
     }
-    
-    .card-text h4 { margin-bottom: 0.25rem; font-size: 1.1rem; }
-    .card-text p { color: var(--clr-text-muted); font-size: 0.95rem; }
-    
+
+    .card-text h4 { margin-bottom: 0.25rem; font-size: 1.05rem; }
+    .card-text p { color: var(--clr-text-subtle); font-size: 0.9rem; }
+
     .contact-form-wrapper {
-        background: rgba(255,255,255,0.82);
-        border: 1px solid rgba(10, 26, 18, 0.08);
-        padding: 3rem;
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(13, 9, 7, 0.07);
+        padding: 2.75rem;
         border-radius: 24px;
         box-shadow: var(--shadow-md);
     }
@@ -174,11 +182,11 @@
     /* form-control styles come from resources/css/frontend.css */
     
     .alert-success {
-        background: #e6fffa;
-        color: #2c7a7b;
-        padding: 1rem;
-        border-radius: 4px;
-        border-left: 4px solid #285e61;
+        background: rgba(201, 150, 63, 0.10);
+        color: var(--clr-gold-hover);
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        border-left: 4px solid var(--clr-gold);
     }
     
     .w-full { width: 100%; }

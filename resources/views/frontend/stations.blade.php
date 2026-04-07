@@ -4,17 +4,18 @@
 @section('meta_description', 'Explore our state-of-the-art washing stations in Rwanda where our specialty coffee is processed with care.')
 
 @section('content')
-<section class="page-hero fade-in">
-    <div class="container">
-        <div class="page-hero-card">
-            <div class="page-hero-kicker">GMAC Coffee</div>
-            <h1 class="page-hero-title">{{ __('messages.our_stations') }}</h1>
-            <p class="page-hero-subtitle">{{ __('messages.slogan') }}</p>
-        </div>
-    </div>
-</section>
+@include('partials.frontend.page-hero', [
+    'title' => __('messages.our_stations'),
+    'subtitle' => __('messages.slogan'),
+])
 
 <div class="container py-6">
+    <div class="stations-intro fade-in">
+        <div class="stations-kicker">Origin &amp; Processing</div>
+        <h2 class="stations-intro-title">Discover the places where our cherries are processed with care, precision, and <em>full traceability.</em></h2>
+        <p class="stations-intro-text">Each station reflects our commitment to quality, farmer relationships, and the distinctive character of Rwandan coffee.</p>
+    </div>
+
     @forelse($stations as $index => $station)
         <div class="station-block mb-6 fade-in {{ $index % 2 != 0 ? 'reverse' : '' }}">
             <div class="station-visuals">
@@ -77,17 +78,71 @@
         </div>
     @endforelse
 </div>
+
+<div id="stations-lightbox" class="stations-lightbox" onclick="closeStationsLightbox()">
+    <span class="stations-lightbox__close">&times;</span>
+    <img id="stations-lightbox-img" src="" alt="Full size station image">
+    <div id="stations-lightbox-caption" class="stations-lightbox__caption"></div>
+</div>
 @endsection
 
 @push('scripts')
 <style>
+    .stations-intro {
+        max-width: 780px;
+        margin: 0 auto 2.75rem;
+        text-align: center;
+    }
+
+    .stations-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.95rem;
+        border-radius: 999px;
+        background: rgba(138, 99, 32, 0.1);
+        border: 1px solid rgba(138, 99, 32, 0.16);
+        color: #8a6320;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .stations-intro-title {
+        margin: 0 0 0.9rem;
+        font-size: clamp(2.2rem, 4vw, 3.5rem);
+        line-height: 1.05;
+        color: #21160f;
+    }
+
+    .stations-intro-title em {
+        color: #234535;
+        font-style: italic;
+    }
+
+    .stations-intro-text {
+        max-width: 58ch;
+        margin: 0 auto;
+        color: rgba(24,49,38,0.74);
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
     .station-block {
         display: grid;
         grid-template-columns: 1fr 1.2fr;
-        gap: 4rem;
+        gap: 2.25rem;
         align-items: start;
-        padding: 4rem 0;
-        border-bottom: 1px solid var(--clr-bg-alt);
+        padding: 2rem;
+        border-bottom: 1px solid rgba(10,26,18,0.08);
+        background:
+            radial-gradient(360px 160px at 100% 0%, rgba(31,157,106,0.08), transparent 60%),
+            linear-gradient(180deg, rgba(244,236,223,0.94) 0%, rgba(239,226,207,0.98) 100%);
+        border: 1px solid rgba(10,26,18,0.08);
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(10,26,18,0.08);
     }
     
     .station-block.reverse {
@@ -102,19 +157,19 @@
         width: 100%;
         height: 450px;
         object-fit: cover;
-        border-radius: var(--radius-card);
+        border-radius: 24px;
     }
     
     .station-placeholder {
         width: 100%;
         height: 450px;
-        background: var(--clr-bg-alt);
+        background: linear-gradient(180deg, #dfe8df 0%, #d4dfd5 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 5rem;
         color: var(--clr-gold);
-        border-radius: var(--radius-card);
+        border-radius: 24px;
     }
     
     .station-mini-gallery {
@@ -127,16 +182,16 @@
         width: 100%;
         height: 80px;
         object-fit: cover;
-        border-radius: 4px;
+        border-radius: 12px;
         cursor: pointer;
-        transition: opacity 0.2s;
+        transition: opacity 0.2s, transform 0.2s ease, box-shadow 0.2s ease;
     }
     
-    .station-mini-gallery img:hover { opacity: 0.8; }
+    .station-mini-gallery img:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 12px 24px rgba(10,26,18,0.12); }
     
     .station-name {
-        font-size: 2.5rem;
-        color: var(--clr-deep-espresso);
+        font-size: clamp(2rem, 3vw, 2.8rem);
+        color: #21160f;
         margin-bottom: 0.5rem;
     }
     
@@ -144,18 +199,19 @@
     
     .station-location {
         font-size: 1.1rem;
-        color: var(--clr-text-muted);
+        color: rgba(24,49,38,0.72);
         font-weight: 500;
     }
     
     .station-specs-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 1.5rem;
-        background: var(--clr-bg-alt);
+        gap: 1rem;
+        background: rgba(250,244,235,0.84);
         padding: 2rem;
-        border-radius: 12px;
+        border-radius: 24px;
         margin: 2rem 0;
+        border: 1px solid rgba(10,26,18,0.08);
     }
     
     .spec-item {
@@ -164,30 +220,108 @@
     }
     
     .spec-label {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--clr-text-muted);
+        letter-spacing: 0.14em;
+        color: #8a6320;
         margin-bottom: 0.25rem;
+        font-weight: 700;
     }
     
     .spec-value {
         font-size: 1.1rem;
         font-weight: 700;
-        color: var(--clr-deep-espresso);
+        color: #234535;
     }
     
     [data-theme='dark'] .spec-value { color: var(--clr-white); }
     [data-theme='dark'] .station-specs-grid { background: rgba(255,255,255,0.05); }
+
+    .station-description {
+        padding: 1.25rem 1.35rem;
+        border-radius: 22px;
+        background: rgba(250,244,235,0.8);
+        border: 1px solid rgba(10,26,18,0.08);
+    }
+
+    .station-description h4 {
+        margin-bottom: 0.5rem;
+        color: #21160f;
+        font-size: 1.1rem;
+    }
+
+    .station-description p {
+        color: rgba(24,49,38,0.72);
+        line-height: 1.75;
+    }
+
+    .stations-lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        background:
+            radial-gradient(circle at top, rgba(31,157,106,0.12), transparent 28%),
+            rgba(12,10,8,0.94);
+        backdrop-filter: blur(10px);
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 2rem;
+    }
+
+    .stations-lightbox img {
+        max-width: 90%;
+        max-height: 80vh;
+        border-radius: 18px;
+        box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+        border: 1px solid rgba(244,236,223,0.14);
+    }
+
+    .stations-lightbox__close {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        color: white;
+        font-size: 3rem;
+        cursor: pointer;
+    }
+
+    .stations-lightbox__caption {
+        color: #f4ecdf;
+        margin-top: 1.5rem;
+        font-size: 1.1rem;
+        text-align: center;
+        max-width: 600px;
+    }
     
     @media (max-width: 992px) {
         .station-block {
             grid-template-columns: 1fr;
             gap: 2rem;
             direction: ltr !important;
+            padding: 1.35rem;
         }
         .station-block.reverse { direction: ltr; }
         .station-image, .station-placeholder { height: 350px; }
     }
 </style>
+
+<script>
+    function openLightbox(src, caption) {
+        const lb = document.getElementById('stations-lightbox');
+        const img = document.getElementById('stations-lightbox-img');
+        const cap = document.getElementById('stations-lightbox-caption');
+
+        img.src = src;
+        cap.textContent = caption || '';
+        lb.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeStationsLightbox() {
+        document.getElementById('stations-lightbox').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+</script>
 @endpush

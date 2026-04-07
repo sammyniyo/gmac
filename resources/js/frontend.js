@@ -1,23 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const navbar = document.getElementById('site-navbar');
     const burger = document.getElementById('navbar-burger');
+    const panel = document.getElementById('navbar-panel');
     const backdrop = document.getElementById('navbar-backdrop');
 
-    // Navbar scroll (avoid jitter with hysteresis)
+    // Navbar scroll state
     if (navbar) {
-        const ENTER_AT = 90;
-        const EXIT_AT = 30;
-        let isScrolled = false;
-
         const onScroll = () => {
             const y = window.scrollY || 0;
-            if (!isScrolled && y >= ENTER_AT) {
-                isScrolled = true;
-                navbar.classList.add('scrolled');
-            } else if (isScrolled && y <= EXIT_AT) {
-                isScrolled = false;
-                navbar.classList.remove('scrolled');
-            }
+            navbar.classList.toggle('is-scrolled', y > 60);
         };
 
         onScroll();
@@ -27,22 +18,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const NAV_BREAKPOINT = 1024;
 
     function setNavOpen(open) {
-        if (!navbar || !burger) return;
-        navbar.classList.toggle('is-open', open);
+        if (!burger || !panel || !backdrop) return;
+        panel.classList.toggle('is-open', open);
+        backdrop.classList.toggle('is-open', open);
+        burger.classList.toggle('is-open', open);
         burger.setAttribute('aria-expanded', open ? 'true' : 'false');
         burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         document.body.style.overflow = open ? 'hidden' : '';
     }
 
-    if (burger && backdrop && navbar) {
+    if (burger && backdrop && panel) {
         burger.addEventListener('click', () => {
-            setNavOpen(!navbar.classList.contains('is-open'));
+            setNavOpen(!panel.classList.contains('is-open'));
         });
         backdrop.addEventListener('click', () => setNavOpen(false));
     }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && navbar && navbar.classList.contains('is-open')) {
+        if (e.key === 'Escape' && panel && panel.classList.contains('is-open')) {
             setNavOpen(false);
         }
     });
@@ -50,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener(
         'resize',
         () => {
-            if (window.innerWidth > NAV_BREAKPOINT && navbar && navbar.classList.contains('is-open')) {
+            if (window.innerWidth > NAV_BREAKPOINT && panel && panel.classList.contains('is-open')) {
                 setNavOpen(false);
             }
         },

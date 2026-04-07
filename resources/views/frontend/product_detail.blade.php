@@ -201,9 +201,12 @@
     
     .subsection-title {
         font-size: 1.1rem;
-        letter-spacing: 0.4px;
-        border-bottom: 2px solid rgba(31,157,106,0.55);
+        font-family: var(--font-heading);
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        border-bottom: 2px solid rgba(201, 150, 63, 0.55);
         display: inline-block;
+        padding-bottom: 4px;
         margin-bottom: 1.5rem;
     }
     

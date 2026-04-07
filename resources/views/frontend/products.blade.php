@@ -4,17 +4,18 @@
 @section('meta_description', 'Browse our premium selection of Rwandan green and roasted coffee beans. Sustainably sourced and expertly processed.')
 
 @section('content')
-<section class="page-hero fade-in">
-    <div class="container">
-        <div class="page-hero-card">
-            <div class="page-hero-kicker">GMAC Coffee</div>
-            <h1 class="page-hero-title">{{ __('messages.products') }}</h1>
-            <p class="page-hero-subtitle">{{ __('messages.slogan') }}</p>
-        </div>
-    </div>
-</section>
+@include('partials.frontend.page-hero', [
+    'title' => __('messages.products'),
+    'subtitle' => __('messages.slogan'),
+])
 
 <div class="container py-6">
+    <div class="products-intro fade-in">
+        <div class="products-kicker">Coffee Collection</div>
+        <h2 class="products-intro-title">Discover green and roasted coffees prepared for quality, traceability, and <em>distinctive flavour.</em></h2>
+        <p class="products-intro-text">Browse our collection by category and explore coffees crafted for specialty buyers, roasters, and coffee lovers.</p>
+    </div>
+
     <!-- Category Filter -->
     <div class="filter-wrapper mb-4 fade-in">
         <div class="filter-buttons">
@@ -64,6 +65,48 @@
 
 @push('scripts')
 <style>
+    .products-intro {
+        max-width: 760px;
+        margin: 0 auto 2.5rem;
+        text-align: center;
+    }
+    
+    .products-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.95rem;
+        border-radius: 999px;
+        background: rgba(138, 99, 32, 0.1);
+        border: 1px solid rgba(138, 99, 32, 0.16);
+        color: #8a6320;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .products-intro-title {
+        margin: 0 0 0.9rem;
+        font-size: clamp(2.2rem, 4vw, 3.5rem);
+        line-height: 1.05;
+        color: #21160f;
+    }
+
+    .products-intro-title em {
+        color: #234535;
+        font-style: italic;
+    }
+
+    .products-intro-text {
+        max-width: 58ch;
+        margin: 0 auto;
+        color: rgba(24,49,38,0.74);
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
     .filter-wrapper {
         text-align: center;
     }
@@ -71,40 +114,48 @@
     .filter-buttons {
         display: flex;
         justify-content: center;
-        gap: 1rem;
+        gap: 0.85rem;
         flex-wrap: wrap;
         margin-top: 1rem;
     }
     
     .filter-btn {
-        background: rgba(255,255,255,0.7);
-        border: 1px solid rgba(31, 157, 106, 0.22);
+        background: rgba(244,236,223,0.88);
+        border: 1px solid rgba(31, 157, 106, 0.18);
         color: rgba(10,26,18,0.88);
-        padding: 0.65rem 1rem;
+        padding: 0.7rem 1.05rem;
         border-radius: 999px;
         font-weight: 700;
+        font-size: 0.76rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
         cursor: pointer;
         transition: all var(--transition-base);
+        box-shadow: 0 10px 24px rgba(10,26,18,0.04);
     }
     
     .filter-btn:hover, .filter-btn.active {
-        background: rgba(31, 157, 106, 0.16);
+        background: linear-gradient(135deg, rgba(31,157,106,0.16) 0%, rgba(244,236,223,0.96) 100%);
         border-color: rgba(31, 157, 106, 0.35);
         color: rgba(10,26,18,0.92);
+        transform: translateY(-2px);
     }
     
     .product-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 2.5rem;
+        gap: 2rem;
         margin-top: 2rem;
     }
     
     .product-card {
-        background: var(--clr-white);
-        border-radius: 12px;
+        background:
+            radial-gradient(320px 140px at 100% 0%, rgba(31,157,106,0.08), transparent 60%),
+            linear-gradient(180deg, rgba(244,236,223,0.94) 0%, rgba(239,226,207,0.96) 100%);
+        border-radius: 26px;
         overflow: hidden;
-        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(10,26,18,0.08);
+        box-shadow: 0 18px 42px rgba(10,26,18,0.08);
         transition: all var(--transition-base);
         display: flex;
         flex-direction: column;
@@ -112,7 +163,8 @@
     
     .product-card:hover {
         transform: translateY(-8px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: 0 28px 64px rgba(10,26,18,0.12);
+        border-color: rgba(31,157,106,0.18);
     }
     
     .product-image-container {
@@ -135,7 +187,7 @@
     .product-image-placeholder {
         width: 100%;
         height: 100%;
-        background-color: var(--clr-bg-alt);
+        background: linear-gradient(180deg, #dfe8df 0%, #d4dfd5 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -155,10 +207,10 @@
     }
     
     .product-overlay span {
-        background: var(--clr-gold);
+        background: linear-gradient(135deg, var(--clr-gold) 0%, #178257 100%);
         color: white;
-        padding: 0.6rem 1.8rem;
-        border-radius: 4px;
+        padding: 0.65rem 1.8rem;
+        border-radius: 999px;
         font-weight: 600;
         transform: translateY(20px);
         transition: transform var(--transition-base);
@@ -173,7 +225,7 @@
     }
     
     .product-info {
-        padding: 1.5rem;
+        padding: 1.45rem 1.4rem 1.5rem;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
@@ -181,20 +233,22 @@
     
     .tag {
         display: inline-block;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        background: var(--clr-bg-alt);
-        color: var(--clr-deep-espresso);
-        padding: 0.3rem 1rem;
+        letter-spacing: 0.16em;
+        background: rgba(138,99,32,0.1);
+        color: #8a6320;
+        padding: 0.38rem 0.95rem;
         border-radius: 20px;
         margin-bottom: 1rem;
         align-self: flex-start;
+        font-weight: 700;
     }
     
     .product-title {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         margin-bottom: 0.8rem;
+        color: #21160f;
     }
     
     .product-title a {
@@ -203,10 +257,10 @@
     }
     
     .product-excerpt {
-        color: var(--clr-text-muted);
+        color: rgba(24,49,38,0.72);
         font-size: 0.95rem;
         margin-bottom: 1.5rem;
-        line-height: 1.6;
+        line-height: 1.75;
     }
     
     .product-footer {
@@ -215,21 +269,21 @@
         justify-content: space-between;
         align-items: center;
         padding-top: 1rem;
-        border-top: 1px solid var(--clr-bg-alt);
+        border-top: 1px solid rgba(10,26,18,0.08);
     }
     
     .product-price {
         font-weight: 700;
-        color: var(--clr-gold);
+        color: #234535;
         font-size: 1.25rem;
     }
     
     .read-more {
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-        color: var(--clr-deep-espresso);
+        font-size: 0.76rem;
+        letter-spacing: 0.15em;
+        color: #8a6320;
     }
     
     [data-theme='dark'] .read-more {
