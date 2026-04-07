@@ -95,14 +95,14 @@
     }
 
     .products-intro-title em {
-        color: #234535;
+        color: var(--clr-gold, #c9963f);
         font-style: italic;
     }
 
     .products-intro-text {
         max-width: 58ch;
         margin: 0 auto;
-        color: rgba(24,49,38,0.74);
+        color: rgba(26,16,8,0.62);
         font-size: 1rem;
         line-height: 1.8;
     }
@@ -120,9 +120,9 @@
     }
     
     .filter-btn {
-        background: rgba(244,236,223,0.88);
-        border: 1px solid rgba(31, 157, 106, 0.18);
-        color: rgba(10,26,18,0.88);
+        background: rgba(253,250,245,0.95);
+        border: 1px solid rgba(192,139,48,0.18);
+        color: rgba(26,16,8,0.72);
         padding: 0.7rem 1.05rem;
         border-radius: 999px;
         font-weight: 700;
@@ -131,14 +131,21 @@
         text-transform: uppercase;
         cursor: pointer;
         transition: all var(--transition-base);
-        box-shadow: 0 10px 24px rgba(10,26,18,0.04);
+        box-shadow: 0 4px 16px rgba(26,16,8,0.06);
     }
-    
-    .filter-btn:hover, .filter-btn.active {
-        background: linear-gradient(135deg, rgba(31,157,106,0.16) 0%, rgba(244,236,223,0.96) 100%);
-        border-color: rgba(31, 157, 106, 0.35);
-        color: rgba(10,26,18,0.92);
+
+    .filter-btn:hover {
+        background: rgba(201,150,63,0.10);
+        border-color: rgba(192,139,48,0.35);
+        color: rgba(26,16,8,0.88);
         transform: translateY(-2px);
+    }
+    .filter-btn.active {
+        background: #1a0e08;
+        border-color: var(--clr-gold, #c9963f);
+        color: #f6f0e6;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(26,16,8,0.18);
     }
     
     .product-grid {
@@ -150,21 +157,21 @@
     
     .product-card {
         background:
-            radial-gradient(320px 140px at 100% 0%, rgba(31,157,106,0.08), transparent 60%),
-            linear-gradient(180deg, rgba(244,236,223,0.94) 0%, rgba(239,226,207,0.96) 100%);
+            radial-gradient(320px 140px at 100% 0%, rgba(201,150,63,0.08), transparent 60%),
+            linear-gradient(180deg, #fdfaf5 0%, #f5ebe0 100%);
         border-radius: 26px;
         overflow: hidden;
-        border: 1px solid rgba(10,26,18,0.08);
-        box-shadow: 0 18px 42px rgba(10,26,18,0.08);
+        border: 1px solid rgba(201,150,63,0.12);
+        box-shadow: 0 18px 42px rgba(26,16,8,0.07);
         transition: all var(--transition-base);
         display: flex;
         flex-direction: column;
     }
-    
+
     .product-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 28px 64px rgba(10,26,18,0.12);
-        border-color: rgba(31,157,106,0.18);
+        box-shadow: 0 28px 64px rgba(26,16,8,0.12);
+        border-color: rgba(201,150,63,0.28);
     }
     
     .product-image-container {
@@ -187,28 +194,28 @@
     .product-image-placeholder {
         width: 100%;
         height: 100%;
-        background: linear-gradient(180deg, #dfe8df 0%, #d4dfd5 100%);
+        background: linear-gradient(160deg, #2d1a0e 0%, #1a0e08 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 4rem;
-        color: var(--clr-gold);
+        color: rgba(201,150,63,0.35);
     }
-    
+
     .product-overlay {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(10, 26, 18, 0.35);
+        background: rgba(26,16,8,0.35);
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
         transition: opacity var(--transition-base);
     }
-    
+
     .product-overlay span {
-        background: linear-gradient(135deg, var(--clr-gold) 0%, #178257 100%);
-        color: white;
+        background: var(--clr-gold, #c9963f);
+        color: #1a0e08;
         padding: 0.65rem 1.8rem;
         border-radius: 999px;
         font-weight: 600;
@@ -257,7 +264,7 @@
     }
     
     .product-excerpt {
-        color: rgba(24,49,38,0.72);
+        color: rgba(26,16,8,0.6);
         font-size: 0.95rem;
         margin-bottom: 1.5rem;
         line-height: 1.75;
@@ -274,7 +281,7 @@
     
     .product-price {
         font-weight: 700;
-        color: #234535;
+        color: #1a0e08;
         font-size: 1.25rem;
     }
     

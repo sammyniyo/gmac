@@ -118,7 +118,7 @@
     }
 
     .stations-intro-title em {
-        color: #234535;
+        color: var(--clr-gold, #c9963f);
         font-style: italic;
     }
 
@@ -136,11 +136,10 @@
         gap: 2.25rem;
         align-items: start;
         padding: 2rem;
-        border-bottom: 1px solid rgba(10,26,18,0.08);
         background:
-            radial-gradient(360px 160px at 100% 0%, rgba(31,157,106,0.08), transparent 60%),
-            linear-gradient(180deg, rgba(244,236,223,0.94) 0%, rgba(239,226,207,0.98) 100%);
-        border: 1px solid rgba(10,26,18,0.08);
+            radial-gradient(360px 160px at 100% 0%, rgba(201,150,63,0.08), transparent 60%),
+            linear-gradient(180deg, #fdfaf5 0%, #f5ebe0 100%);
+        border: 1px solid rgba(201,150,63,0.12);
         border-radius: 30px;
         box-shadow: 0 20px 50px rgba(10,26,18,0.08);
     }
@@ -163,7 +162,7 @@
     .station-placeholder {
         width: 100%;
         height: 450px;
-        background: linear-gradient(180deg, #dfe8df 0%, #d4dfd5 100%);
+        background: linear-gradient(160deg, #2d1a0e 0%, #1a0e08 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -207,11 +206,11 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 1rem;
-        background: rgba(250,244,235,0.84);
+        background: rgba(201,150,63,0.06);
         padding: 2rem;
         border-radius: 24px;
         margin: 2rem 0;
-        border: 1px solid rgba(10,26,18,0.08);
+        border: 1px solid rgba(201,150,63,0.14);
     }
     
     .spec-item {
@@ -231,7 +230,7 @@
     .spec-value {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #234535;
+        color: #1a0e08;
     }
     
     [data-theme='dark'] .spec-value { color: var(--clr-white); }
@@ -240,18 +239,18 @@
     .station-description {
         padding: 1.25rem 1.35rem;
         border-radius: 22px;
-        background: rgba(250,244,235,0.8);
-        border: 1px solid rgba(10,26,18,0.08);
+        background: rgba(201,150,63,0.05);
+        border: 1px solid rgba(201,150,63,0.14);
     }
 
     .station-description h4 {
         margin-bottom: 0.5rem;
-        color: #21160f;
+        color: #1a0e08;
         font-size: 1.1rem;
     }
 
     .station-description p {
-        color: rgba(24,49,38,0.72);
+        color: rgba(26,16,8,0.62);
         line-height: 1.75;
     }
 
@@ -261,7 +260,7 @@
         inset: 0;
         z-index: 2000;
         background:
-            radial-gradient(circle at top, rgba(31,157,106,0.12), transparent 28%),
+            radial-gradient(circle at top, rgba(201,150,63,0.10), transparent 28%),
             rgba(12,10,8,0.94);
         backdrop-filter: blur(10px);
         justify-content: center;

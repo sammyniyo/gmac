@@ -652,7 +652,7 @@
     will-change: opacity, transform;
 }
 .gh-hero__slide.is-active {
-    opacity: 0.78;
+    opacity: 1;
     transform: scale(1.0);
 }
 .gh-hero__slide-img {
