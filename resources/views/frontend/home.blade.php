@@ -6,76 +6,25 @@
 @section('content')
 
 @php
-    $fallbackHeroSlides = collect([
-        (object) [
-            'title' => 'Premium Rwandan Coffee',
-            'subtitle' => 'From our hills to your cup.',
-            'image_url' => asset('images/pexels-adam-lukac-254247-773958-1920x1280.jpg.jpeg'),
-        ],
-        (object) [
-            'title' => 'Crafted With Care',
-            'subtitle' => 'Clean processing, distinctive flavour, and export-ready quality.',
-            'image_url' => asset('images/pexels-maksgelatin-4815899-950x633.jpg.jpeg'),
-        ],
-    ]);
-
-    $heroSlides = $slides
-        ->map(function ($s) {
-            return (object) [
-                'title' => $s->title ?? null,
-                'subtitle' => $s->subtitle ?? null,
-                'image_url' => $s->image_url ?? null,
-            ];
-        })
-        ->filter(fn ($s) => !empty($s->image_url))
-        ->values();
-
-    if ($heroSlides->count() < 2) {
-        $heroSlides = $heroSlides
-            ->concat($fallbackHeroSlides)
-            ->unique('image_url')
-            ->values();
-    }
-
-    $heroSlide  = $heroSlides->first();
-    $heroTitle  = $heroSlide?->title ?? (__('messages.slogan') ?? 'Premium Rwandan Coffee');
-    $heroSub    = $heroSlide?->subtitle ?? 'From our hills to your cup.';
-    $heroImage  = $heroSlide?->image_url;
-    $brandStoryImage = asset('images/pexels-adam-lukac-254247-773958-1920x1280.jpg.jpeg');
-    $processImage = asset('images/pexels-maksgelatin-4815899-950x633.jpg.jpeg');
-    $reviews = ($testimonials ?? collect())->count()
-        ? $testimonials
-        : collect([
-            (object) [
-                'name' => 'Aline M.',
-                'role' => 'Specialty Buyer',
-                'company' => 'Kigali Coffee Partners',
-                'quote' => 'GMAC delivers reliable quality, clean lots, and a professional partnership from sampling to shipment.',
-                'rating' => 5,
-            ],
-            (object) [
-                'name' => 'David R.',
-                'role' => 'Roastery Founder',
-                'company' => 'North Roast Co.',
-                'quote' => 'What stands out is the consistency. The coffees are expressive, traceable, and beautifully prepared.',
-                'rating' => 5,
-            ],
-            (object) [
-                'name' => 'Sophie K.',
-                'role' => 'Import Partner',
-                'company' => 'Origin Select',
-                'quote' => 'Their team combines origin knowledge, communication, and quality control in a way buyers can trust.',
-                'rating' => 5,
-            ],
-        ]);
-
-    $tagline    = \App\Models\Setting::where('key', 'company_tagline')->value('value') ?? 'Coffee with character';
-    $aboutShort = \App\Models\Setting::where('key', 'about_short_text')->value('value')
-                  ?? 'GMAC Coffee represents the peak of Rwandan coffee farming. We cultivate, harvest, and process our beans with absolute dedication to quality and sustainability.';
+    $firstHero = $heroSlides->first();
+    $heroPrimaryLabel = ($firstHero && filled($firstHero->button_text ?? null)) ? $firstHero->button_text : __('messages.discover');
+    $heroPrimaryHref = $firstHero->button_href ?? LaravelLocalization::localizeUrl(url('/products'));
 @endphp
 
 <section class="gh-hero">
-    <div class="gh-hero__slider" id="gh-hero-slider" data-interval="4200" aria-label="Hero image slider">
+    <div
+        class="gh-hero__slider"
+        id="gh-hero-slider"
+        data-interval="4200"
+        aria-label="Hero image slider"
+        data-default-primary-label="{{ e(__('messages.discover')) }}"
+        data-default-primary-href="{{ e(LaravelLocalization::localizeUrl(url('/products'))) }}"
+        data-secondary-label="{{ e(__('messages.contact')) }}"
+        data-secondary-href="{{ e(LaravelLocalization::localizeUrl(url('/contact'))) }}"
+    >
+        @if($heroSlides->isEmpty())
+            <div class="gh-hero__ambient-fallback" aria-hidden="true"></div>
+        @else
         <div class="gh-hero__track" aria-live="polite">
             @foreach($heroSlides as $s)
                 <div
@@ -83,11 +32,14 @@
                     data-slide
                     data-title="{{ e($s->title ?? $heroTitle) }}"
                     data-subtitle="{{ e($s->subtitle ?? $heroSub) }}"
+                    data-primary-label="{{ e(filled($s->button_text ?? null) ? $s->button_text : __('messages.discover')) }}"
+                    data-primary-href="{{ e($s->button_href) }}"
                 >
                     <img class="gh-hero__slide-img" src="{{ $s->image_url }}" alt="{{ e($s->title ?? $heroTitle) }}">
                 </div>
             @endforeach
         </div>
+        @endif
 
         <div class="gh-hero__overlay"></div>
 
@@ -102,19 +54,19 @@
 
                 <p class="gh-hero__body">{{ $aboutShort }}</p>
 
-                <div class="gh-hero__actions">
-                    <a href="{{ LaravelLocalization::localizeUrl(url('/products')) }}" class="gh-btn gh-btn--gold">
-                        {{ __('messages.discover') }}
+                <div class="gh-hero__actions" id="gh-hero-actions">
+                    <a href="{{ $heroPrimaryHref }}" id="gh-hero-cta-primary" class="gh-btn gh-btn--gold">
+                        {{ $heroPrimaryLabel }}
                     </a>
-                    <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" class="gh-btn gh-btn--ghost">
+                    <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" id="gh-hero-cta-secondary" class="gh-btn gh-btn--ghost">
                         {{ __('messages.contact') }}
                     </a>
                 </div>
 
                 <div class="gh-hero__badges">
-                    <span class="gh-badge">{{ __('messages.sustainable') }}</span>
-                    <span class="gh-badge">{{ __('messages.premium') }}</span>
-                    <span class="gh-badge">Rwanda</span>
+                    @foreach($heroBadges as $badgeLabel)
+                        <span class="gh-badge">{{ $badgeLabel }}</span>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -149,13 +101,13 @@
     <div class="container">
         <div class="home-about gh-reveal">
             <div class="home-about__media">
-                <img src="{{ $brandStoryImage }}" alt="GMAC Coffee cherries and farm">
+                <img src="{{ $brandStoryImage }}" alt="{{ __('messages.home_about_image_alt') }}">
             </div>
             <div class="home-about__content">
                 <div class="home-kicker">{{ __('messages.history') }}</div>
-                <h2 class="home-title">The source of exceptional coffee from <em>Rwanda.</em></h2>
+                <h2 class="home-title">{{ $aboutTitleBefore }}<em>{{ $aboutTitleEm }}</em></h2>
                 <p class="home-copy">{{ $aboutShort }}</p>
-                <p class="home-copy">We cultivate, process, and prepare coffee with traceability, premium quality, and long-term partnership in mind.</p>
+                <p class="home-copy">{{ $aboutParagraph2 }}</p>
                 <a href="{{ LaravelLocalization::localizeUrl(url('/history')) }}" class="home-link">
                     {{ __('messages.read_more') }}
                     <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
@@ -170,7 +122,7 @@
         <div class="home-heading gh-reveal">
             <div class="home-kicker">{{ __('messages.why_gmac') }}</div>
             <h2 class="home-title home-title--center">Why people choose <em>GMAC Coffee.</em></h2>
-            <p class="home-copy home-copy--center">Premium processing, sustainable sourcing, and consistent export quality for buyers who care about character and reliability.</p>
+            <p class="home-copy home-copy--center">{{ $whyLead }}</p>
         </div>
 
         <div class="home-why">
@@ -211,16 +163,17 @@
 </section>
 @endif
 
+@if($testimonials->isNotEmpty())
 <section class="home-section home-section--reviews">
     <div class="container">
         <div class="home-heading gh-reveal">
-            <div class="home-kicker">Reviews &amp; Trust</div>
-            <h2 class="home-title home-title--center">What buyers and partners say about <em>GMAC Coffee.</em></h2>
-            <p class="home-copy home-copy--center">Long-term quality is built on trust, communication, and coffee that arrives exactly as promised.</p>
+            <div class="home-kicker">{{ $reviewsKicker }}</div>
+            <h2 class="home-title home-title--center">{{ $reviewsTitle }}<em>{{ $reviewsTitleEm }}</em></h2>
+            <p class="home-copy home-copy--center">{{ $reviewsLead }}</p>
         </div>
 
         <div class="home-reviews">
-            @foreach($reviews as $review)
+            @foreach($testimonials as $review)
                 <article class="home-review gh-reveal" style="--reveal-delay:{{ $loop->index * 0.08 }}s">
                     <div class="home-review__stars" aria-hidden="true">
                         @foreach(range(1, max(1, (int) ($review->rating ?? 5))) as $star)
@@ -237,6 +190,7 @@
         </div>
     </div>
 </section>
+@endif
 
 @if($featuredProducts->count() > 0)
 <section class="home-section home-section--products">
@@ -256,8 +210,8 @@
             @foreach($featuredProducts->take(3) as $product)
                 <article class="home-product gh-reveal" style="--reveal-delay:{{ $loop->index * 0.08 }}s">
                     <a href="{{ route('products.show', $product->slug) }}" class="home-product__media">
-                        @if($product->hasMedia('cover'))
-                            <img src="{{ $product->getFirstMediaUrl('cover', 'thumb') ?: $product->getFirstMediaUrl('cover') }}" alt="{{ $product->name }}">
+                        @if($product->hasMedia('products'))
+                            <img src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name }}">
                         @else
                             <div class="home-product__placeholder"><i class="fa-solid fa-mug-hot" aria-hidden="true"></i></div>
                         @endif
@@ -279,9 +233,9 @@
 <section class="home-section home-section--cta">
     <div class="container">
         <div class="home-cta gh-reveal">
-            <div class="home-kicker">Wholesale &amp; Partnerships</div>
-            <h2 class="home-title home-title--center">From farm to your cup with <em>care.</em></h2>
-            <p class="home-copy home-copy--center">Talk to us about export, wholesale, and long-term sourcing partnerships for Rwandan coffee.</p>
+            <div class="home-kicker">{{ $ctaKicker }}</div>
+            <h2 class="home-title home-title--center">{{ $ctaTitle }}<em>{{ $ctaTitleEm }}</em></h2>
+            <p class="home-copy home-copy--center">{{ $ctaLead }}</p>
             <div class="home-cta__actions">
                 <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}" class="gh-btn gh-btn--gold">Shop Coffee</a>
                 <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" class="gh-btn gh-btn--dark">Contact Us</a>
@@ -303,9 +257,9 @@
     --gh-cream: #f6f0e7;
     --gh-surface: #fffdf9;
     --gh-line: rgba(33, 22, 15, 0.08);
-    --gh-gold: #b8893d;
-    --gh-gold-dk: #8a6320;
-    --gh-gold-lt: #d8b76b;
+    --gh-gold: #d4a24a;
+    --gh-gold-dk: #9a7028;
+    --gh-gold-lt: #e8c97a;
     --gh-display:  'Cormorant Garamond', Georgia, serif;
     --gh-body:     'DM Sans', var(--font-body, sans-serif);
     --gh-ease:     cubic-bezier(0.16, 1, 0.3, 1);
@@ -320,11 +274,21 @@
 
 .gh-reveal {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s var(--gh-ease), transform 0.6s var(--gh-ease);
+    transform: translateY(28px) scale(0.99);
+    filter: blur(2px);
+    transition: opacity 0.7s var(--gh-ease), transform 0.7s var(--gh-ease), filter 0.7s var(--gh-ease);
     transition-delay: var(--reveal-delay, 0s);
 }
-.gh-reveal.is-visible { opacity: 1; transform: none; }
+.gh-reveal.is-visible { opacity: 1; transform: none; filter: none; }
+
+@media (prefers-reduced-motion: reduce) {
+    .gh-reveal {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        transition: none;
+    }
+}
 
 .gh-btn {
     display: inline-flex;
@@ -345,11 +309,11 @@
 }
 .gh-btn:hover { transform: translateY(-2px); }
 .gh-btn--gold {
-    background: linear-gradient(135deg, var(--gh-gold) 0%, #c89b56 100%);
+    background: linear-gradient(135deg, var(--gh-gold) 0%, #e8b84e 55%, #c9933a 100%);
     color: #ffffff;
-    box-shadow: 0 16px 32px rgba(184, 137, 61, 0.24);
+    box-shadow: 0 14px 36px rgba(212, 162, 74, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
 }
-.gh-btn--gold:hover { color: #ffffff; }
+.gh-btn--gold:hover { color: #ffffff; box-shadow: 0 18px 44px rgba(212, 162, 74, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.18) inset; }
 .gh-btn--dark {
     background: #2d1f15;
     color: #ffffff;
@@ -368,6 +332,15 @@
     min-height: min(88vh, 820px);
     overflow: hidden;
     background: #20150f;
+}
+
+.gh-hero__ambient-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 85% 55% at 18% 28%, rgba(212, 162, 74, 0.18), transparent 52%),
+        linear-gradient(145deg, #2a1d15 0%, #3d2a1c 38%, #1a120d 100%);
 }
 
 .gh-hero__slider,
@@ -426,6 +399,11 @@
     padding: calc(var(--gnav-total-h, 100px) + 2rem) 0 5rem;
 }
 
+@keyframes gh-kicker-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212, 162, 74, 0); border-color: rgba(255,255,255,0.16); }
+    50% { box-shadow: 0 0 28px rgba(212, 162, 74, 0.2); border-color: rgba(232, 201, 122, 0.35); }
+}
+
 .gh-kicker {
     display: inline-flex;
     align-items: center;
@@ -440,6 +418,10 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     margin-bottom: 1.25rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .gh-kicker { animation: gh-kicker-pulse 6s ease-in-out infinite; }
 }
 
 .gh-hero__body {
@@ -482,20 +464,31 @@
 .gh-hero__overlay {
     position: absolute;
     inset: 0;
+    z-index: 1;
     background:
-        linear-gradient(90deg, rgba(20,14,10,0.82) 0%, rgba(20,14,10,0.5) 42%, rgba(20,14,10,0.18) 100%),
-        linear-gradient(180deg, rgba(20,14,10,0.18) 0%, rgba(20,14,10,0.62) 100%);
+        radial-gradient(ellipse 80% 50% at 20% 30%, rgba(212, 162, 74, 0.12), transparent 55%),
+        linear-gradient(90deg, rgba(20,14,10,0.85) 0%, rgba(20,14,10,0.48) 42%, rgba(20,14,10,0.15) 100%),
+        linear-gradient(180deg, rgba(20,14,10,0.25) 0%, rgba(20,14,10,0.68) 100%);
+    pointer-events: none;
 }
 
 .gh-hero__slide {
     opacity: 0;
-    transform: scale(1.04);
-    transition: opacity 0.55s ease, transform 6s cubic-bezier(0.65,0,0.35,1);
+    transform: scale(1.06);
+    transition: opacity 0.65s var(--gh-ease), transform 8s cubic-bezier(0.25, 0.1, 0.25, 1);
     will-change: opacity, transform;
 }
 .gh-hero__slide.is-active {
     opacity: 1;
     transform: scale(1.0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gh-hero__slide {
+        transition: opacity 0.35s ease;
+        transform: none;
+    }
+    .gh-hero__slide.is-active { transform: none; }
 }
 .gh-hero__slide-img {
     width: 100%;
@@ -590,7 +583,9 @@
 .home-section--why,
 .home-section--products,
 .home-section--reviews {
-    background: #fbf8f3;
+    background:
+        radial-gradient(900px 400px at 0% 0%, rgba(212, 162, 74, 0.06), transparent 55%),
+        #fbf8f3;
 }
 
 .home-section--stats {
@@ -670,6 +665,17 @@
     border-radius: 28px;
     padding: 1.4rem;
     box-shadow: 0 18px 40px rgba(33, 22, 15, 0.05);
+    transition: box-shadow 0.4s var(--gh-ease), border-color 0.4s, transform 0.4s var(--gh-ease);
+}
+
+.home-about:hover {
+    box-shadow: 0 28px 56px rgba(33, 22, 15, 0.09);
+    border-color: rgba(212, 162, 74, 0.18);
+}
+
+.home-about__media {
+    overflow: hidden;
+    border-radius: 22px;
 }
 
 .home-about__media img {
@@ -678,6 +684,11 @@
     object-fit: cover;
     border-radius: 22px;
     display: block;
+    transition: transform 0.7s var(--gh-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .home-about:hover .home-about__media img { transform: scale(1.04); }
 }
 
 .home-why {
@@ -692,6 +703,15 @@
     border-radius: 24px;
     padding: 2rem 1.6rem;
     box-shadow: 0 16px 36px rgba(33, 22, 15, 0.04);
+    transition: transform 0.35s var(--gh-ease), box-shadow 0.35s var(--gh-ease), border-color 0.35s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .home-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 28px 52px rgba(33, 22, 15, 0.1);
+        border-color: rgba(212, 162, 74, 0.2);
+    }
 }
 
 .home-card__icon {
@@ -744,6 +764,15 @@
     border-radius: 24px;
     padding: 1.7rem 1.5rem;
     box-shadow: 0 16px 36px rgba(33, 22, 15, 0.04);
+    transition: transform 0.35s var(--gh-ease), box-shadow 0.35s var(--gh-ease), border-color 0.35s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .home-review:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 48px rgba(33, 22, 15, 0.08);
+        border-color: rgba(212, 162, 74, 0.18);
+    }
 }
 
 .home-review__stars {
@@ -817,6 +846,15 @@
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 16px 36px rgba(33, 22, 15, 0.04);
+    transition: transform 0.35s var(--gh-ease), box-shadow 0.35s var(--gh-ease), border-color 0.35s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .home-product:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 28px 56px rgba(33, 22, 15, 0.11);
+        border-color: rgba(212, 162, 74, 0.22);
+    }
 }
 
 .home-product__media {
@@ -830,6 +868,11 @@
     height: 240px;
     display: block;
     object-fit: cover;
+    transition: transform 0.65s var(--gh-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .home-product:hover .home-product__media img { transform: scale(1.06); }
 }
 
 .home-product__placeholder {
@@ -875,10 +918,14 @@
 }
 
 .home-cta {
-    background: #2d1f15;
+    background:
+        radial-gradient(ellipse 100% 80% at 50% 0%, rgba(212, 162, 74, 0.15), transparent 55%),
+        linear-gradient(165deg, #3a281c 0%, #2d1f15 45%, #1f1510 100%);
     border-radius: 30px;
     padding: 3.2rem 2rem;
     text-align: center;
+    box-shadow: 0 32px 64px rgba(33, 22, 15, 0.2);
+    border: 1px solid rgba(212, 162, 74, 0.12);
 }
 
 .home-section--cta .home-kicker,

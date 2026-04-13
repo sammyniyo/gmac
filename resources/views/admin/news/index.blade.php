@@ -33,7 +33,7 @@
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="p-3">
                                         @if($post->hasMedia('news'))
-                                            <img src="{{ $post->getFirstMediaUrl('news') }}" alt="{{ $post->title }}" class="w-16 h-12 object-cover rounded">
+                                            <img src="{{ $post->getFirstMediaUrl('cover') }}" alt="{{ $post->title }}" class="w-16 h-12 object-cover rounded">
                                         @else
                                             <div class="w-16 h-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">No Img</div>
                                         @endif

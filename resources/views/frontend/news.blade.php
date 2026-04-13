@@ -4,187 +4,315 @@
 @section('meta_description', 'The latest updates, harvest news, and community events from GMAC Coffee and the Rwandan coffee industry.')
 
 @section('content')
-<section class="page-hero fade-in">
-    <div class="container">
-        <div class="page-hero-card">
-            <div class="page-hero-kicker">GMAC Coffee</div>
-            <h1 class="page-hero-title">{{ __('messages.news') }}</h1>
-            <p class="page-hero-subtitle">Updates, harvest stories, and community events.</p>
-        </div>
-    </div>
-</section>
+@include('partials.frontend.mag-hero', [
+    'variant' => 'news',
+    'title' => __('messages.news'),
+    'subtitle' => __('messages.news_hero_subtitle'),
+    'mosaic' => $heroPosts,
+])
 
 <div class="container py-6">
-    <div class="news-listing fade-in">
-        <div class="news-grid">
+    <div class="news-page fade-in">
+        <div class="news-mag">
             @forelse($posts as $post)
-                <article class="news-card fade-in">
-                    <a href="{{ route('news.show', $post->slug) }}" class="news-image-link">
+                @php
+                    $isLead = $posts->currentPage() === 1 && $loop->first;
+                    $date = $post->published_at ?? $post->created_at;
+                @endphp
+                <article class="news-mag__card {{ $isLead ? 'news-mag__card--lead' : '' }} fade-in">
+                    <a href="{{ route('news.show', $post->slug) }}" class="news-mag__media">
                         @if($post->hasMedia('cover'))
-                            <img src="{{ $post->getFirstMediaUrl('cover', 'thumb') ?? $post->getFirstMediaUrl('cover') }}" alt="{{ $post->title }}" class="news-image">
+                            <img src="{{ $post->getFirstMediaUrl('cover', 'thumb') ?? $post->getFirstMediaUrl('cover') }}"
+                                 alt="{{ $post->title }}"
+                                 loading="{{ $loop->iteration < 4 ? 'eager' : 'lazy' }}"
+                                 decoding="async">
                         @else
-                            <div class="news-image-placeholder">
-                                <i class="fa-solid fa-newspaper"></i>
-                            </div>
+                            <span class="news-mag__placeholder" aria-hidden="true"><i class="fa-solid fa-newspaper"></i></span>
                         @endif
-                        <div class="news-date">
-                            <span class="day">{{ $post->published_at ? $post->published_at->format('d') : $post->created_at->format('d') }}</span>
-                            <span class="month">{{ $post->published_at ? $post->published_at->format('M') : $post->created_at->format('M') }}</span>
-                        </div>
+                        <span class="news-mag__media-veil" aria-hidden="true"></span>
                     </a>
-                    <div class="news-body">
-                        <h2 class="news-title"><a href="{{ route('news.show', $post->slug) }}">{{ $post->title }}</a></h2>
-                        <p class="news-excerpt">{{ Str::limit(strip_tags($post->content), 120) }}</p>
-                        <a href="{{ route('news.show', $post->slug) }}" class="news-link">{{ __('messages.read_more') }} <i class="fa-solid fa-arrow-right-long ml-1"></i></a>
+                    <div class="news-mag__body">
+                        <div class="news-mag__kicker">
+                            <time datetime="{{ $date->toIso8601String() }}">{{ $date->format('M j, Y') }}</time>
+                            @if($isLead)
+                                <span class="news-mag__pill">{{ __('messages.latest_news') }}</span>
+                            @endif
+                        </div>
+                        <h2 class="news-mag__title">
+                            <a href="{{ route('news.show', $post->slug) }}">{{ $post->title }}</a>
+                        </h2>
+                        <p class="news-mag__excerpt">{{ Str::limit(strip_tags($post->content), $isLead ? 220 : 130) }}</p>
+                        <a href="{{ route('news.show', $post->slug) }}" class="news-mag__link">
+                            {{ __('messages.read_more') }}
+                            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </article>
             @empty
-                <div class="text-center py-6 w-full">
-                    <p class="text-xl text-gray-500">No news updates yet. Stay tuned for harvest reports and events.</p>
-                </div>
+                <p class="news-mag__empty">No news yet. Soon you will see harvest reports and events here.</p>
             @endforelse
         </div>
 
-        <div class="pagination-wrapper mt-4">
+        <div class="news-pagination">
             {{ $posts->links() }}
         </div>
     </div>
 </div>
 @endsection
 
-@push('scripts')
+@push('styles')
 <style>
-    .news-grid {
+    .news-mag {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 3rem;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1.5rem;
+        grid-auto-flow: dense;
     }
-    
-    .news-card {
-        background: rgba(255,255,255,0.88);
-        border: 1px solid rgba(13, 9, 7, 0.07);
-        border-radius: var(--radius-card);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-        transition: transform var(--transition-base), box-shadow var(--transition-base);
+
+    .news-mag__card {
+        grid-column: span 4;
         display: flex;
         flex-direction: column;
-    }
-    
-    .news-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-lg);
-    }
-    
-    .news-image-link {
-        position: relative;
-        height: 240px;
-        display: block;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(13, 9, 7, 0.07);
+        border-radius: 20px;
         overflow: hidden;
+        box-shadow: 0 6px 28px rgba(13, 9, 7, 0.06);
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.25s ease;
     }
-    
-    .news-image {
+
+    [data-theme="dark"] .news-mag__card {
+        background: rgba(22, 14, 10, 0.92);
+        border-color: rgba(201, 150, 63, 0.12);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .news-mag__card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 48px rgba(13, 9, 7, 0.12);
+        border-color: rgba(201, 150, 63, 0.22);
+    }
+
+    .news-mag__card--lead {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 280px;
+    }
+
+    .news-mag__card--lead .news-mag__media {
+        flex: 1.15;
+        min-height: 280px;
+        aspect-ratio: auto;
+    }
+
+    .news-mag__card--lead .news-mag__body {
+        flex: 1;
+        padding: 2rem 2.25rem;
+        justify-content: center;
+    }
+
+    .news-mag__card--lead .news-mag__title {
+        font-size: clamp(1.65rem, 3vw, 2.35rem);
+    }
+
+    .news-mag__media {
+        position: relative;
+        display: block;
+        aspect-ratio: 16 / 11;
+        overflow: hidden;
+        background: var(--clr-bg-alt, rgba(26, 14, 8, 0.06));
+    }
+
+    .news-mag__media img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform var(--transition-slow);
+        transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    
-    .news-card:hover .news-image {
-        transform: scale(1.1);
+
+    .news-mag__card:hover .news-mag__media img {
+        transform: scale(1.05);
     }
-    
-    .news-image-placeholder {
-        width: 100%;
-        height: 100%;
-        background-color: var(--clr-bg-alt);
+
+    .news-mag__placeholder {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 4rem;
-        color: var(--clr-gold);
-    }
-    
-    .news-date {
-        position: absolute;
-        top: 1.25rem; right: 1.25rem;
-        background: #1a0e08;
-        color: #f6f0e6;
-        padding: 0.5rem 0.85rem;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        box-shadow: 0 4px 14px rgba(13,9,7,0.22);
-        z-index: 10;
-        min-width: 54px;
-        text-align: center;
+        width: 100%;
+        height: 100%;
+        font-size: 3rem;
+        color: var(--clr-gold, #d4a24a);
+        opacity: 0.65;
     }
 
-    .news-date .day {
+    .news-mag__media-veil {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(13, 9, 7, 0.45), transparent 55%);
+        opacity: 0.75;
+        pointer-events: none;
+    }
+
+    .news-mag__body {
+        padding: 1.35rem 1.5rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 0.65rem;
+    }
+
+    .news-mag__kicker {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(26, 14, 8, 0.45);
+    }
+
+    [data-theme="dark"] .news-mag__kicker {
+        color: rgba(246, 240, 230, 0.45);
+    }
+
+    .news-mag__kicker time {
+        color: var(--clr-gold-dk, #9a7028);
+    }
+
+    [data-theme="dark"] .news-mag__kicker time {
+        color: var(--clr-gold, #e8c97a);
+    }
+
+    .news-mag__pill {
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: rgba(212, 162, 74, 0.18);
+        color: var(--clr-gold-dk, #7a5218);
+        font-size: 0.65rem;
+    }
+
+    [data-theme="dark"] .news-mag__pill {
+        background: rgba(212, 162, 74, 0.15);
+        color: var(--clr-gold-lt, #edd078);
+    }
+
+    .news-mag__title {
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 1.35rem;
         font-weight: 600;
-        line-height: 1;
-        color: #e8c97a;
+        line-height: 1.22;
+        margin: 0;
     }
 
-    .news-date .month {
-        font-size: 0.65rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: rgba(246, 240, 230, 0.55);
-    }
-    
-    .news-body {
-        padding: 2rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .news-title {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        line-height: 1.3;
-    }
-    
-    .news-title a {
+    .news-mag__title a {
         color: inherit;
         text-decoration: none;
+        transition: color 0.2s;
     }
-    
-    .news-title a:hover {
-        color: var(--clr-gold);
+
+    .news-mag__title a:hover {
+        color: var(--clr-gold, #b8892a);
     }
-    
-    .news-excerpt {
-        color: var(--clr-text-muted);
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
-        flex-grow: 1;
+
+    .news-mag__excerpt {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: var(--clr-text-muted, rgba(26, 14, 8, 0.58));
+        flex: 1;
     }
-    
-    .news-link {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-        color: var(--clr-gold);
-        display: flex;
+
+    [data-theme="dark"] .news-mag__excerpt {
+        color: rgba(246, 240, 230, 0.55);
+    }
+
+    .news-mag__link {
+        display: inline-flex;
         align-items: center;
+        gap: 8px;
+        margin-top: 0.25rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--clr-gold-dk, #9a7028);
+        text-decoration: none;
+        transition: gap 0.25s ease, color 0.2s;
     }
-    
-    /* Pagination Styles */
-    .pagination-wrapper nav {
+
+    .news-mag__link:hover {
+        gap: 12px;
+        color: var(--clr-gold, #c9942e);
+    }
+
+    .news-mag__empty {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--clr-text-muted, rgba(26, 14, 8, 0.5));
+        font-size: 1.05rem;
+    }
+
+    .news-pagination {
+        margin-top: 2.5rem;
         display: flex;
         justify-content: center;
     }
-    
-    @media (max-width: 600px) {
-        .news-grid { grid-template-columns: 1fr; }
+
+    .news-pagination nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.35rem;
+    }
+
+    .news-pagination a,
+    .news-pagination span {
+        min-width: 2.5rem;
+        height: 2.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 0.65rem;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid rgba(13, 9, 7, 0.1);
+        color: rgba(26, 14, 8, 0.65);
+        background: rgba(255, 255, 255, 0.85);
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    [data-theme="dark"] .news-pagination a,
+    [data-theme="dark"] .news-pagination span {
+        background: rgba(22, 14, 10, 0.85);
+        border-color: rgba(201, 150, 63, 0.2);
+        color: rgba(246, 240, 230, 0.75);
+    }
+
+    .news-pagination a:hover {
+        border-color: var(--clr-gold, #d4a24a);
+        color: var(--clr-gold-dk, #7a5218);
+    }
+
+    .news-pagination span[aria-current="page"] {
+        background: linear-gradient(135deg, rgba(212, 162, 74, 0.35), rgba(212, 162, 74, 0.12));
+        border-color: rgba(201, 150, 63, 0.45);
+        color: var(--clr-ink, #1a0e08);
+    }
+
+    @media (max-width: 1100px) {
+        .news-mag__card { grid-column: span 6; }
+        .news-mag__card--lead { flex-direction: column; min-height: 0; }
+        .news-mag__card--lead .news-mag__media { min-height: 240px; }
+    }
+
+    @media (max-width: 640px) {
+        .news-mag__card { grid-column: 1 / -1; }
     }
 </style>
 @endpush

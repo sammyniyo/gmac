@@ -32,6 +32,7 @@ class NewsPostController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
+        $validated['content'] = $this->sanitizeEditorHtml($validated['content']);
         $validated['slug'] = Str::slug($validated['title']);
         $validated['is_published'] = $request->has('is_published');
         
@@ -42,7 +43,7 @@ class NewsPostController extends Controller
         $post = NewsPost::create(\Illuminate\Support\Arr::except($validated, ['image']));
 
         if ($request->hasFile('image')) {
-            $post->addMediaFromRequest('image')->toMediaCollection('news');
+            $post->addMediaFromRequest('image')->toMediaCollection('cover');
         }
 
         return redirect()->route('admin.news.index')->with('success', 'News post created successfully.');
@@ -64,6 +65,7 @@ class NewsPostController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
+        $validated['content'] = $this->sanitizeEditorHtml($validated['content']);
         $validated['slug'] = Str::slug($validated['title']);
         $validated['is_published'] = $request->has('is_published');
         
@@ -76,8 +78,8 @@ class NewsPostController extends Controller
         $news->update(\Illuminate\Support\Arr::except($validated, ['image']));
 
         if ($request->hasFile('image')) {
-            $news->clearMediaCollection('news');
-            $news->addMediaFromRequest('image')->toMediaCollection('news');
+            $news->clearMediaCollection('cover');
+            $news->addMediaFromRequest('image')->toMediaCollection('cover');
         }
 
         return redirect()->route('admin.news.index')->with('success', 'News post updated successfully.');
@@ -87,5 +89,13 @@ class NewsPostController extends Controller
     {
         $news->delete();
         return redirect()->route('admin.news.index')->with('success', 'News post deleted successfully.');
+    }
+
+    private function sanitizeEditorHtml(string $html): string
+    {
+        $clean = preg_replace('#<\s*(script|iframe|object|embed|form)[^>]*>.*?<\s*/\s*\1\s*>#is', '', $html) ?? $html;
+        $clean = preg_replace('#\son\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)#i', '', $clean) ?? $clean;
+
+        return $clean;
     }
 }

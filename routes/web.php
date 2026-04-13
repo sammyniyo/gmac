@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 Route::group([
     'prefix' => LaravelLocalization::setLocale(),
@@ -22,6 +24,18 @@ Route::group([
     Route::get('/team', [FrontendController::class, 'team'])->name('team');
     Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
     Route::post('/contact/send', [FrontendController::class, 'sendContact'])->name('contact.send');
+
+    Route::get('/reviews', [FrontendController::class, 'reviews'])->name('reviews');
+    Route::post('/reviews', [FrontendController::class, 'submitFeedback'])->name('reviews.submit');
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product:slug}', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/{product:slug}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{product:slug}', [CartController::class, 'remove'])->name('cart.remove');
+
+    Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/order/thanks/{reference}', [CheckoutController::class, 'thanks'])->name('order.thanks');
 });
 Route::post('/subscribe', [FrontendController::class, 'subscribe'])->name('subscribe');
 
@@ -51,7 +65,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('news', \App\Http\Controllers\Admin\NewsPostController::class)->except(['show']);
     Route::resource('gallery', \App\Http\Controllers\Admin\GalleryItemController::class)->except(['show']);
     Route::resource('washing-stations', \App\Http\Controllers\Admin\WashingStationController::class);
+    Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class)->only(['index', 'show', 'update']);
     Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'show', 'destroy']);
+    Route::resource('feedbacks', \App\Http\Controllers\Admin\FeedbackController::class)->only(['index', 'destroy']);
+    Route::post('feedbacks/{feedback}/approve', [\App\Http\Controllers\Admin\FeedbackController::class, 'approve'])->name('feedbacks.approve');
+    Route::post('feedbacks/{feedback}/unapprove', [\App\Http\Controllers\Admin\FeedbackController::class, 'unapprove'])->name('feedbacks.unapprove');
     Route::resource('subscribers', \App\Http\Controllers\Admin\SubscriberController::class)->only(['index', 'destroy']);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show']);
     Route::resource('statistics', \App\Http\Controllers\Admin\StatisticController::class)->except(['show']);

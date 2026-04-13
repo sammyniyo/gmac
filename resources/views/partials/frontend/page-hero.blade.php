@@ -25,9 +25,9 @@
 .ph-hero {
     position: relative;
     background:
-        radial-gradient(900px 320px at 10% 0%, rgba(201, 150, 63, 0.16), transparent 60%),
-        radial-gradient(720px 260px at 90% 10%, rgba(13, 9, 7, 0.08), transparent 58%),
-        linear-gradient(180deg, #f6eee2 0%, #efe4d3 55%, #ecdfcc 100%);
+        radial-gradient(900px 320px at 10% 0%, rgba(212, 162, 74, 0.14), transparent 60%),
+        radial-gradient(720px 260px at 90% 10%, rgba(20, 61, 50, 0.07), transparent 58%),
+        linear-gradient(180deg, #faf6ef 0%, #f0e6d6 55%, #ebe0d0 100%);
     padding: calc(var(--site-header-h, 84px) + 34px) 0 42px;
     border-bottom: 1px solid rgba(13, 9, 7, 0.06);
 }
@@ -37,17 +37,38 @@
     z-index: 1;
 }
 
+@keyframes ph-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.985);
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
+
 .ph-hero__inner {
     max-width: 860px;
     margin: 0 auto;
     padding: clamp(2rem, 4vw, 3rem);
     text-align: center;
     background:
-        radial-gradient(360px 140px at 50% 0%, rgba(201, 150, 63, 0.12), transparent 70%),
-        rgba(255, 252, 247, 0.7);
+        radial-gradient(360px 140px at 50% 0%, rgba(212, 162, 74, 0.14), transparent 70%),
+        rgba(255, 252, 247, 0.78);
     border: 1px solid rgba(13, 9, 7, 0.06);
     border-radius: 30px;
-    box-shadow: 0 22px 56px rgba(13, 9, 7, 0.08);
+    box-shadow:
+        0 22px 56px rgba(13, 9, 7, 0.08),
+        0 0 0 1px rgba(212, 162, 74, 0.06) inset;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .ph-hero__inner {
+        animation: ph-card-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
 }
 
 [data-theme='dark'] .ph-hero {

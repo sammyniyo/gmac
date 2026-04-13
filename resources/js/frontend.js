@@ -70,6 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const dots = Array.from(slider.querySelectorAll('[data-dot]'));
         const prevBtn = slider.querySelector('[data-prev]');
         const nextBtn = slider.querySelector('[data-next]');
+        const primaryBtn = document.getElementById('gh-hero-cta-primary');
+        const secondaryBtn = document.getElementById('gh-hero-cta-secondary');
 
         const interval = Number(slider.getAttribute('data-interval') || '6500');
         const prefersReducedMotion =
@@ -102,6 +104,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        function updateHeroCtas(activeSlide) {
+            const defPL = slider.getAttribute('data-default-primary-label') || '';
+            const defPH = slider.getAttribute('data-default-primary-href') || '#';
+            const secL = slider.getAttribute('data-secondary-label') || '';
+            const secH = slider.getAttribute('data-secondary-href') || '#';
+            if (secondaryBtn) {
+                secondaryBtn.textContent = secL;
+                secondaryBtn.setAttribute('href', secH);
+            }
+            if (!activeSlide) {
+                if (primaryBtn) {
+                    primaryBtn.textContent = defPL;
+                    primaryBtn.setAttribute('href', defPH);
+                }
+                return;
+            }
+            const pLabel = activeSlide.getAttribute('data-primary-label') || defPL;
+            const pHref = activeSlide.getAttribute('data-primary-href') || defPH;
+            if (primaryBtn) {
+                primaryBtn.textContent = pLabel;
+                primaryBtn.setAttribute('href', pHref);
+            }
+        }
+
         function render(nextIdx) {
             idx = (nextIdx + slides.length) % slides.length;
 
@@ -118,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (subtitleEl) subtitleEl.textContent = activeSlide.getAttribute('data-subtitle') || '';
                 triggerTextAnimation();
             }
+            updateHeroCtas(activeSlide);
         }
 
         function start() {
@@ -147,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 start();
             });
         });
+
+        updateHeroCtas(slides[idx]);
 
         slider.addEventListener('mouseenter', stop);
         slider.addEventListener('mouseleave', start);
@@ -200,33 +229,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     initHeroSlider();
 
-    // Fade-in on scroll animation observer
-    const fadeElements = document.querySelectorAll('.fade-in');
-    
-    if ('IntersectionObserver' in window && fadeElements.length > 0) {
-        const appearOptions = {
-            threshold: 0.15,
-            rootMargin: "0px 0px -50px 0px"
-        };
-        
-        const appearOnScroll = new IntersectionObserver(function(entries, observer) {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) {
-                    return;
-                } else {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
+    const appearOptions = {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px',
+    };
+
+    function observeReveal(selector, visibleClass) {
+        const nodes = document.querySelectorAll(selector);
+        if (!nodes.length) return;
+
+        if (!('IntersectionObserver' in window)) {
+            nodes.forEach((el) => el.classList.add(visibleClass));
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add(visibleClass);
+                obs.unobserve(entry.target);
             });
         }, appearOptions);
-        
-        fadeElements.forEach(item => {
-            appearOnScroll.observe(item);
-        });
-    } else {
-        // Fallback for browsers without IntersectionObserver
-        fadeElements.forEach(item => {
-            item.classList.add('visible');
-        });
+
+        nodes.forEach((el) => observer.observe(el));
     }
+
+    observeReveal('.fade-in', 'visible');
+    observeReveal('.reveal-on-scroll', 'is-visible');
 });

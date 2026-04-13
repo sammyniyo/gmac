@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\Feedback;
 use App\Models\GalleryItem;
 use App\Models\HeroSlide;
 use App\Models\NewsPost;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Statistic;
 use App\Models\Subscriber;
@@ -35,39 +37,58 @@ class DashboardController extends Controller
             'gallery_items' => GalleryItem::count(),
             'stations' => WashingStation::count(),
             'statistics' => Statistic::count(),
+            'orders_pending' => 0,
+            'orders_open' => 0,
         ];
+
+        if (Schema::hasTable('orders')) {
+            $stats['orders_pending'] = Order::where('status', Order::STATUS_PENDING)->count();
+            $stats['orders_open'] = Order::whereIn('status', [Order::STATUS_PENDING, Order::STATUS_PROCESSING])->count();
+        }
+
+        if (Schema::hasTable('feedbacks')) {
+            $stats['feedbacks_pending'] = Feedback::where('is_approved', false)->count();
+        } else {
+            $stats['feedbacks_pending'] = 0;
+        }
 
         $quickLinks = [
             [
-                'label' => 'Add Product',
-                'description' => 'Create a new coffee listing for the shop.',
-                'route' => route('admin.products.create'),
+                'label' => 'Products',
+                'description' => 'Shop catalog and pricing',
+                'route' => route('admin.products.index'),
             ],
             [
-                'label' => 'Manage Messages',
-                'description' => 'Review incoming contact requests and leads.',
+                'label' => 'Orders',
+                'description' => 'Customer order requests',
+                'route' => route('admin.orders.index'),
+            ],
+            [
+                'label' => 'Messages',
+                'description' => 'Contact form inbox',
                 'route' => route('admin.contacts.index'),
             ],
             [
-                'label' => 'Update Hero Slides',
-                'description' => 'Refresh homepage visuals and calls to action.',
+                'label' => 'Ratings & feedback',
+                'description' => 'Public reviews (moderate)',
+                'route' => route('admin.feedbacks.index'),
+            ],
+            [
+                'label' => 'Hero slides',
+                'description' => 'Homepage carousel',
                 'route' => route('admin.hero-slides.index'),
             ],
             [
-                'label' => 'Manage Users',
-                'description' => 'Review admin access and create new accounts.',
-                'route' => route('admin.users.index'),
+                'label' => 'News',
+                'description' => 'Stories and updates',
+                'route' => route('admin.news.index'),
             ],
             [
-                'label' => 'Site Settings',
-                'description' => 'Edit brand, contact, and footer information.',
+                'label' => 'Settings',
+                'description' => 'Brand, contact, social',
                 'route' => route('admin.settings.index'),
             ],
         ];
-
-        $recentUsers = User::latest()
-            ->take(6)
-            ->get(['id', 'name', 'email', 'is_admin', 'email_verified_at', 'created_at']);
 
         $visitorStats = [
             'today_visits' => 0,
@@ -124,6 +145,6 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        return view('admin.dashboard', compact('stats', 'quickLinks', 'recentUsers', 'visitorStats', 'visitorTrend', 'topPages'));
+        return view('admin.dashboard', compact('stats', 'quickLinks', 'visitorStats', 'visitorTrend', 'topPages'));
     }
 }

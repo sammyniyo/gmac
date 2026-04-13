@@ -63,11 +63,21 @@
                 </div>
             @endif
 
-            <!-- Inquiry CTA -->
             <div class="detail-cta mt-4 p-2 bg-alt rounded">
-                <h3 class="subsection-title mb-1">Interested in this coffee?</h3>
-                <p class="mb-2">We provide wholesale and retail options. Contact us for bulk pricing and availability.</p>
-                <a href="{{ LaravelLocalization::localizeUrl(url('/contact?product=' . urlencode($product->name))) }}" class="btn btn-primary">Enquire Now</a>
+                <h3 class="subsection-title mb-1">{{ __('messages.add_to_cart') }}</h3>
+                <p class="mb-2">{{ __('messages.no_payment_note') }}</p>
+                <form action="{{ route('cart.add', $product->slug) }}" method="post" class="detail-cart-row">
+                    @csrf
+                    <div class="detail-qty-wrap">
+                        <label for="detail-qty" class="detail-qty-label">{{ __('messages.quantity') }}</label>
+                        <input type="number" id="detail-qty" name="qty" value="1" min="1" max="500" class="input detail-qty-input">
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ __('messages.add_to_cart') }}</button>
+                </form>
+                <div class="detail-cta-links mt-1">
+                    <a href="{{ route('cart.index') }}" class="btn btn-outline">{{ __('messages.view_cart') }}</a>
+                    <a href="{{ LaravelLocalization::localizeUrl(url('/contact?product=' . urlencode($product->name))) }}" class="btn btn-outline">{{ __('messages.contact') }}</a>
+                </div>
             </div>
         </div>
     </div>
@@ -235,6 +245,34 @@
     .rounded { border-radius: var(--radius-card); }
     .font-bold { font-weight: 700; }
     
+    .detail-cart-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 1rem;
+    }
+    .detail-qty-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+    .detail-qty-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--clr-text-muted);
+    }
+    .detail-qty-input {
+        width: 88px;
+        min-height: 2.75rem;
+    }
+    .detail-cta-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
     @media (max-width: 992px) {
         .product-detail-grid {
             grid-template-columns: 1fr;

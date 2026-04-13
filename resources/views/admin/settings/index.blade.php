@@ -30,6 +30,11 @@
                                 </div>
 
                                 <div class="mb-4">
+                                    <label for="company_tagline" class="block text-gray-700 font-medium mb-2">Home hero tagline (pill above headline)</label>
+                                    <input type="text" name="company_tagline" id="company_tagline" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['company_tagline'] ?? '' }}" placeholder="Coffee with character">
+                                </div>
+
+                                <div class="mb-4">
                                     <label for="site_description" class="block text-gray-700 font-medium mb-2">Site Description (SEO)</label>
                                     <textarea name="site_description" id="site_description" rows="3" class="w-full border-gray-300 rounded-md shadow-sm">{{ $settings['site_description'] ?? '' }}</textarea>
                                 </div>
@@ -89,10 +94,100 @@
                         <!-- Homepage Content -->
                         <div class="mt-8">
                             <h3 class="font-bold text-lg mb-4 text-indigo-700 border-b pb-2">Homepage Content</h3>
-                            
+                            <p class="text-sm text-gray-600 mb-6">Hero <strong>images</strong> are managed under <strong>Hero slides</strong> in the admin menu. Use these fields for text and the “Our history” section photo.</p>
+
+                            <div class="mb-4 bg-gray-50 border p-4 rounded text-sm">
+                                <label for="home_about_image" class="block text-gray-700 font-medium mb-2">About section image (next to Our History)</label>
+                                @if(!empty($settings['home_about_image'] ?? null))
+                                    <div class="bg-white rounded p-2 mb-2 inline-block shadow-sm">
+                                        <img src="{{ $settings['home_about_image'] }}" alt="" class="h-24 w-auto object-cover rounded max-w-full">
+                                    </div>
+                                @endif
+                                <input type="file" name="home_about_image" id="home_about_image" class="w-full border-gray-300 rounded-md shadow-sm" accept="image/*">
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="home_hero_title" class="block text-gray-700 font-medium mb-2">Hero headline (when no slides, or slide has no title)</label>
+                                    <input type="text" name="home_hero_title" id="home_hero_title" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_hero_title'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="home_hero_subtitle" class="block text-gray-700 font-medium mb-2">Hero subtitle (fallback)</label>
+                                    <input type="text" name="home_hero_subtitle" id="home_hero_subtitle" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_hero_subtitle'] ?? '' }}">
+                                </div>
+                            </div>
+
                             <div class="mb-4">
-                                <label for="about_short_text" class="block text-gray-700 font-medium mb-2">About Us Summary (Homepage)</label>
+                                <label for="home_hero_badges" class="block text-gray-700 font-medium mb-2">Hero badges (one per line; default: Sustainable, Premium, Rwanda)</label>
+                                <textarea name="home_hero_badges" id="home_hero_badges" rows="3" class="w-full border-gray-300 rounded-md shadow-sm font-mono text-sm">{{ $settings['home_hero_badges'] ?? '' }}</textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="about_short_text" class="block text-gray-700 font-medium mb-2">About Us Summary (first paragraph, hero + about block)</label>
                                 <textarea name="about_short_text" id="about_short_text" rows="4" class="w-full border-gray-300 rounded-md shadow-sm placeholder-gray-400" placeholder="A brief introduction to the company...">{{ $settings['about_short_text'] ?? '' }}</textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="home_about_title_before" class="block text-gray-700 font-medium mb-2">About heading — text before italic part</label>
+                                    <input type="text" name="home_about_title_before" id="home_about_title_before" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_about_title_before'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="home_about_title_em" class="block text-gray-700 font-medium mb-2">About heading — italic part</label>
+                                    <input type="text" name="home_about_title_em" id="home_about_title_em" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_about_title_em'] ?? '' }}">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="home_about_paragraph_2" class="block text-gray-700 font-medium mb-2">About section — second paragraph</label>
+                                <textarea name="home_about_paragraph_2" id="home_about_paragraph_2" rows="3" class="w-full border-gray-300 rounded-md shadow-sm">{{ $settings['home_about_paragraph_2'] ?? '' }}</textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="home_why_lead" class="block text-gray-700 font-medium mb-2">“Why GMAC” intro (under section title)</label>
+                                <textarea name="home_why_lead" id="home_why_lead" rows="2" class="w-full border-gray-300 rounded-md shadow-sm">{{ $settings['home_why_lead'] ?? '' }}</textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="home_reviews_kicker" class="block text-gray-700 font-medium mb-2">Reviews — small label (kicker)</label>
+                                    <input type="text" name="home_reviews_kicker" id="home_reviews_kicker" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_reviews_kicker'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="home_reviews_title" class="block text-gray-700 font-medium mb-2">Reviews — title before italic</label>
+                                    <input type="text" name="home_reviews_title" id="home_reviews_title" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_reviews_title'] ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="home_reviews_title_em" class="block text-gray-700 font-medium mb-2">Reviews — italic part of title</label>
+                                    <input type="text" name="home_reviews_title_em" id="home_reviews_title_em" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_reviews_title_em'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="home_reviews_lead" class="block text-gray-700 font-medium mb-2">Reviews — subtitle paragraph</label>
+                                    <input type="text" name="home_reviews_lead" id="home_reviews_lead" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_reviews_lead'] ?? '' }}">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="home_cta_kicker" class="block text-gray-700 font-medium mb-2">Bottom CTA — kicker</label>
+                                    <input type="text" name="home_cta_kicker" id="home_cta_kicker" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_cta_kicker'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="home_cta_title" class="block text-gray-700 font-medium mb-2">Bottom CTA — title before italic</label>
+                                    <input type="text" name="home_cta_title" id="home_cta_title" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_cta_title'] ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="home_cta_title_em" class="block text-gray-700 font-medium mb-2">Bottom CTA — italic part</label>
+                                    <input type="text" name="home_cta_title_em" id="home_cta_title_em" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_cta_title_em'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="home_cta_lead" class="block text-gray-700 font-medium mb-2">Bottom CTA — paragraph</label>
+                                    <input type="text" name="home_cta_lead" id="home_cta_lead" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['home_cta_lead'] ?? '' }}">
+                                </div>
                             </div>
                         </div>
 

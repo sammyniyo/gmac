@@ -25,9 +25,9 @@
         --l-ink:       #1a0e08;
         --l-parchment: #f6f0e6;
         --l-cream:     #fdfaf5;
-        --l-gold:      var(--clr-gold, #c9963f);
-        --l-gold-dk:   #8a6420;
-        --l-gold-lt:   #e8c97a;
+        --l-gold:      var(--clr-gold, #d4a24a);
+        --l-gold-dk:   #9a7028;
+        --l-gold-lt:   #edd078;
         --l-display:   'Cormorant Garamond', Georgia, serif;
         --l-body:      'DM Sans', sans-serif;
         --l-ease:      cubic-bezier(0.16, 1, 0.3, 1);
@@ -244,6 +244,10 @@
         gap: 8px;
         flex-shrink: 0;
     }
+    .navbar__tools--compact {
+        gap: 6px;
+        align-items: stretch;
+    }
     .navbar__cta {
         display: inline-flex;
         align-items: center;
@@ -372,6 +376,35 @@
             padding: 28px 32px 0;
             margin-top: 16px;
             border-top: 1px solid rgba(192,139,48,0.12);
+        }
+        .navbar__panel-row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 10px;
+            align-items: stretch;
+        }
+        .navbar__panel-row > a {
+            flex: 1;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        .navbar__panel-shop {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--l-gold);
+            color: var(--l-ink);
+            border: none;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-decoration: none;
         }
         .navbar__panel-phone {
             display: flex;
@@ -608,21 +641,27 @@
         transition: background 0.2s;
     }
     .footer__submit:hover { background: var(--l-gold-dk); }
-    /* Bottom bar */
+    /* Bottom bar — full-bleed below main footer grid */
     .footer__bottom {
         border-top: 1px solid rgba(192,139,48,0.1);
         background: rgba(26,16,8,0.03);
-        padding: 20px 0;
+        padding: 22px 0 28px;
         position: relative;
         z-index: 1;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
     }
     [data-theme="dark"] .footer__bottom { background: rgba(246,240,230,0.02); }
     .footer__bottom-inner {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 1.25rem;
+        width: 100%;
+        max-width: 100%;
+        flex-wrap: nowrap;
     }
     .footer__bottom p {
         font-size: 0.72rem;
@@ -633,7 +672,10 @@
     [data-theme="dark"] .footer__bottom p { color: rgba(246,240,230,0.3); }
     .footer__bottom-links {
         display: flex;
-        gap: 20px;
+        flex-wrap: wrap;
+        gap: 12px 22px;
+        justify-content: center;
+        width: 100%;
     }
     .footer__bottom-links a {
         font-size: 0.68rem;
@@ -647,13 +689,381 @@
     [data-theme="dark"] .footer__bottom-links a { color: rgba(246,240,230,0.28); }
     .footer__bottom-links a:hover { color: var(--l-gold); }
 
+    .footer__credits {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        align-items: center;
+        padding: 1.35rem 1.25rem;
+        background: rgba(26, 16, 8, 0.04);
+        border: 1px solid rgba(201, 150, 63, 0.14);
+        border-radius: 20px;
+    }
+    [data-theme="dark"] .footer__credits {
+        background: rgba(246, 240, 230, 0.04);
+        border-color: rgba(201, 150, 63, 0.12);
+    }
+    .footer__copy {
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        color: rgba(26,16,8,0.55);
+        margin: 0;
+    }
+    [data-theme="dark"] .footer__copy { color: rgba(246,240,230,0.45); }
+    .footer__tagline {
+        font-family: var(--l-display);
+        font-size: 1.02rem;
+        font-weight: 400;
+        font-style: italic;
+        color: rgba(26,16,8,0.48);
+        margin: 0;
+        max-width: 56ch;
+        line-height: 1.5;
+    }
+    [data-theme="dark"] .footer__tagline { color: rgba(246,240,230,0.38); }
+    .footer__legal {
+        font-size: 0.68rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(26,16,8,0.4);
+        margin: 0.15rem 0 0;
+    }
+    [data-theme="dark"] .footer__legal { color: rgba(246,240,230,0.28); }
+
+    .navbar__cart {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        background: rgba(26,16,8,0.06);
+        color: var(--l-ink);
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s, transform 0.2s var(--l-ease);
+    }
+    [data-theme="dark"] .navbar__cart {
+        background: rgba(246,240,230,0.08);
+        color: var(--l-parchment);
+    }
+    .navbar__cart:hover { background: rgba(201,150,63,0.15); color: var(--l-gold-dk); transform: translateY(-1px); }
+    .navbar__cart-badge {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: var(--l-gold);
+        color: var(--l-forest-dk);
+        font-size: 0.62rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .site-quick-actions {
+        position: fixed;
+        right: max(16px, env(safe-area-inset-right));
+        bottom: max(20px, env(safe-area-inset-bottom));
+        z-index: 950;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+        pointer-events: none;
+    }
+    .site-quick-actions > * { pointer-events: auto; }
+
+    @keyframes wa-pulse {
+        0%, 100% { transform: scale(1); opacity: 0.55; }
+        50% { transform: scale(1.15); opacity: 0.2; }
+    }
+    @keyframes wa-bob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+    }
+
+    .site-wa-stack {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    /* Compact WhatsApp FAB — same footprint as scroll-to-top */
+    .site-wa-fab {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        padding: 0;
+        border: none;
+        border-radius: 999px;
+        cursor: pointer;
+        color: #fff;
+        background: linear-gradient(145deg, #25D366 0%, #128C7E 48%, #075E54 100%);
+        box-shadow:
+            0 4px 0 rgba(0,0,0,0.12),
+            0 12px 32px rgba(7, 94, 84, 0.42),
+            0 0 0 1px rgba(255,255,255,0.2) inset;
+        transition: transform 0.25s var(--l-ease), box-shadow 0.25s;
+        animation: wa-bob 2.8s ease-in-out infinite;
+    }
+    .site-wa-fab:hover {
+        transform: translateY(-3px);
+        box-shadow:
+            0 5px 0 rgba(0,0,0,0.1),
+            0 16px 40px rgba(7, 94, 84, 0.5),
+            0 0 0 1px rgba(255,255,255,0.28) inset;
+        animation: none;
+    }
+    .site-wa-fab.is-open {
+        animation: none;
+        box-shadow:
+            0 3px 0 rgba(0,0,0,0.1),
+            0 10px 28px rgba(7, 94, 84, 0.38),
+            0 0 0 2px rgba(255,255,255,0.35) inset;
+    }
+    .site-wa-fab:focus-visible {
+        outline: 2px solid var(--l-gold);
+        outline-offset: 3px;
+    }
+    .site-wa-fab__ring {
+        position: absolute;
+        inset: -5px;
+        border-radius: 999px;
+        border: 2px solid rgba(37, 211, 102, 0.5);
+        animation: wa-pulse 2s ease-out infinite;
+        pointer-events: none;
+    }
+    .site-wa-fab.is-open .site-wa-fab__ring {
+        animation: none;
+        opacity: 0.35;
+    }
+    .site-wa-fab__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        line-height: 1;
+    }
+
+    /* Popover above the FAB */
+    .site-wa-panel {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 12px);
+        width: min(280px, calc(100vw - 32px));
+        padding: 1.1rem 1.15rem 1rem;
+        border-radius: 16px;
+        background: var(--l-cream);
+        color: var(--l-ink);
+        box-shadow:
+            0 4px 0 rgba(0,0,0,0.06),
+            0 20px 48px rgba(26,16,8,0.18);
+        border: 1px solid rgba(201,150,63,0.22);
+        z-index: 2;
+        text-align: left;
+        transform-origin: 85% 100%;
+        animation: wa-panel-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    [data-theme="dark"] .site-wa-panel {
+        background: #1a120c;
+        color: var(--l-parchment);
+        border-color: rgba(201,150,63,0.28);
+        box-shadow:
+            0 4px 0 rgba(0,0,0,0.2),
+            0 24px 56px rgba(0,0,0,0.45);
+    }
+    .site-wa-panel[hidden] {
+        display: none !important;
+    }
+    @keyframes wa-panel-in {
+        from {
+            opacity: 0;
+            transform: translateY(8px) scale(0.94);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    .site-wa-panel__label {
+        font-family: var(--l-body);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(26,16,8,0.5);
+        margin: 0 0 0.35rem;
+    }
+    [data-theme="dark"] .site-wa-panel__label {
+        color: rgba(246,240,230,0.45);
+    }
+    .site-wa-panel__num {
+        font-family: var(--l-body);
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        margin: 0 0 1rem;
+        word-break: break-word;
+    }
+    .site-wa-panel__cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 11px 14px;
+        border-radius: 12px;
+        font-family: var(--l-body);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: #fff;
+        background: linear-gradient(145deg, #25D366 0%, #128C7E 100%);
+        border: none;
+        box-shadow: 0 2px 0 rgba(0,0,0,0.12);
+        transition: transform 0.2s, filter 0.2s;
+    }
+    .site-wa-panel__cta:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+    }
+    .site-wa-panel__close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(26,16,8,0.06);
+        color: rgba(26,16,8,0.55);
+        font-size: 1.35rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: background 0.2s, color 0.2s;
+    }
+    [data-theme="dark"] .site-wa-panel__close {
+        background: rgba(246,240,230,0.08);
+        color: rgba(246,240,230,0.55);
+    }
+    .site-wa-panel__close:hover {
+        background: rgba(26,16,8,0.1);
+        color: var(--l-ink);
+    }
+    [data-theme="dark"] .site-wa-panel__close:hover {
+        background: rgba(246,240,230,0.12);
+        color: var(--l-parchment);
+    }
+
+    .site-fab {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 1.15rem;
+        box-shadow: 0 12px 32px rgba(26,16,8,0.18);
+        transition: transform 0.25s var(--l-ease), box-shadow 0.25s;
+    }
+    .site-fab:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(26,16,8,0.22); }
+    .site-fab--top {
+        background: var(--l-cream);
+        color: var(--l-ink);
+        border: 1px solid rgba(201,150,63,0.35);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(8px);
+        transition: opacity 0.3s, visibility 0.3s, transform 0.3s var(--l-ease);
+    }
+    [data-theme="dark"] .site-fab--top {
+        background: #1a120c;
+        color: var(--l-parchment);
+        border-color: rgba(201,150,63,0.25);
+    }
+    .site-fab--top.is-visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    .navbar__cta--quick { gap: 8px; }
+    .navbar__cta-ico { font-size: 0.85rem; opacity: 0.9; }
+    @media (min-width: 1025px) {
+        .navbar__cta--quick .navbar__cta-ico { display: inline-block; }
+    }
+    @media (max-width: 1024px) {
+        .navbar__cta-txt { display: none !important; }
+        .navbar__cta--quick .navbar__cta-ico { display: block; margin: 0; }
+        .navbar__cta--quick {
+            width: 44px;
+            height: 44px;
+            padding: 0 !important;
+            border-radius: 999px;
+            justify-content: center;
+        }
+    }
+
+    .navbar__panel-cart {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(201,150,63,0.25);
+        border-radius: 999px;
+        color: rgba(246,240,230,0.9);
+        text-decoration: none;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+    .navbar__panel-row .navbar__panel-cart {
+        margin-bottom: 0;
+    }
+    .navbar__panel-cart-badge {
+        min-width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: var(--l-gold);
+        color: var(--l-forest-dk);
+        font-size: 0.65rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+
     /* Footer responsive */
     @media (max-width: 1024px) {
         .footer__grid { grid-template-columns: 1fr 1fr; gap: 40px; }
     }
     @media (max-width: 640px) {
         .footer__grid { grid-template-columns: 1fr; gap: 40px; padding: 52px 0 40px; }
-        .footer__bottom-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+        .footer__bottom-inner { align-items: stretch; gap: 1rem; }
     }
     </style>
 
@@ -666,6 +1076,15 @@
     $navPhone     = \App\Models\Setting::where('key', 'contact_phone')->value('value');
     $navPhoneTel  = $navPhone ? preg_replace('/[^\d+]/', '', $navPhone) : null;
     $navAddress   = \App\Models\Setting::where('key', 'contact_address')->value('value');
+    $waDigits = preg_replace('/\D/', '', $navPhone ?: '+250783053415');
+    if (strlen($waDigits) === 9) {
+        $waDigits = '250'.$waDigits;
+    }
+    if (strlen($waDigits) < 10) {
+        $waDigits = '250783053415';
+    }
+    $waDisplay = $navPhone ?: '+250 783 053 415';
+    $waHref = 'https://wa.me/'.$waDigits.'?text='.rawurlencode(__('messages.whatsapp_prefill'));
 @endphp
 
 <div class="site-bg">
@@ -765,11 +1184,11 @@
                 <ul class="navbar__links" id="navbar-links">
                     <li><a href="{{ LaravelLocalization::localizeUrl(url('/')) }}"              class="navbar__link {{ request()->is('/') ? 'is-active' : '' }}">{{ __('messages.home') }}</a></li>
                     <li><a href="{{ LaravelLocalization::localizeUrl(url('/history')) }}"       class="navbar__link {{ request()->is('*history*') ? 'is-active' : '' }}">{{ __('messages.history') }}</a></li>
-                    <li><a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}"          class="navbar__link {{ request()->is('*shop*') || request()->is('*products*') ? 'is-active' : '' }}">{{ __('messages.nav_shop') }}</a></li>
                     <li><a href="{{ LaravelLocalization::localizeUrl(url('/news')) }}"          class="navbar__link {{ request()->is('*news*') ? 'is-active' : '' }}">{{ __('messages.news') }}</a></li>
                     <li><a href="{{ LaravelLocalization::localizeUrl(url('/gallery')) }}"       class="navbar__link {{ request()->is('*gallery*') ? 'is-active' : '' }}">{{ __('messages.gallery') }}</a></li>
                     <li><a href="{{ LaravelLocalization::localizeUrl(url('/washing-stations')) }}" class="navbar__link {{ request()->is('*washing-stations*') ? 'is-active' : '' }}">{{ __('messages.stations') }}</a></li>
                     <li><a href="{{ LaravelLocalization::localizeUrl(url('/team')) }}"          class="navbar__link {{ request()->is('*team*') ? 'is-active' : '' }}">Team</a></li>
+                    <li><a href="{{ LaravelLocalization::localizeUrl(url('/reviews')) }}"       class="navbar__link {{ request()->is('*reviews*') ? 'is-active' : '' }}">{{ __('messages.nav_reviews') }}</a></li>
                     <li><a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}"       class="navbar__link {{ request()->is('*contact*') ? 'is-active' : '' }}">{{ __('messages.contact') }}</a></li>
                 </ul>
 
@@ -781,19 +1200,34 @@
                             <span>{{ $navPhone }}</span>
                         </a>
                     @endif
+                    <div class="navbar__panel-row">
+                        <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}" class="navbar__panel-shop">
+                            {{ __('messages.nav_shop') }}
+                        </a>
+                        <a href="{{ route('cart.index') }}" class="navbar__panel-cart">
+                            <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                            <span>{{ __('messages.view_cart') }}</span>
+                            @if(($cartCount ?? 0) > 0)
+                                <span class="navbar__panel-cart-badge">{{ $cartCount }}</span>
+                            @endif
+                        </a>
+                    </div>
                     <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" class="navbar__panel-cta">
                         {{ __('messages.get_in_touch') ?? __('messages.contact') }}
                     </a>
                 </div>
             </div>
 
-            {{-- Desktop CTA buttons --}}
-            <div class="navbar__tools">
-                <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" class="navbar__cta navbar__cta--secondary">
-                    {{ __('messages.get_in_touch') ?? __('messages.contact') }}
-                </a>
+            {{-- Desktop: shop + cart (shop also in toolbar, not in main links) --}}
+            <div class="navbar__tools navbar__tools--compact">
                 <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}" class="navbar__cta">
                     {{ __('messages.nav_shop') }}
+                </a>
+                <a href="{{ route('cart.index') }}" class="navbar__cart" aria-label="{{ __('messages.view_cart') }}">
+                    <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                    @if(($cartCount ?? 0) > 0)
+                        <span class="navbar__cart-badge" aria-hidden="true">{{ $cartCount }}</span>
+                    @endif
                 </a>
             </div>
 
@@ -913,19 +1347,53 @@
                 @enderror
             </div>
         </div>
+    </div>
 
-        {{-- Bottom bar --}}
-        <div class="footer__bottom">
+    {{-- Bottom bar: full width of footer (credits card spans viewport) --}}
+    <div class="footer__bottom">
+        <div class="container">
             <div class="footer__bottom-inner">
-                <p>&copy; {{ date('Y') }} {{ $companyName }}. All rights reserved.</p>
+                <div class="footer__credits">
+                    <p class="footer__copy">&copy; {{ date('Y') }} {{ $companyName }}. {{ __('messages.footer_rights') }}</p>
+                    <p class="footer__tagline">{{ __('messages.footer_tagline') }}</p>
+                    <p class="footer__legal">{{ $companyName }} · Kigali, Rwanda</p>
+                </div>
                 <div class="footer__bottom-links">
+                    <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}">{{ __('messages.nav_shop') }}</a>
+                    <a href="{{ route('cart.index') }}">{{ __('messages.view_cart') }}</a>
                     <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}">{{ __('messages.contact') }}</a>
+                    <a href="{{ LaravelLocalization::localizeUrl(url('/reviews')) }}">{{ __('messages.nav_reviews') }}</a>
                     <a href="{{ LaravelLocalization::localizeUrl(url('/history')) }}">{{ __('messages.history') }}</a>
                 </div>
             </div>
         </div>
     </div>
 </footer>
+
+<div class="site-quick-actions" aria-label="{{ __('messages.quick_actions') ?? 'Quick actions' }}">
+    <div class="site-wa-stack" id="wa-fab-root">
+        <button type="button"
+                class="site-wa-fab"
+                id="wa-fab-toggle"
+                aria-expanded="false"
+                aria-haspopup="dialog"
+                aria-controls="wa-contact-panel"
+                title="{{ __('messages.whatsapp_cta') }}"
+                aria-label="{{ __('messages.whatsapp_cta') }}">
+            <span class="site-wa-fab__ring" aria-hidden="true"></span>
+            <span class="site-wa-fab__icon" aria-hidden="true"><i class="fa-brands fa-whatsapp"></i></span>
+        </button>
+        <div class="site-wa-panel" id="wa-contact-panel" role="dialog" aria-label="{{ __('messages.whatsapp_cta') }}" hidden>
+            <button type="button" class="site-wa-panel__close" id="wa-fab-close" aria-label="{{ __('messages.close') }}">&times;</button>
+            <p class="site-wa-panel__label">{{ __('messages.whatsapp_cta') }}</p>
+            <p class="site-wa-panel__num">{{ $waDisplay }}</p>
+            <a href="{{ $waHref }}" class="site-wa-panel__cta" target="_blank" rel="noopener noreferrer">{{ __('messages.open_whatsapp') }}</a>
+        </div>
+    </div>
+    <button type="button" class="site-fab site-fab--top" id="scroll-to-top" title="{{ __('messages.scroll_top') }}" aria-label="{{ __('messages.scroll_top') }}">
+        <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+    </button>
+</div>
 
 </div>{{-- /site-shell --}}
 </div>{{-- /site-bg --}}
@@ -974,6 +1442,61 @@
         });
         document.addEventListener('click', function () {
             langWrap.classList.remove('is-open');
+        });
+    }
+
+    /* Scroll to top */
+    var topBtn = document.getElementById('scroll-to-top');
+    if (topBtn) {
+        var toggleTop = function () {
+            var y = window.scrollY || document.documentElement.scrollTop || 0;
+            topBtn.classList.toggle('is-visible', y > 420);
+        };
+        toggleTop();
+        window.addEventListener('scroll', toggleTop, { passive: true });
+        topBtn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    /* WhatsApp FAB: compact toggle + contact panel */
+    var waRoot = document.getElementById('wa-fab-root');
+    var waToggle = document.getElementById('wa-fab-toggle');
+    var waPanel = document.getElementById('wa-contact-panel');
+    var waClose = document.getElementById('wa-fab-close');
+    if (waRoot && waToggle && waPanel) {
+        function setWaOpen(open) {
+            waPanel.hidden = !open;
+            waToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            waToggle.classList.toggle('is-open', open);
+            if (open) {
+                var cta = waPanel.querySelector('.site-wa-panel__cta');
+                if (cta && typeof cta.focus === 'function') {
+                    try { cta.focus({ preventScroll: true }); } catch (e) { cta.focus(); }
+                }
+            } else {
+                try { waToggle.focus(); } catch (e) {}
+            }
+        }
+        waToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setWaOpen(waPanel.hidden);
+        });
+        if (waClose) {
+            waClose.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setWaOpen(false);
+            });
+        }
+        document.addEventListener('click', function (e) {
+            if (!waPanel.hidden && !waRoot.contains(e.target)) {
+                setWaOpen(false);
+            }
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !waPanel.hidden) {
+                setWaOpen(false);
+            }
         });
     }
 })();

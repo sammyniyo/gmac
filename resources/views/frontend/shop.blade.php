@@ -24,15 +24,15 @@
         <div class="sp-steps gh-reveal">
             <div class="sp-step">
                 <strong>1</strong>
-                <span>Browse green coffee</span>
+                <span>{{ __('messages.shop_step_1') }}</span>
             </div>
             <div class="sp-step">
                 <strong>2</strong>
-                <span>Review details and price</span>
+                <span>{{ __('messages.shop_step_2') }}</span>
             </div>
             <div class="sp-step">
                 <strong>3</strong>
-                <span>Contact us to order</span>
+                <span>{{ __('messages.shop_step_3') }}</span>
             </div>
         </div>
 
@@ -107,12 +107,19 @@
                         @if($product->price)
                             <span class="sp-card__price">${{ number_format($product->price, 2) }}</span>
                         @else
-                            <span class="sp-card__price sp-card__price--inquiry">{{ __('messages.contact') }}</span>
+                            <span class="sp-card__price sp-card__price--inquiry">{{ __('messages.price_on_request') }}</span>
                         @endif
-                        <a href="{{ route('products.show', $product->slug) }}" class="sp-card__cta">
-                            {{ __('messages.read_more') }}
-                            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-                        </a>
+                        <div class="sp-card__actions">
+                            <form action="{{ route('cart.add', $product->slug) }}" method="post" class="sp-card__cart-form">
+                                @csrf
+                                <input type="hidden" name="qty" value="1">
+                                <button type="submit" class="sp-card__add">{{ __('messages.add_to_cart') }}</button>
+                            </form>
+                            <a href="{{ route('products.show', $product->slug) }}" class="sp-card__cta">
+                                {{ __('messages.read_more') }}
+                                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </article>
@@ -555,12 +562,50 @@
 
 .sp-card__foot {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
     gap: 12px;
     margin-top: auto;
     padding-top: 14px;
     border-top: 1px solid rgba(13,9,7,0.06);
+}
+.sp-card__foot > .sp-card__price,
+.sp-card__foot > .sp-card__price--inquiry { align-self: flex-start; }
+.sp-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+}
+.sp-card__cart-form { margin: 0; }
+.sp-card__add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1rem;
+    font-family: var(--gh-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--gh-gold) 0%, #c9933a 100%);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(184, 137, 61, 0.28);
+    transition: transform 0.2s var(--gh-ease), box-shadow 0.2s;
+}
+.sp-card__add:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(184, 137, 61, 0.35); }
+@media (min-width: 480px) {
+    .sp-card__foot {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .sp-card__actions { flex: 1; justify-content: flex-end; min-width: 0; }
 }
 .sp-card__price {
     font-family: var(--gh-display);

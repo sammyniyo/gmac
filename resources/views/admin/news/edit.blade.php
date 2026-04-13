@@ -1,84 +1,84 @@
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2.1.1/dist/trix.css">
+@endpush
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/trix@2.1.1/dist/trix.umd.min.js"></script>
+@endpush
+
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Post:') }} {{ $news->title }}
-        </h2>
+        <div class="shadcn-page-head">
+            <div>
+                <p class="shadcn-kicker">News</p>
+                <h2 class="shadcn-title">{{ __('Edit Post') }}</h2>
+                <p class="shadcn-desc">{{ $news->title }}</p>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <form action="{{ route('admin.news.update', $news) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Left Column: Main Content -->
-                            <div class="md:col-span-2">
-                                <div class="mb-4">
-                                    <label for="title" class="block text-gray-700 font-bold mb-2">Post Title <span class="text-red-500">*</span></label>
-                                    <input type="text" name="title" id="title" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="{{ old('title', $news->title) }}" required>
-                                    @error('title') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                </div>
+    <div class="py-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="shadcn-card p-6">
+                <form action="{{ route('admin.news.update', $news) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
 
-                                <div class="mb-4">
-                                    <label for="excerpt" class="block text-gray-700 font-bold mb-2">Excerpt</label>
-                                    <textarea name="excerpt" id="excerpt" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Brief summary of the post..." >{{ old('excerpt', $news->excerpt) }}</textarea>
-                                    @error('excerpt') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="content" class="block text-gray-700 font-bold mb-2">Full Content <span class="text-red-500">*</span></label>
-                                    <textarea name="content" id="content" rows="12" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required placeholder="HTML content is supported...">{{ old('content', $news->content) }}</textarea>
-                                    @error('content') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-
-                            <!-- Right Column: Settings and Image -->
+                    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                        <div class="lg:col-span-2 space-y-5">
                             <div>
-                                <div class="bg-gray-50 p-4 rounded-md border mb-4">
-                                    <h3 class="font-bold text-gray-700 mb-3 border-b pb-2">Publishing</h3>
-                                    
-                                    <div class="mb-4">
-                                        <label class="inline-flex items-center">
-                                            <input type="checkbox" name="is_published" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" {{ old('is_published', $news->is_published) ? 'checked' : '' }}>
-                                            <span class="ml-2 font-semibold">Published</span>
-                                        </label>
-                                    </div>
+                                <label for="title" class="mb-1.5 block text-sm font-medium text-gray-900">Post title <span class="text-red-500">*</span></label>
+                                <input type="text" name="title" id="title" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" value="{{ old('title', $news->title) }}" required>
+                                @error('title') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            </div>
 
-                                    <div class="mb-2">
-                                        <label for="published_at" class="block text-gray-700 font-bold mb-2 text-sm">Publish Date</label>
-                                        <input type="date" name="published_at" id="published_at" class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="{{ old('published_at', $news->published_at ? \Carbon\Carbon::parse($news->published_at)->format('Y-m-d') : '') }}">
-                                        @error('published_at') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
+                            <div>
+                                <label for="excerpt" class="mb-1.5 block text-sm font-medium text-gray-900">Excerpt</label>
+                                <textarea name="excerpt" id="excerpt" rows="3" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" placeholder="Short summary…">{{ old('excerpt', $news->excerpt) }}</textarea>
+                                @error('excerpt') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            </div>
 
-                                <div class="bg-gray-50 p-4 rounded-md border">
-                                    <h3 class="font-bold text-gray-700 mb-3 border-b pb-2">Cover Image</h3>
-                                    
-                                    @if($news->hasMedia('news'))
-                                        <div class="mb-3">
-                                            <img src="{{ $news->getFirstMediaUrl('news') }}" alt="{{ $news->title }}" class="w-full h-auto object-cover rounded shadow-sm border">
-                                            <p class="text-xs text-gray-500 mt-1">Current Image</p>
-                                        </div>
-                                    @endif
-
-                                    <div class="mb-2">
-                                        <input type="file" name="image" id="image" class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" accept="image/*">
-                                        <p class="text-xs text-gray-500 mt-1">Upload to replace. Max 2MB.</p>
-                                        @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
+                            <div>
+                                <span class="mb-1.5 block text-sm font-medium text-gray-900">Body <span class="text-red-500">*</span></span>
+                                <input id="news_content" type="hidden" name="content" value="{{ e(old('content', $news->content ?? '')) }}">
+                                <trix-editor input="news_content" class="trix-shadcn"></trix-editor>
+                                @error('content') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-end mt-6 pt-4 border-t">
-                            <a href="{{ route('admin.news.index') }}" class="text-gray-500 hover:underline mr-4">Cancel</a>
-                            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">Update Post</button>
+                        <div class="space-y-5">
+                            <div class="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
+                                <h3 class="mb-3 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-900">Publishing</h3>
+                                <label class="mb-4 flex items-center gap-2 text-sm">
+                                    <input type="checkbox" name="is_published" value="1" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500" {{ old('is_published', $news->is_published) ? 'checked' : '' }}>
+                                    <span class="font-medium">Published</span>
+                                </label>
+                                <div>
+                                    <label for="published_at" class="mb-1 block text-xs font-medium text-gray-600">Publish date</label>
+                                    <input type="date" name="published_at" id="published_at" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm" value="{{ old('published_at', $news->published_at ? $news->published_at->format('Y-m-d') : '') }}">
+                                    @error('published_at') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
+                                <h3 class="mb-3 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-900">Cover image</h3>
+                                @if($news->hasMedia('cover'))
+                                    <div class="mb-3">
+                                        <img src="{{ $news->getFirstMediaUrl('cover') }}" alt="{{ $news->title }}" class="w-full rounded-lg border border-gray-200 object-cover shadow-sm">
+                                        <p class="mt-1 text-xs text-muted-foreground">Current image</p>
+                                    </div>
+                                @endif
+                                <input type="file" name="image" id="image" class="w-full text-sm" accept="image/*">
+                                <p class="mt-1 text-xs text-muted-foreground">Upload to replace. Max 2MB.</p>
+                                @error('image') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="mt-8 flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 pt-6">
+                        <a href="{{ route('admin.news.index') }}" class="shadcn-btn-secondary">Cancel</a>
+                        <button type="submit" class="shadcn-btn">Update post</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
