@@ -12,6 +12,8 @@ use App\Models\HeroSlide;
 use App\Models\Statistic;
 use App\Models\Contact;
 use App\Models\Subscriber;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
 
 class FrontendController extends Controller
 {
@@ -22,7 +24,16 @@ class FrontendController extends Controller
 
     public function home()
     {
-        $slides = HeroSlide::where('is_active', true)->orderBy('order')->get();
+        $slides = HeroSlide::where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function (HeroSlide $slide) {
+                $slide->image_url = $slide->getFirstMediaUrl('slides');
+                return $slide;
+            })
+            ->filter(fn ($slide) => !empty($slide->image_url))
+            ->values();
+
         // Fallback dummy slide if db empty for preview
         if ($slides->isEmpty()) {
             $slides = collect([(object)['title' => 'Premium Rwandan Coffee', 'subtitle' => 'From our hills to your cup', 'image_url' => 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2000&auto=format&fit=crop']]);
@@ -30,8 +41,9 @@ class FrontendController extends Controller
         
         $featuredProducts = Product::where('is_active', true)->latest()->take(3)->get();
         $stats = Statistic::orderBy('order')->get();
+        $testimonials = Testimonial::where('is_active', true)->orderBy('order')->take(3)->get();
         
-        return view('frontend.home', compact('slides', 'featuredProducts', 'stats'));
+        return view('frontend.home', compact('slides', 'featuredProducts', 'stats', 'testimonials'));
     }
 
     public function history()
@@ -56,12 +68,6 @@ class FrontendController extends Controller
     public function productDetail(Product $product)
     {
         abort_unless($product->is_active, 404);
-        return view('frontend.product_detail', compact('product'));
-    }
-
-    public function product($slug)
-    {
-        $product = Product::where('slug', $slug)->where('is_active', true)->firstOrFail();
         return view('frontend.product_detail', compact('product'));
     }
 
@@ -91,26 +97,32 @@ class FrontendController extends Controller
 
     public function team()
     {
-        $team = [
-            [
-                'name' => 'Leadership',
-                'role' => 'Management',
-                'bio' => 'Building a sustainable coffee value chain from Rwanda to the world.',
-                'photo' => null,
-            ],
-            [
-                'name' => 'Processing Team',
-                'role' => 'Quality & Operations',
-                'bio' => 'Careful processing, consistent quality, and traceable lots.',
-                'photo' => null,
-            ],
-            [
-                'name' => 'Field Team',
-                'role' => 'Farm Support',
-                'bio' => 'Partnering with farmers to improve yields, quality, and livelihoods.',
-                'photo' => null,
-            ],
-        ];
+        $team = TeamMember::where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function (TeamMember $member) {
+                return [
+                    'name' => $member->name,
+                    'role' => $member->role,
+                    'email' => $member->email,
+                    'phone' => $member->phone,
+                    'bio' => $member->bio,
+                    'photo' => $member->getFirstMediaUrl('photos') ?: null,
+                ];
+            });
+
+        if ($team->isEmpty()) {
+            $team = collect([
+                [
+                    'name' => 'Niyonsaba Jeanne',
+                    'role' => 'Founder & Chairperson',
+                    'email' => 'info@gmac.coffee',
+                    'phone' => '+250 783 053 415',
+                    'bio' => 'Jeanne founded GMAC Coffee with a vision to create more value from origin, build stronger traceability, and open better opportunities for farmers, especially women in Rwanda’s coffee sector.',
+                    'photo' => asset('images/Jeanne.png'),
+                ],
+            ]);
+        }
 
         return view('frontend.team', compact('team'));
     }

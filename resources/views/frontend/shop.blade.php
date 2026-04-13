@@ -15,14 +15,31 @@
 ══════════════════════════════════════════ --}}
 <section class="sp-section">
     <div class="container">
+        <div class="sp-intro gh-reveal">
+            <div class="sp-intro__kicker">Coffee Selection</div>
+            <h2 class="sp-intro__title">Cleanly presented <em>green coffee.</em></h2>
+            <p class="sp-intro__text">Browse the demo products, check the price, then follow the simple buying steps below.</p>
+        </div>
+
+        <div class="sp-steps gh-reveal">
+            <div class="sp-step">
+                <strong>1</strong>
+                <span>Browse green coffee</span>
+            </div>
+            <div class="sp-step">
+                <strong>2</strong>
+                <span>Review details and price</span>
+            </div>
+            <div class="sp-step">
+                <strong>3</strong>
+                <span>Contact us to order</span>
+            </div>
+        </div>
 
         {{-- ── Toolbar: count + filters ─────────────────────────── --}}
         <div class="sp-toolbar gh-reveal">
             <div class="sp-toolbar__left">
-                <div class="gh-eyebrow">
-                    <span class="gh-eyebrow__line"></span>
-                    {{ __('messages.products') }}
-                </div>
+                <div class="sp-toolbar__meta">{{ $products->count() }} products available</div>
                 <h2 class="sp-toolbar__heading">
                     Our finest <em>selections.</em>
                 </h2>
@@ -78,6 +95,7 @@
 
                 {{-- Body --}}
                 <div class="sp-card__body">
+                    <div class="sp-card__type">Green Coffee</div>
                     <h3 class="sp-card__name">
                         <a href="{{ route('products.show', $product->slug) }}">{{ $product->name }}</a>
                     </h3>
@@ -118,15 +136,15 @@
 {{-- ══════════════════════════════════════════
      CTA — same as homepage
 ══════════════════════════════════════════ --}}
-<section class="gh-cta">
+<section class="shop-cta">
     <div class="container">
-        <div class="gh-cta__inner gh-reveal">
-            <div class="gh-cta__label">Wholesale &amp; Export</div>
-            <h2 class="gh-cta__h2">Interested in <em>bulk orders?</em></h2>
-            <p class="gh-cta__sub">We work with importers, roasters, and specialty buyers worldwide. Get in touch for export pricing and availability.</p>
-            <div class="gh-cta__btns">
+        <div class="shop-cta__inner gh-reveal">
+            <div class="shop-cta__label">Wholesale &amp; Export</div>
+            <h2 class="shop-cta__h2">Interested in <em>bulk orders?</em></h2>
+            <p class="shop-cta__sub">We work with importers, roasters, and specialty buyers worldwide. Contact us for availability, samples, and export conversations.</p>
+            <div class="shop-cta__btns">
                 <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" class="gh-btn gh-btn--gold">Contact Us</a>
-                <a href="{{ LaravelLocalization::localizeUrl(url('/history')) }}" class="gh-btn gh-btn--outline-light">Our Story</a>
+                <a href="{{ LaravelLocalization::localizeUrl(url('/history')) }}" class="shop-cta__link">Our Story</a>
             </div>
         </div>
     </div>
@@ -190,26 +208,91 @@
    SECTION SHELL
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .sp-section {
-    padding: 72px 0 100px;
+    padding: 3rem 0 5rem;
     background:
         radial-gradient(800px 340px at 15% 0%, rgba(201,150,63,0.08), transparent 60%),
-        radial-gradient(760px 320px at 85% 100%, rgba(138,99,32,0.1), transparent 60%),
         linear-gradient(180deg, #fdfaf5 0%, #f5ebe0 100%);
     position: relative;
 }
 [data-theme="dark"] .sp-section { background: var(--gh-cream); }
 
-/* Ghost watermark */
-.sp-section::before {
-    content: 'SHOP';
-    position: absolute; top: 60px; right: -20px;
+.sp-intro {
+    max-width: 820px;
+    margin: 0 auto 1.8rem;
+    text-align: center;
+}
+
+.sp-intro__kicker {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(201,150,63,0.1);
+    border: 1px solid rgba(201,150,63,0.16);
+    color: var(--gh-gold-dk);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.sp-intro__title {
+    margin: 0 0 0.8rem;
     font-family: var(--gh-display);
-    font-size: clamp(80px, 12vw, 160px);
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+    font-weight: 300;
+    line-height: 1.06;
+    color: var(--clr-deep-espresso, #1a1008);
+}
+
+.sp-intro__title em {
+    font-style: italic;
+    color: var(--gh-gold-dk);
+}
+
+.sp-intro__text {
+    max-width: 60ch;
+    margin: 0 auto;
+    color: var(--clr-text-muted);
+    line-height: 1.85;
+    font-size: 1rem;
+}
+
+.sp-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin: 0 0 1.8rem;
+}
+
+.sp-step {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 1.05rem;
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(13,9,7,0.06);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.sp-step strong {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: rgba(201,150,63,0.12);
+    color: var(--gh-gold-dk);
+    font-size: 0.95rem;
+}
+
+.sp-step span {
+    color: var(--clr-text-main);
+    font-size: 0.9rem;
     font-weight: 600;
-    color: rgba(138,99,32,0.06);
-    letter-spacing: 0.1em;
-    pointer-events: none; user-select: none;
-    white-space: nowrap;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -221,11 +304,20 @@
     justify-content: space-between;
     gap: 32px;
     flex-wrap: wrap;
-    margin-bottom: 52px;
+    margin-bottom: 2.2rem;
+}
+
+.sp-toolbar__meta {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gh-gold-dk);
+    margin-bottom: 0.5rem;
 }
 .sp-toolbar__heading {
     font-family: var(--gh-display);
-    font-size: clamp(2rem, 3.2vw, 3rem);
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
     font-weight: 300;
     line-height: 1.06;
     color: var(--clr-deep-espresso, #1a1008);
@@ -253,8 +345,8 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--clr-text-muted, #6b7280);
-    background: rgba(244,236,223,0.9);
-    border: 1px solid rgba(10,26,18,0.10);
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(13,9,7,0.08);
     cursor: pointer;
     transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.22s var(--gh-ease), box-shadow 0.22s;
     position: relative;
@@ -277,10 +369,10 @@
     box-shadow: 0 6px 20px rgba(26,16,8,0.07);
 }
 .sp-filter.is-active {
-    background: var(--gh-ink, #21160f);
-    border-color: var(--gh-gold, #c9963f);
-    color: var(--gh-parchment, #efe2cf);
-    box-shadow: 0 8px 24px rgba(26,16,8,0.18);
+    background: rgba(201,150,63,0.16);
+    border-color: rgba(201,150,63,0.26);
+    color: var(--gh-gold-dk);
+    box-shadow: none;
 }
 .sp-filter.is-active::after { transform: scaleX(1); }
 
@@ -317,8 +409,8 @@
     transition: background 0.22s, color 0.22s;
 }
 .sp-filter.is-active .sp-filter__count {
-    background: rgba(246,240,230,0.20);
-    color: var(--gh-gold-lt);
+    background: rgba(201,150,63,0.14);
+    color: var(--gh-gold-dk);
 }
 [data-theme="dark"] .sp-filter__count { color: var(--gh-gold-lt); background: rgba(232,201,122,0.10); }
 
@@ -333,11 +425,9 @@
 
 /* ── Card ───────────────────────────────────────────────────────── */
 .sp-card {
-    background:
-        radial-gradient(320px 140px at 100% 0%, rgba(31,157,106,0.08), transparent 60%),
-        linear-gradient(180deg, rgba(244,236,223,0.94) 0%, rgba(239,226,207,0.96) 100%);
-    border: 1px solid rgba(192,139,48,0.10);
-    border-radius: 28px;
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(13,9,7,0.06);
+    border-radius: 26px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -347,8 +437,8 @@
 }
 .sp-card:hover {
     transform: translateY(-7px);
-    box-shadow: 0 28px 56px rgba(26,16,8,0.12);
-    border-color: rgba(31,157,106,0.18);
+    box-shadow: 0 24px 48px rgba(26,16,8,0.12);
+    border-color: rgba(201,150,63,0.18);
 }
 [data-theme="dark"] .sp-card {
     background: rgba(246,251,248,0.04);
@@ -361,7 +451,7 @@
     position: relative;
     height: 260px;
     overflow: hidden;
-    background: linear-gradient(180deg, #e8dcc8 0%, #ddd0b8 100%);
+    background: linear-gradient(180deg, #efe3d0 0%, #e2d4be 100%);
     text-decoration: none;
     flex-shrink: 0;
 }
@@ -398,6 +488,7 @@
     color: var(--gh-parchment);
     border: 1px solid rgba(246,240,230,0.55);
     padding: 9px 22px;
+    border-radius: 999px;
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.3s ease, transform 0.3s var(--gh-ease);
@@ -407,10 +498,11 @@
 /* Category badge on image */
 .sp-card__badge {
     position: absolute;
-    top: 16px; left: 0;
-    background: rgba(244,236,223,0.96);
-    border-top: 2px solid var(--gh-gold);
-    padding: 5px 14px 5px 12px;
+    top: 16px; left: 16px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(201,150,63,0.18);
+    padding: 6px 12px;
+    border-radius: 999px;
     font-family: var(--gh-body);
     font-size: 0.60rem; font-weight: 600;
     letter-spacing: 0.18em; text-transform: uppercase;
@@ -422,8 +514,23 @@
 /* Body */
 .sp-card__body {
     padding: 20px 22px 22px;
-    border-top: 1px solid rgba(192,139,48,0.10);
     display: flex; flex-direction: column; flex: 1;
+}
+
+.sp-card__type {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    margin-bottom: 0.7rem;
+    padding: 0.32rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(22, 118, 80, 0.1);
+    border: 1px solid rgba(22, 118, 80, 0.16);
+    color: #167650;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
 }
 .sp-card__name {
     font-family: var(--gh-display);
@@ -453,7 +560,7 @@
     gap: 12px;
     margin-top: auto;
     padding-top: 14px;
-    border-top: 1px solid rgba(192,139,48,0.08);
+    border-top: 1px solid rgba(13,9,7,0.06);
 }
 .sp-card__price {
     font-family: var(--gh-display);
@@ -516,19 +623,89 @@
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    CTA (shared from homepage)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.gh-cta { padding: 120px 0; background: var(--gh-ink); position: relative; overflow: hidden; }
-[data-theme="dark"] .gh-cta { background: #0f0a05; }
-.gh-cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(192,139,48,0.1), transparent 70%); pointer-events: none; }
-.gh-cta__inner { position: relative; z-index: 1; text-align: center; max-width: 680px; margin: 0 auto; }
-.gh-cta__label { font-family: var(--gh-body); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gh-gold); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-.gh-cta__label::before, .gh-cta__label::after { content: ''; display: block; width: 28px; height: 1px; background: var(--gh-gold); }
-.gh-cta__h2 { font-family: var(--gh-display); font-size: clamp(2.8rem, 5vw, 4.4rem); font-weight: 300; line-height: 1.04; color: var(--gh-parchment); margin-bottom: 16px; }
-.gh-cta__h2 em { font-style: italic; color: var(--gh-gold-lt); }
-.gh-cta__sub { font-family: var(--gh-body); font-size: 0.95rem; font-weight: 300; color: rgba(246,240,230,0.46); line-height: 1.8; margin-bottom: 44px; max-width: 50ch; margin-left: auto; margin-right: auto; }
-.gh-cta__btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.shop-cta {
+    margin-top: 2.75rem;
+    padding: 0 0 5.5rem;
+}
+
+.shop-cta__inner {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg, rgba(201,150,63,0.1) 0%, rgba(13,9,7,0.03) 100%);
+    border: 1px solid rgba(201,150,63,0.16);
+    border-radius: 30px;
+}
+
+.shop-cta__label {
+    font-family: var(--gh-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gh-gold-dk);
+    margin-bottom: 1rem;
+}
+
+.shop-cta__h2 {
+    margin: 0 0 0.8rem;
+    font-family: var(--gh-display);
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.06;
+    color: var(--clr-deep-espresso);
+}
+
+.shop-cta__h2 em {
+    font-style: italic;
+    color: var(--gh-gold-dk);
+}
+
+.shop-cta__sub {
+    max-width: 54ch;
+    margin: 0 auto 1.2rem;
+    color: var(--clr-text-muted);
+    line-height: 1.8;
+}
+
+.shop-cta__btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.shop-cta__link {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gh-gold-dk);
+}
+
+.shop-cta__link:hover {
+    color: var(--gh-gold);
+}
+
+[data-theme="dark"] .sp-step {
+    background: rgba(246,251,248,0.04);
+    border-color: rgba(246,251,248,0.08);
+}
+
+[data-theme="dark"] .sp-step strong,
+[data-theme="dark"] .sp-card__type {
+    color: var(--gh-gold-lt);
+}
+
+[data-theme="dark"] .sp-step span {
+    color: rgba(246, 240, 230, 0.8);
+}
 
 /* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 860px) {
+    .sp-steps { grid-template-columns: 1fr; }
     .sp-toolbar { flex-direction: column; align-items: flex-start; }
     .sp-toolbar__right { width: 100%; }
     .sp-filters { gap: 6px; }
@@ -538,6 +715,7 @@
 @media (max-width: 520px) {
     .sp-grid { grid-template-columns: 1fr; }
     .sp-card__img-wrap { height: 220px; }
+    .shop-cta__inner { padding: 2rem 1.25rem; }
 }
 </style>
 

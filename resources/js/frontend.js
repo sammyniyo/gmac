@@ -152,6 +152,13 @@ document.addEventListener('DOMContentLoaded', function() {
         slider.addEventListener('mouseleave', start);
         slider.addEventListener('focusin', stop);
         slider.addEventListener('focusout', start);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stop();
+            } else {
+                start();
+            }
+        });
 
         // Swipe support (mobile)
         let touchStartX = 0;

@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSafeMedia;
 use Illuminate\Database\Eloquent\Model;
-
 use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
 class GalleryItem extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use HasSafeMedia;
 
     protected $guarded = [];
 }

@@ -8,7 +8,7 @@ use App\Http\Controllers\FrontendController;
 
 Route::group([
     'prefix' => LaravelLocalization::setLocale(),
-    'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath']
+    'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'track.visitors']
 ], function() {
     Route::get('/', [FrontendController::class, 'index'])->name('home');
     Route::get('/history', [FrontendController::class, 'history'])->name('history');
@@ -26,6 +26,10 @@ Route::group([
 Route::post('/subscribe', [FrontendController::class, 'subscribe'])->name('subscribe');
 
 Route::get('/dashboard', function () {
+    if (auth()->user()?->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -39,13 +43,17 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
-    Route::resource('product-categories', \App\Http\Controllers\Admin\ProductCategoryController::class);
-    Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
-    Route::resource('news', \App\Http\Controllers\Admin\NewsPostController::class);
-    Route::resource('gallery', \App\Http\Controllers\Admin\GalleryItemController::class);
+    Route::resource('hero-slides', \App\Http\Controllers\Admin\HeroSlideController::class)->except(['show']);
+    Route::resource('team-members', \App\Http\Controllers\Admin\TeamMemberController::class)->except(['show']);
+    Route::resource('testimonials', \App\Http\Controllers\Admin\TestimonialController::class)->except(['show']);
+    Route::resource('product-categories', \App\Http\Controllers\Admin\ProductCategoryController::class)->except(['show']);
+    Route::resource('products', \App\Http\Controllers\Admin\ProductController::class)->except(['show']);
+    Route::resource('news', \App\Http\Controllers\Admin\NewsPostController::class)->except(['show']);
+    Route::resource('gallery', \App\Http\Controllers\Admin\GalleryItemController::class)->except(['show']);
     Route::resource('washing-stations', \App\Http\Controllers\Admin\WashingStationController::class);
     Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'show', 'destroy']);
     Route::resource('subscribers', \App\Http\Controllers\Admin\SubscriberController::class)->only(['index', 'destroy']);
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show']);
     Route::resource('statistics', \App\Http\Controllers\Admin\StatisticController::class)->except(['show']);
     
     Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');

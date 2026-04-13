@@ -4,291 +4,431 @@
 @section('meta_description', 'Learn about the rich history of GMAC Coffee, our mission, vision, and dedication to Rwandan coffee excellence.')
 
 @section('content')
-<section class="page-hero fade-in">
+@php
+    $founderImage = asset('images/Jeanne.png');
+    $historyStats = [
+        ['value' => '2012', 'label' => 'Founded'],
+        ['value' => '1,200+', 'label' => 'Partner farmers'],
+        ['value' => '90%', 'label' => 'Seasonal team women'],
+        ['value' => '4', 'label' => 'Processing profiles'],
+    ];
+
+    $milestones = [
+        ['year' => '2012', 'text' => 'GMAC was founded by Niyonsaba Jeanne with a clear aim to build a traceable, higher-value coffee business.'],
+        ['year' => '2017', 'text' => 'The company acquired a washing station in Karenge, Rwamagana, together with 12,000 mature coffee trees.'],
+        ['year' => 'Today', 'text' => 'GMAC supports more than 1,200 farmers and produces washed, honey, natural, and anaerobic coffees.'],
+    ];
+
+    $values = ['Integrity', 'Quality', 'Sustainability', 'Teamwork', 'Risk Taking', 'Innovation', 'Accountability'];
+@endphp
+
+@include('partials.frontend.page-hero', [
+    'title' => __('messages.history'),
+    'subtitle' => 'The story behind our quality, our people, and our long-term commitment to Rwandan coffee.',
+    'eyebrow' => 'GMAC Coffee',
+])
+
+<section class="history-page">
     <div class="container">
-        <div class="page-hero-card">
-            <div class="page-hero-kicker">GMAC Coffee</div>
-            <h1 class="page-hero-title">{{ __('messages.history') }}</h1>
-            <p class="page-hero-subtitle">{{ __('messages.slogan') }}</p>
+        <div class="history-intro fade-in">
+            <div class="history-kicker">{{ __('messages.our_legacy') }}</div>
+            <h2 class="history-title">A founder-led story of ambition, resilience, and <em>better coffee from origin.</em></h2>
+            <p class="history-copy">GMAC Coffee did not begin as a polished brand. It began as a determined effort to build something more valuable for farmers, more traceable for buyers, and more meaningful for Rwanda’s coffee future.</p>
+        </div>
+
+        <div class="history-stats fade-in">
+            @foreach($historyStats as $stat)
+                <div class="history-stat">
+                    <div class="history-stat__value">{{ $stat['value'] }}</div>
+                    <div class="history-stat__label">{{ $stat['label'] }}</div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="history-grid">
+            <article class="history-card history-card--story fade-in">
+                <div class="history-card__eyebrow">Our story</div>
+                <h3 class="history-card__title">From one vision to a growing coffee platform.</h3>
+                <div class="history-founder">
+                    <div class="history-founder__media">
+                        <img src="{{ $founderImage }}" alt="Founder Jeanne of GMAC Coffee">
+                        <div class="history-founder__caption">
+                            <strong>Niyonsaba Jeanne</strong>
+                            <span>Founder and Chairperson</span>
+                        </div>
+                    </div>
+                    <div class="history-founder__story">
+                        <p class="history-founder__lead">In 2012, Jeanne started GMAC with a simple but powerful belief: coffee from Rwanda could create more value when quality, traceability, and producer impact were taken seriously from the beginning.</p>
+                        <p>At first, the company exported low-grade coffee. But even then, the goal was never to stay small or ordinary. The deeper ambition was to own processing infrastructure, invest in plantations, and create a business that could grow with farmers rather than around them.</p>
+                    </div>
+                </div>
+                <div class="history-richtext">
+                    <p>The turning point came in 2017, when GMAC purchased a washing station in <strong>Karenge Sector, Rwamagana District</strong>, together with <strong>12,000 mature coffee trees</strong>. That step changed the story from trading coffee to truly shaping it, giving the company more control over processing, consistency, and long-term quality.</p>
+                    <p>As the company grew, <strong>Rukaka Steven</strong> joined as Managing Director while Jeanne continued as Chairperson of the Board. Their leadership helped GMAC move beyond transactions and into stronger systems, deeper farmer relationships, and a more ambitious specialty coffee future.</p>
+                    <p>Today GMAC works with around <strong>1,200 Rainforest Alliance-certified farmers</strong>, including an association of <strong>156 women farmers</strong> and youth-focused producer groups that encourage the next generation to stay engaged in coffee. What started as one founder’s determination is now a broader story of quality, opportunity, and shared progress.</p>
+                </div>
+            </article>
+
+            <div class="history-stack">
+                <article class="history-card fade-in">
+                    <div class="history-card__eyebrow">Milestones</div>
+                    <h3 class="history-card__title">Key moments in our journey.</h3>
+                    <div class="history-timeline">
+                        @foreach($milestones as $milestone)
+                            <div class="history-timeline__item">
+                                <div class="history-timeline__year">{{ $milestone['year'] }}</div>
+                                <p>{{ $milestone['text'] }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </article>
+
+                <article class="history-card fade-in">
+                    <div class="history-card__eyebrow">Mission &amp; vision</div>
+                    <div class="history-pillars">
+                        <div class="history-pillar">
+                            <span>Vision</span>
+                            <p>To produce for the market a traceable, high-quality coffee.</p>
+                        </div>
+                        <div class="history-pillar">
+                            <span>Mission</span>
+                            <p>To become efficient across the full coffee value chain, from farm to multinational markets.</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <div class="history-bottom">
+            <article class="history-card fade-in">
+                <div class="history-card__eyebrow">Impact</div>
+                <h3 class="history-card__title">What GMAC looks like today.</h3>
+                <p class="history-copy history-copy--left">GMAC now generates about <strong>$800,000 USD</strong> in turnover, with <strong>12 permanent staff</strong> and around <strong>250 seasonal workers</strong>, most of them women. We produce fully washed lots alongside <strong>Honey</strong>, <strong>Natural</strong>, and <strong>Anaerobic</strong> coffees for quality-driven markets.</p>
+            </article>
+
+            <article class="history-card fade-in">
+                <div class="history-card__eyebrow">Values</div>
+                <h3 class="history-card__title">The principles behind our growth.</h3>
+                <div class="history-values">
+                    @foreach($values as $value)
+                        <span class="history-value">{{ $value }}</span>
+                    @endforeach
+                </div>
+            </article>
         </div>
     </div>
 </section>
-
-<div class="container py-6">
-    <div class="history-content fade-in">
-        <div class="history-text">
-            <h2 class="section-title text-center mb-2">{{ __('messages.our_legacy') }}</h2>
-            <div class="title-separator mb-4"></div>
-            
-            <p class="lead-text text-center mx-auto mb-4" style="max-width: 800px; font-size: 1.2rem; color: var(--clr-text-muted);">
-                Green Mountain Arabica Coffee Ltd (GMAC) was founded in 2012 with a clear ambition: to build a traceable, high‑quality coffee business that creates value for farmers—especially women—across Rwanda.
-            </p>
-            
-            <div class="history-split mt-4">
-                <div class="history-story card">
-                    <h3 class="history-h3"><i class="fa-solid fa-seedling text-gold mr-2" aria-hidden="true"></i> Our story</h3>
-                    <div class="history-story__body">
-                        <p>
-                            GMAC was incorporated in 2012 by a young entrepreneur, <strong>Niyonsaba Jeanne</strong>. At the time, the company exported low‑grade coffee—an honest starting point, but not Jeanne’s end goal.
-                        </p>
-                        <p>
-                            Her inspiration was to work toward owning a washing station and building a coffee plantation, while helping women farmers—who often do the hardest work on the farms—share more fairly in the benefits.
-                        </p>
-                        <p>
-                            In 2017, Jeanne reached a major milestone: with accumulated profits, she purchased a <strong>coffee washing station</strong> in Rwanda’s Eastern Province, <strong>Rwamagana District, Karenge Sector</strong>.
-                            The station was surrounded by <strong>12,000 mature coffee trees</strong>, acquired together with the washing station.
-                        </p>
-                        <p>
-                            As the business grew, Jeanne strengthened the management team by bringing in her husband. <strong>Rukaka Steven</strong> became the Managing Director, while Jeanne continued as Chairperson of the Board of Directors.
-                        </p>
-                        <p>
-                            Together, they expanded farmer partnerships to around <strong>1,200 Rainforest Alliance‑certified farmers</strong>, including:
-                        </p>
-                        <ul class="history-list">
-                            <li>An association of <strong>156 women coffee farmers</strong>, funded to support women farmers</li>
-                            <li>An association of <strong>young farmers</strong>, supported to inspire the next generation in coffee farming</li>
-                        </ul>
-                        <p>
-                            Today, GMAC generates a turnover of approximately <strong>$800,000 USD</strong>, with a team of <strong>12 permanent staff</strong> and around <strong>250 seasonal workers</strong>—about <strong>90% women</strong>.
-                            We produce fully washed coffees and specialty processes including <strong>Honey</strong>, <strong>Natural</strong>, and <strong>Anaerobic</strong> coffees.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="history-side">
-                    <div class="history-timeline card">
-                        <h3 class="history-h3"><i class="fa-solid fa-clock text-gold mr-2" aria-hidden="true"></i> Key milestones</h3>
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-year">2012</div>
-                                <div class="timeline-body">GMAC incorporated by Niyonsaba Jeanne; exporting coffee begins.</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-year">2017</div>
-                                <div class="timeline-body">Purchase of Karenge coffee washing station and 12,000 mature coffee trees.</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-year">Today</div>
-                                <div class="timeline-body">1,200+ farmer partners, women/youth associations supported, specialty processing expanded.</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="history-pillars card">
-                        <h3 class="history-h3"><i class="fa-solid fa-bullseye text-gold mr-2" aria-hidden="true"></i> Vision & Mission</h3>
-                        <div class="pillars">
-                            <div class="pillar">
-                                <div class="pillar-kicker">Vision</div>
-                                <div class="pillar-text">To produce for the market a traceable, high‑quality coffee.</div>
-                            </div>
-                            <div class="pillar">
-                                <div class="pillar-kicker">Mission</div>
-                                <div class="pillar-text">Becoming efficient across the full coffee value chain—from farm to multinational markets.</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="history-values card">
-                        <h3 class="history-h3"><i class="fa-solid fa-certificate text-gold mr-2" aria-hidden="true"></i> Values</h3>
-                        <ul class="values-list">
-                            <li>Integrity</li>
-                            <li>Quality</li>
-                            <li>Sustainability</li>
-                            <li>Teamwork</li>
-                            <li>Risk Taking</li>
-                            <li>Innovation</li>
-                            <li>Accountability</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @endsection
 
 @push('scripts')
 <style>
-    .text-gold {
+    .history-page {
+        padding: 3rem 0 5.5rem;
+    }
+
+    .history-intro {
+        max-width: 860px;
+        margin: 0 auto 2rem;
+        text-align: center;
+    }
+
+    .history-kicker,
+    .history-card__eyebrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(201, 150, 63, 0.1);
+        border: 1px solid rgba(201, 150, 63, 0.16);
+        color: var(--clr-gold-hover);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .history-kicker {
+        margin-bottom: 1rem;
+    }
+
+    .history-title {
+        margin: 0 0 0.9rem;
+        font-size: clamp(2.25rem, 4vw, 3.7rem);
+        line-height: 1.06;
+        color: var(--clr-deep-espresso);
+    }
+
+    .history-title em {
+        font-style: italic;
         color: var(--clr-gold);
     }
-    
-    .mr-2 {
-        margin-right: 0.5rem;
-    }
 
-    .history-split {
-        display: grid;
-        grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-        gap: 2rem;
-        align-items: start;
-    }
-
-    .history-story.card,
-    .history-timeline.card,
-    .history-pillars.card,
-    .history-values.card {
-        padding: 2.25rem;
-        border-top: 3px solid var(--clr-gold);
-    }
-
-    [data-theme="dark"] .history-story.card,
-    [data-theme="dark"] .history-timeline.card,
-    [data-theme="dark"] .history-pillars.card,
-    [data-theme="dark"] .history-values.card {
-        border-top-color: var(--clr-gold-light);
-    }
-
-    .history-h3 {
-        margin: 0 0 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .history-story__body p {
-        margin: 0 0 1rem;
+    .history-copy {
+        max-width: 62ch;
+        margin: 0 auto;
+        font-size: 1rem;
+        line-height: 1.85;
         color: var(--clr-text-muted);
     }
 
-    [data-theme="dark"] .history-story__body p {
-        color: rgba(220, 200, 180, 0.85);
+    .history-copy--left {
+        margin: 0;
+        max-width: none;
     }
 
-    .history-list {
-        margin: 0.25rem 0 1rem;
-        padding-left: 1.1rem;
-        color: var(--clr-text-muted);
+    .history-stats {
         display: grid;
-        gap: 0.5rem;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 0 0 2rem;
     }
 
-    [data-theme="dark"] .history-list {
-        color: rgba(220, 200, 180, 0.85);
+    .history-stat,
+    .history-card {
+        background: rgba(255, 255, 255, 0.84);
+        border: 1px solid rgba(13, 9, 7, 0.07);
+        border-radius: 26px;
+        box-shadow: var(--shadow-sm);
     }
 
-    .history-side {
-        display: grid;
-        gap: 1.5rem;
+    .history-stat {
+        padding: 1.35rem 1.2rem;
+        text-align: center;
     }
 
-    .timeline {
-        display: grid;
-        gap: 0.95rem;
-        position: relative;
-        padding-left: 0.5rem;
+    .history-stat__value {
+        font-family: var(--font-heading);
+        font-size: clamp(1.9rem, 3vw, 2.5rem);
+        color: var(--clr-deep-espresso);
+        line-height: 1;
     }
 
-    .timeline-item {
-        display: grid;
-        grid-template-columns: 72px 1fr;
-        gap: 0.9rem;
-        align-items: start;
-        padding: 0.85rem 0.85rem;
-        border-radius: 16px;
-        background: rgba(201, 150, 63, 0.06);
-        border: 1px solid rgba(201, 150, 63, 0.14);
-    }
-
-    [data-theme="dark"] .timeline-item {
-        background: rgba(246, 240, 230, 0.06);
-        border-color: rgba(246, 240, 230, 0.10);
-    }
-
-    .timeline-year {
-        font-weight: 900;
+    .history-stat__label {
+        margin-top: 0.45rem;
+        font-size: 0.76rem;
+        font-weight: 700;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        font-size: 0.78rem;
-        color: var(--clr-gold-hover);
-    }
-
-    .timeline-body {
         color: var(--clr-text-muted);
-        line-height: 1.6;
-        font-size: 0.95rem;
     }
 
-    [data-theme="dark"] .timeline-body {
-        color: rgba(220, 200, 180, 0.85);
+    .history-grid,
+    .history-bottom {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+        gap: 1.4rem;
     }
 
-    .pillars {
+    .history-bottom {
+        margin-top: 1.4rem;
+    }
+
+    .history-stack {
+        display: grid;
+        gap: 1.4rem;
+    }
+
+    .history-card {
+        padding: 1.9rem;
+    }
+
+    .history-card__eyebrow {
+        margin-bottom: 1rem;
+    }
+
+    .history-card__title {
+        margin: 0 0 1rem;
+        font-size: 1.8rem;
+        line-height: 1.12;
+    }
+
+    .history-richtext p {
+        margin: 0 0 1rem;
+        color: var(--clr-text-muted);
+        line-height: 1.85;
+    }
+
+    .history-founder {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+        margin: 0 0 1.35rem;
+    }
+
+    .history-founder__media {
+        background: rgba(201, 150, 63, 0.06);
+        border: 1px solid rgba(201, 150, 63, 0.14);
+        border-radius: 22px;
+        overflow: hidden;
+    }
+
+    .history-founder__media img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+    }
+
+    .history-founder__caption {
+        padding: 0.95rem 1rem 1rem;
+        display: grid;
+        gap: 0.2rem;
+        background: rgba(255, 255, 255, 0.7);
+    }
+
+    .history-founder__caption strong {
+        color: var(--clr-deep-espresso);
+        font-size: 1rem;
+    }
+
+    .history-founder__caption span {
+        color: var(--clr-text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-weight: 700;
+    }
+
+    .history-founder__story {
+        padding-top: 0.2rem;
+    }
+
+    .history-founder__lead {
+        margin: 0 0 1rem;
+        font-family: var(--font-heading);
+        font-size: 1.35rem;
+        line-height: 1.55;
+        color: var(--clr-deep-espresso);
+    }
+
+    .history-founder__story p {
+        margin: 0 0 1rem;
+        color: var(--clr-text-muted);
+        line-height: 1.85;
+    }
+
+    .history-timeline {
         display: grid;
         gap: 0.85rem;
     }
 
-    .pillar {
-        padding: 1rem 1.1rem;
+    .history-timeline__item,
+    .history-pillar {
+        padding: 1rem 1.05rem;
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.65);
-        border: 1px solid rgba(13, 9, 7, 0.07);
-    }
-
-    [data-theme="dark"] .pillar {
-        background: rgba(246, 240, 230, 0.05);
-        border-color: rgba(246, 240, 230, 0.10);
-    }
-
-    .pillar-kicker {
-        font-weight: 700;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        font-size: 0.72rem;
-        color: var(--clr-gold);
-        margin-bottom: 0.35rem;
-    }
-
-    [data-theme="dark"] .pillar-kicker {
-        color: var(--clr-gold-light);
-    }
-
-    .pillar-text {
-        color: var(--clr-text-main);
-        font-weight: 600;
-        line-height: 1.55;
-    }
-
-    [data-theme="dark"] .pillar-text {
-        color: rgba(246, 251, 248, 0.92);
-    }
-
-    .values-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 0.6rem;
-        color: var(--clr-text-muted);
-        font-weight: 600;
-    }
-
-    .values-list li {
-        padding: 0.75rem 0.9rem;
-        border-radius: 14px;
         background: rgba(201, 150, 63, 0.06);
         border: 1px solid rgba(201, 150, 63, 0.14);
     }
 
-    [data-theme="dark"] .values-list { color: rgba(220, 200, 180, 0.85); }
-    [data-theme="dark"] .values-list li {
-        background: rgba(246, 240, 230, 0.06);
-        border-color: rgba(246, 240, 230, 0.10);
+    .history-timeline__year,
+    .history-pillar span {
+        display: inline-block;
+        margin-bottom: 0.35rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--clr-gold-hover);
+    }
+
+    .history-timeline__item p,
+    .history-pillar p {
+        margin: 0;
+        color: var(--clr-text-muted);
+        line-height: 1.7;
+    }
+
+    .history-pillars,
+    .history-values {
+        display: grid;
+        gap: 0.85rem;
+    }
+
+    .history-values {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .history-value {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 52px;
+        padding: 0.9rem 1rem;
+        text-align: center;
+        border-radius: 16px;
+        background: rgba(201, 150, 63, 0.06);
+        border: 1px solid rgba(201, 150, 63, 0.14);
+        color: var(--clr-text-main);
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    [data-theme="dark"] .history-stat,
+    [data-theme="dark"] .history-card {
+        background: rgba(246, 240, 230, 0.05);
+        border-color: rgba(246, 240, 230, 0.1);
+    }
+
+    [data-theme="dark"] .history-title,
+    [data-theme="dark"] .history-card__title,
+    [data-theme="dark"] .history-stat__value,
+    [data-theme="dark"] .history-value {
+        color: var(--clr-text-light);
+    }
+
+    [data-theme="dark"] .history-copy,
+    [data-theme="dark"] .history-founder__caption span,
+    [data-theme="dark"] .history-founder__story p,
+    [data-theme="dark"] .history-richtext p,
+    [data-theme="dark"] .history-timeline__item p,
+    [data-theme="dark"] .history-pillar p,
+    [data-theme="dark"] .history-stat__label {
+        color: rgba(246, 240, 230, 0.7);
+    }
+
+    [data-theme="dark"] .history-founder__caption {
+        background: rgba(246, 240, 230, 0.04);
+    }
+
+    [data-theme="dark"] .history-founder__media {
+        background: rgba(246, 240, 230, 0.04);
+        border-color: rgba(246, 240, 230, 0.1);
+    }
+
+    [data-theme="dark"] .history-founder__caption strong,
+    [data-theme="dark"] .history-founder__lead {
+        color: var(--clr-text-light);
+    }
+
+    @media (max-width: 1024px) {
+        .history-stats,
+        .history-grid,
+        .history-bottom {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .history-grid > .history-card--story {
+            grid-column: 1 / -1;
+        }
     }
 
     @media (max-width: 900px) {
-        .history-split {
+        .history-stats,
+        .history-grid,
+        .history-bottom,
+        .history-values {
             grid-template-columns: 1fr;
         }
-        .history-story.card,
-        .history-timeline.card,
-        .history-pillars.card,
-        .history-values.card {
-            padding: 1.6rem;
+
+        .history-founder {
+            grid-template-columns: 1fr;
         }
-        .timeline-item {
-            grid-template-columns: 64px 1fr;
+
+        .history-card,
+        .history-stat {
+            padding: 1.4rem;
         }
     }
 </style>

@@ -6,78 +6,99 @@
 @section('content')
 @include('partials.frontend.page-hero', [
     'title' => __('messages.our_stations'),
-    'subtitle' => __('messages.slogan'),
+    'subtitle' => 'The places where our cherries are received, processed, and prepared with care for quality-focused buyers.',
+    'eyebrow' => 'GMAC Coffee',
 ])
 
-<div class="container py-6">
-    <div class="stations-intro fade-in">
-        <div class="stations-kicker">Origin &amp; Processing</div>
-        <h2 class="stations-intro-title">Discover the places where our cherries are processed with care, precision, and <em>full traceability.</em></h2>
-        <p class="stations-intro-text">Each station reflects our commitment to quality, farmer relationships, and the distinctive character of Rwandan coffee.</p>
-    </div>
+<section class="stations-page">
+    <div class="container">
+        <div class="stations-intro fade-in">
+            <div class="stations-kicker">Origin &amp; Processing</div>
+            <h2 class="stations-intro-title">Discover the places where our cherries are processed with <em>care and full traceability.</em></h2>
+            <p class="stations-intro-text">Each station reflects our commitment to cleaner processing, stronger farmer relationships, and the distinctive character of Rwandan coffee.</p>
+        </div>
 
-    @forelse($stations as $index => $station)
-        <div class="station-block mb-6 fade-in {{ $index % 2 != 0 ? 'reverse' : '' }}">
-            <div class="station-visuals">
-                @if($station->hasMedia('cover'))
-                    <img src="{{ $station->getFirstMediaUrl('cover') }}" alt="{{ $station->name }}" class="station-image shadow-lg">
-                @else
-                    <div class="station-placeholder shadow-lg">
-                        <i class="fa-solid fa-industry"></i>
-                    </div>
-                @endif
-                
-                @if($station->hasMedia('gallery'))
-                    <div class="station-mini-gallery mt-1">
-                        @foreach($station->getMedia('gallery')->take(4) as $media)
-                            <img src="{{ $media->getUrl('thumb') ?? $media->getUrl() }}" alt="Gallery" onclick="openLightbox('{{ $media->getUrl() }}', '{{ $station->name }} Gallery')">
-                        @endforeach
-                    </div>
-                @endif
+        <div class="stations-summary fade-in">
+            <div class="stations-summary__item">
+                <strong>{{ $stations->count() }}</strong>
+                <span>Managed stations</span>
             </div>
+            <div class="stations-summary__item">
+                <strong>Traceable</strong>
+                <span>Farm-linked sourcing</span>
+            </div>
+            <div class="stations-summary__item">
+                <strong>Specialty</strong>
+                <span>Washed and experimental lots</span>
+            </div>
+        </div>
 
-            <div class="station-info">
-                <h2 class="station-name">{{ $station->name }}</h2>
-                <div class="station-location mb-2"><i class="fa-solid fa-location-dot text-gold mr-1"></i> {{ $station->location }}</div>
-                
-                <div class="station-specs-grid">
-                    <div class="spec-item">
-                        <span class="spec-label">Altitude</span>
-                        <span class="spec-value">{{ $station->altitude ?? 'N/A' }}</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Soil type</span>
-                        <span class="spec-value">{{ $station->type_of_soil ?? 'N/A' }}</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Variety</span>
-                        <span class="spec-value">{{ $station->coffee_variety ?? 'N/A' }}</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Farmers</span>
-                        <span class="spec-value">{{ $station->farmers_working ?? '0' }}+</span>
-                    </div>
-                    @if($station->cupping_score)
-                    <div class="spec-item">
-                        <span class="spec-label">Cupping Score</span>
-                        <span class="spec-value text-gold">{{ $station->cupping_score }}</span>
-                    </div>
+        @forelse($stations as $index => $station)
+            <article class="station-block fade-in {{ $index % 2 !== 0 ? 'reverse' : '' }}">
+                <div class="station-visuals">
+                    @if($station->hasMedia('cover'))
+                        <img src="{{ $station->getFirstMediaUrl('cover') }}" alt="{{ $station->name }}" class="station-image shadow-lg">
+                    @else
+                        <div class="station-placeholder shadow-lg">
+                            <i class="fa-solid fa-industry"></i>
+                        </div>
+                    @endif
+
+                    @if($station->hasMedia('gallery'))
+                        <div class="station-mini-gallery mt-1">
+                            @foreach($station->getMedia('gallery')->take(4) as $media)
+                                <button type="button" class="station-thumb" onclick="openStationsLightbox('{{ $media->getUrl() }}', '{{ $station->name }} Gallery')">
+                                    <img src="{{ $media->getUrl('thumb') ?? $media->getUrl() }}" alt="Gallery image for {{ $station->name }}">
+                                </button>
+                            @endforeach
+                        </div>
                     @endif
                 </div>
 
-                <div class="station-description mt-2">
-                    <h4 class="mb-1">Processing & Traceability</h4>
-                    <p>{{ $station->processing ?? 'Traditional washed process with precise moisture control.' }}</p>
-                    <p class="mt-1 text-sm italic">{{ $station->traceability ?? 'Fully traceable to the farm level.' }}</p>
+                <div class="station-info">
+                    <div class="station-eyebrow">Washing Station</div>
+                    <h2 class="station-name">{{ $station->name }}</h2>
+                    <div class="station-location"><i class="fa-solid fa-location-dot text-gold mr-1"></i> {{ $station->location }}</div>
+
+                    <div class="station-specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">Altitude</span>
+                            <span class="spec-value">{{ $station->altitude ?? 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Soil type</span>
+                            <span class="spec-value">{{ $station->type_of_soil ?? 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Variety</span>
+                            <span class="spec-value">{{ $station->coffee_variety ?? 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Farmers</span>
+                            <span class="spec-value">{{ $station->farmers_working ?? '0' }}+</span>
+                        </div>
+                        @if($station->cupping_score)
+                            <div class="spec-item">
+                                <span class="spec-label">Cupping Score</span>
+                                <span class="spec-value text-gold">{{ $station->cupping_score }}</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="station-description">
+                        <h4>Processing &amp; Traceability</h4>
+                        <p>{{ $station->processing ?? 'Traditional washed process with precise moisture control.' }}</p>
+                        <p class="station-description__trace">{{ $station->traceability ?? 'Fully traceable to the farm level.' }}</p>
+                    </div>
                 </div>
+            </article>
+        @empty
+            <div class="text-center py-6">
+                <p>Our washing station details are being updated.</p>
             </div>
-        </div>
-    @empty
-        <div class="text-center py-6">
-            <p>Our washing station details are being updated.</p>
-        </div>
-    @endforelse
-</div>
+        @endforelse
+    </div>
+</section>
 
 <div id="stations-lightbox" class="stations-lightbox" onclick="closeStationsLightbox()">
     <span class="stations-lightbox__close">&times;</span>
@@ -88,6 +109,10 @@
 
 @push('scripts')
 <style>
+    .stations-page {
+        padding: 3rem 0 5.5rem;
+    }
+
     .stations-intro {
         max-width: 780px;
         margin: 0 auto 2.75rem;
@@ -130,6 +155,40 @@
         line-height: 1.8;
     }
 
+    .stations-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stations-summary__item {
+        padding: 1.2rem 1.3rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(13, 9, 7, 0.07);
+        border-radius: 22px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .stations-summary__item strong {
+        display: block;
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--clr-deep-espresso);
+    }
+
+    .stations-summary__item span {
+        display: block;
+        margin-top: 0.4rem;
+        color: var(--clr-text-muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
     .station-block {
         display: grid;
         grid-template-columns: 1fr 1.2fr;
@@ -150,6 +209,21 @@
     
     .station-block.reverse > * {
         direction: ltr;
+    }
+
+    .station-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(201, 150, 63, 0.1);
+        border: 1px solid rgba(201, 150, 63, 0.16);
+        color: var(--clr-gold-hover);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
     }
     
     .station-image {
@@ -176,13 +250,19 @@
         grid-template-columns: repeat(4, 1fr);
         gap: 0.5rem;
     }
-    
+
+    .station-thumb {
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
     .station-mini-gallery img {
         width: 100%;
         height: 80px;
         object-fit: cover;
         border-radius: 12px;
-        cursor: pointer;
         transition: opacity 0.2s, transform 0.2s ease, box-shadow 0.2s ease;
     }
     
@@ -200,6 +280,7 @@
         font-size: 1.1rem;
         color: rgba(24,49,38,0.72);
         font-weight: 500;
+        margin-bottom: 1.25rem;
     }
     
     .station-specs-grid {
@@ -254,6 +335,11 @@
         line-height: 1.75;
     }
 
+    .station-description__trace {
+        margin-top: 0.6rem;
+        font-style: italic;
+    }
+
     .stations-lightbox {
         display: none;
         position: fixed;
@@ -293,8 +379,33 @@
         text-align: center;
         max-width: 600px;
     }
+
+    [data-theme='dark'] .stations-summary__item,
+    [data-theme='dark'] .station-block {
+        background: rgba(246, 240, 230, 0.05);
+        border-color: rgba(246, 240, 230, 0.1);
+    }
+
+    [data-theme='dark'] .stations-summary__item strong,
+    [data-theme='dark'] .stations-intro-title,
+    [data-theme='dark'] .station-name,
+    [data-theme='dark'] .spec-value,
+    [data-theme='dark'] .station-description h4 {
+        color: var(--clr-text-light);
+    }
+
+    [data-theme='dark'] .stations-summary__item span,
+    [data-theme='dark'] .stations-intro-text,
+    [data-theme='dark'] .station-location,
+    [data-theme='dark'] .station-description p {
+        color: rgba(246, 240, 230, 0.7);
+    }
     
     @media (max-width: 992px) {
+        .stations-summary {
+            grid-template-columns: 1fr;
+        }
+
         .station-block {
             grid-template-columns: 1fr;
             gap: 2rem;
@@ -307,7 +418,7 @@
 </style>
 
 <script>
-    function openLightbox(src, caption) {
+    function openStationsLightbox(src, caption) {
         const lb = document.getElementById('stations-lightbox');
         const img = document.getElementById('stations-lightbox-img');
         const cap = document.getElementById('stations-lightbox-caption');

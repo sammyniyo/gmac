@@ -608,18 +608,6 @@
         transition: background 0.2s;
     }
     .footer__submit:hover { background: var(--l-gold-dk); }
-    .footer__terms {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        font-size: 0.72rem;
-        color: rgba(26,16,8,0.42);
-        line-height: 1.5;
-        cursor: pointer;
-    }
-    [data-theme="dark"] .footer__terms { color: rgba(246,240,230,0.32); }
-    .footer__terms input[type="checkbox"] { margin-top: 2px; accent-color: var(--l-gold); flex-shrink: 0; }
-
     /* Bottom bar */
     .footer__bottom {
         border-top: 1px solid rgba(192,139,48,0.1);
@@ -677,6 +665,7 @@
     $logo         = \App\Models\Setting::where('key', 'site_logo')->value('value');
     $navPhone     = \App\Models\Setting::where('key', 'contact_phone')->value('value');
     $navPhoneTel  = $navPhone ? preg_replace('/[^\d+]/', '', $navPhone) : null;
+    $navAddress   = \App\Models\Setting::where('key', 'contact_address')->value('value');
 @endphp
 
 <div class="site-bg">
@@ -696,6 +685,12 @@
                         <i class="fa-solid fa-phone" aria-hidden="true"></i>
                         <span>{{ $navPhone }}</span>
                     </a>
+                @endif
+                @if($navAddress)
+                    <span class="navbar__top-pill navbar__top-pill--hide-sm">
+                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                        <span>{{ $navAddress }}</span>
+                    </span>
                 @endif
                 @if($emailTop = \App\Models\Setting::where('key', 'contact_email')->value('value'))
                     <a href="mailto:{{ $emailTop }}" class="navbar__top-pill navbar__top-pill--hide-sm">
@@ -835,7 +830,6 @@
         $fb = \App\Models\Setting::where('key', 'social_facebook')->value('value');
         $ig = \App\Models\Setting::where('key', 'social_instagram')->value('value');
         $tw = \App\Models\Setting::where('key', 'social_twitter')->value('value');
-        $li = \App\Models\Setting::where('key', 'social_linkedin')->value('value');
     @endphp
 
     <div class="container">
@@ -857,7 +851,6 @@
                     @if($fb)<a href="{{ $fb }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>@endif
                     @if($ig)<a href="{{ $ig }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>@endif
                     @if($tw)<a href="{{ $tw }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>@endif
-                    @if($li)<a href="{{ $li }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>@endif
                 </div>
             </div>
 
@@ -914,10 +907,6 @@
                                class="footer__input" placeholder="Your email address" required>
                         <button type="submit" class="footer__submit">Subscribe</button>
                     </div>
-                    <label class="footer__terms">
-                        <input type="checkbox" name="terms_ack" required>
-                        <span>I agree to the terms &amp; conditions</span>
-                    </label>
                 </form>
                 @error('email')
                     <div class="footer__notice footer__notice--error">{{ $message }}</div>
@@ -948,53 +937,6 @@
 ══════════════════════════════════════════ --}}
 <script>
 (function () {
-    var navbar   = document.getElementById('site-navbar');
-    var burger   = document.getElementById('navbar-burger');
-    var panel    = document.getElementById('navbar-panel');
-    var backdrop = document.getElementById('navbar-backdrop');
-
-    /* Scroll shrink */
-    var lastY = 0;
-    window.addEventListener('scroll', function () {
-        var y = window.scrollY;
-        if (y > 60) {
-            navbar.classList.add('is-scrolled');
-        } else {
-            navbar.classList.remove('is-scrolled');
-        }
-        lastY = y;
-    }, { passive: true });
-
-    /* Mobile menu open/close */
-    function openMenu() {
-        panel.classList.add('is-open');
-        backdrop.classList.add('is-open');
-        burger.classList.add('is-open');
-        burger.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeMenu() {
-        panel.classList.remove('is-open');
-        backdrop.classList.remove('is-open');
-        burger.classList.remove('is-open');
-        burger.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-    }
-
-    if (burger) {
-        burger.addEventListener('click', function () {
-            panel.classList.contains('is-open') ? closeMenu() : openMenu();
-        });
-    }
-    if (backdrop) {
-        backdrop.addEventListener('click', closeMenu);
-    }
-
-    /* Close on ESC */
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeMenu();
-    });
-
     /* Dark mode toggle */
     var themeBtn = document.getElementById('theme-toggle');
     var html     = document.documentElement;
