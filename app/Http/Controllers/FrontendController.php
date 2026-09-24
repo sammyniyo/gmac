@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactMessageRequest;
+use App\Mail\ContactReceived;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\Product;
 use App\Models\NewsPost;
@@ -388,7 +391,18 @@ class FrontendController extends Controller
             return back()->with('success', __('messages.contact_success'));
         }
 
-        Contact::create($request->safePayload());
+        $payload = $request->safePayload();
+        Contact::create($payload);
+
+        $notify = Setting::where('key', 'contact_email')->value('value')
+            ?: config('mail.from.address')
+            ?: 'info@gmac.coffee';
+
+        try {
+            Mail::to($notify)->send(new ContactReceived($payload));
+        } catch (\Throwable $e) {
+            Log::warning('Contact mail failed: '.$e->getMessage());
+        }
 
         return back()->with('success', __('messages.contact_success'));
     }

@@ -33,3 +33,4 @@ php artisan view:cache
 
 echo "Hostinger setup finished. Change the admin password immediately."
 echo "Login: /login  —  admin@gmac.coffee  —  password"
+echo "Set MAIL_PASSWORD in .env to the info@gmac.coffee mailbox password, then: php artisan config:clear"

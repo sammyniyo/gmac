@@ -9,7 +9,7 @@ Upload either the GitHub repo or the local zip, then point the site at Laravel�
 
 ## Hostinger
 
-1. PHP **8.2+** (8.3 is fine).
+1. PHP **8.2+** (8.3 is fine). Git deploy needs `proc_open` enabled — in hPanel → Advanced → PHP Configuration, remove `proc_open` and `popen` from `disable_functions`.
 2. Extract the project into `domains/gmac.coffee/public_html`.
 3. Copy `deploy/public_html.htaccess` to `public_html/.htaccess` so `/` serves `public/`.
    Or in hPanel set the document root to `public_html/public`.
@@ -36,7 +36,7 @@ php artisan config:cache
 - Admin: `https://gmac.coffee/login` — `admin@gmac.coffee` / `password`. Change that password.
 - Delete any leftover `default.php`, `gmac-release.zip`, `gmac.aa`, or `__gmac_setup.php` in `public_html`.
 - English URLs have no `/en` prefix (`/history`, `/team`).
-- Order email uses PHP `sendmail` until you add real SMTP.
+- SMTP is `info@gmac.coffee` via `smtp.hostinger.com:465`. Put the mailbox password in `.env` as `MAIL_PASSWORD`, then `php artisan config:clear`.
 
 ## MySQL later
 
