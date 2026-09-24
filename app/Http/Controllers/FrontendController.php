@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactMessageRequest;
 use Illuminate\Http\Request;
 
 use App\Models\Product;
@@ -16,7 +17,9 @@ use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\Setting;
 use App\Models\Feedback;
+use App\Support\FrontendShowcase;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class FrontendController extends Controller
@@ -51,19 +54,26 @@ class FrontendController extends Controller
 
         $settings = Setting::whereIn('key', $settingKeys)->pluck('value', 'key');
 
+        $heroDefaults = collect(FrontendShowcase::heroSlides());
+
         $heroSlides = HeroSlide::where('is_active', true)
             ->orderBy('order')
             ->get()
-            ->map(function (HeroSlide $slide) {
+            ->map(function (HeroSlide $slide) use ($heroDefaults) {
                 $url = $slide->getFirstMediaUrl('slides');
                 if ($url === '') {
                     return null;
                 }
 
+                $fallback = $heroDefaults->first(
+                    fn (array $row) => mb_strtolower($row['title']) === mb_strtolower($slide->title)
+                );
+
                 return (object) [
                     'title' => $slide->title,
                     'subtitle' => $slide->subtitle,
                     'image_url' => $url,
+                    'image_position' => $fallback['position'] ?? 'center 40%',
                     'button_text' => $slide->button_text,
                     'button_href' => $this->localizeHeroButtonLink($slide->button_link),
                 ];
@@ -83,7 +93,7 @@ class FrontendController extends Controller
 
         $brandStoryImage = $settings['home_about_image'] ?? null;
         if (empty($brandStoryImage)) {
-            $brandStoryImage = asset('images/pexels-adam-lukac-254247-773958-1920x1280.jpg.jpeg');
+            $brandStoryImage = FrontendShowcase::img('women_beds');
         }
 
         $aboutTitleBefore = $settings['home_about_title_before'] ?? __('messages.home_about_title_before_default');
@@ -105,9 +115,22 @@ class FrontendController extends Controller
 
         $heroBadges = $this->parseHomeHeroBadges($settings['home_hero_badges'] ?? null);
 
-        $featuredProducts = Product::where('is_active', true)->latest()->take(3)->get();
+        $featuredProducts = Product::where('is_active', true)
+            ->with('category')
+            ->orderBy('order')
+            ->get()
+            ->unique(fn (Product $product) => $product->product_category_id)
+            ->take(3)
+            ->values();
         $stats = Statistic::orderBy('order')->get();
+        if ($stats->isEmpty()) {
+            $stats = collect(FrontendShowcase::stats())->map(fn (array $row) => (object) $row);
+        }
         $testimonials = Testimonial::where('is_active', true)->orderBy('order')->take(6)->get();
+        if ($testimonials->isEmpty()) {
+            $testimonials = collect(FrontendShowcase::testimonials())->map(fn (array $row) => (object) $row);
+        }
+        $processSteps = FrontendShowcase::process();
 
         return view('frontend.home', compact(
             'heroSlides',
@@ -131,7 +154,8 @@ class FrontendController extends Controller
             'heroBadges',
             'featuredProducts',
             'stats',
-            'testimonials'
+            'testimonials',
+            'processSteps'
         ));
     }
 
@@ -175,7 +199,10 @@ class FrontendController extends Controller
 
     public function reviews()
     {
-        $feedbacks = Feedback::where('is_approved', true)->latest()->take(50)->get();
+        $feedbacks = collect();
+        if (Schema::hasTable('feedbacks')) {
+            $feedbacks = Feedback::where('is_approved', true)->latest()->take(50)->get();
+        }
 
         return view('frontend.reviews', compact('feedbacks'));
     }
@@ -207,27 +234,71 @@ class FrontendController extends Controller
 
     public function products()
     {
-        $categories = \App\Models\ProductCategory::orderBy('name')->get();
         $products = Product::where('is_active', true)->with('category')->orderBy('order')->get();
+        $categories = \App\Models\ProductCategory::whereHas('products', fn ($q) => $q->where('is_active', true))
+            ->orderBy('name')
+            ->get();
+
         return view('frontend.products', compact('products', 'categories'));
     }
 
     public function shop()
     {
-        $categories = \App\Models\ProductCategory::orderBy('name')->get();
         $products = Product::where('is_active', true)->with('category')->orderBy('order')->get();
+        $categories = \App\Models\ProductCategory::whereHas('products', fn ($q) => $q->where('is_active', true))
+            ->orderBy('name')
+            ->get();
+
         return view('frontend.shop', compact('products', 'categories'));
     }
 
     public function productDetail(Product $product)
     {
         abort_unless($product->is_active, 404);
-        return view('frontend.product_detail', compact('product'));
+        $product->load('category');
+
+        $catalog = Product::where('is_active', true)->with('category')->orderBy('order')->get();
+        $variants = $catalog
+            ->filter(fn (Product $row) => $row->packColor() === $product->packColor())
+            ->unique(fn (Product $row) => $row->packSize())
+            ->values();
+        $colours = $catalog
+            ->filter(fn (Product $row) => $row->packSize() === $product->packSize())
+            ->unique(fn (Product $row) => $row->packColor())
+            ->values();
+
+        $related = $catalog
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->values();
+
+        $gallery = collect([
+            ['src' => $product->displayImage(), 'label' => $product->name, 'pack' => $product->usesPackShot()],
+            ['src' => FrontendShowcase::img('cupping_line'), 'label' => 'The cupping table', 'pack' => false],
+            ['src' => FrontendShowcase::img('roaster'), 'label' => 'Sample roast', 'pack' => false],
+            ['src' => FrontendShowcase::img('cupping_glasses'), 'label' => 'Ready to taste', 'pack' => false],
+        ])->unique('src')->values();
+
+        return view('frontend.product_detail', compact('product', 'variants', 'colours', 'related', 'gallery'));
     }
 
     public function news()
     {
         $posts = NewsPost::where('is_published', true)->latest('published_at')->paginate(9);
+        if ($posts->total() === 0) {
+            $fallback = collect(FrontendShowcase::news())
+                ->map(fn (array $row) => new NewsPost($row))
+                ->sortByDesc('published_at')
+                ->values();
+            $posts = new \Illuminate\Pagination\LengthAwarePaginator(
+                $fallback->forPage(1, 9)->values(),
+                $fallback->count(),
+                9,
+                1,
+                ['path' => request()->url()]
+            );
+        }
+
         $heroPosts = NewsPost::where('is_published', true)
             ->latest('published_at')
             ->take(6)
@@ -245,69 +316,80 @@ class FrontendController extends Controller
 
     public function gallery()
     {
-        $items = GalleryItem::latest()->get();
+        $items = GalleryItem::where('is_active', true)->orderBy('order')->get();
         return view('frontend.gallery', compact('items'));
     }
 
     public function stations()
     {
-        $stations = WashingStation::latest()->get();
+        $stations = WashingStation::query()->orderBy('order')->orderBy('id')->get();
+        if ($stations->isEmpty()) {
+            $stations = collect(FrontendShowcase::stations())
+                ->map(fn (array $row) => new WashingStation($row));
+        }
+
         return view('frontend.stations', compact('stations'));
     }
 
     public function team()
     {
-        $team = TeamMember::where('is_active', true)
+        $defaults = collect(FrontendShowcase::teamMembers());
+
+        $team = TeamMember::query()
+            ->where('is_active', true)
             ->orderBy('order')
+            ->orderBy('name')
             ->get()
-            ->map(function (TeamMember $member) {
+            ->map(function (TeamMember $member) use ($defaults) {
+                $fallback = $defaults->first(
+                    fn ($row) => mb_strtolower($row['name']) === mb_strtolower($member->name)
+                );
+
                 return [
                     'name' => $member->name,
                     'role' => $member->role,
                     'email' => $member->email,
                     'phone' => $member->phone,
-                    'bio' => $member->bio,
-                    'photo' => $member->getFirstMediaUrl('photos') ?: null,
+                    'bio' => $member->bio ?: ($fallback['bio'] ?? null),
+                    'quote' => $fallback['quote'] ?? null,
+                    'photo' => $member->portraitUrl() ?: ($fallback['photo'] ?? null),
+                    'focus' => $fallback['focus'] ?? null,
+                    'pose' => $fallback['pose'] ?? 'face',
+                    'initials' => $member->avatarInitials(),
                 ];
             });
 
         if ($team->isEmpty()) {
-            $team = collect([
-                [
-                    'name' => 'Niyonsaba Jeanne',
-                    'role' => 'Founder & Chairperson',
-                    'email' => 'info@gmac.coffee',
-                    'phone' => '+250 783 053 415',
-                    'bio' => 'Jeanne founded GMAC Coffee with a vision to create more value from origin, build stronger traceability, and open better opportunities for farmers, especially women in Rwanda’s coffee sector.',
-                    'photo' => asset('images/Jeanne.png'),
-                ],
-            ]);
+            $team = $defaults->map(fn (array $row) => array_merge($row, [
+                'initials' => TeamMember::makeInitials($row['name']),
+            ]));
         }
 
-        return view('frontend.team', compact('team'));
+        $stories = FrontendShowcase::teamStories();
+
+        return view('frontend.team', compact('stories', 'team'));
     }
 
     public function contact()
     {
-        return view('frontend.contact');
+        return view('frontend.contact', [
+            'topics' => ContactMessageRequest::TOPICS,
+        ]);
     }
 
-    public function sendContact(Request $request)
+    public function sendContact(ContactMessageRequest $request)
     {
         return $this->submitContact($request);
     }
 
-    public function submitContact(Request $request)
+    public function submitContact(ContactMessageRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'subject' => 'nullable|string|max:255',
-            'message' => 'required|string'
-        ]);
+        if ($request->shouldDrop()) {
+            return back()->with('success', __('messages.contact_success'));
+        }
 
-        Contact::create($validated);
-        
+        Contact::create($request->safePayload());
+
         return back()->with('success', __('messages.contact_success'));
     }
 

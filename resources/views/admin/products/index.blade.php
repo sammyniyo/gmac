@@ -23,6 +23,7 @@
                             <tr class="border-b">
                                 <th class="p-3">Image</th>
                                 <th class="p-3">Name</th>
+                                <th class="p-3">Barcode</th>
                                 <th class="p-3">Category</th>
                                 <th class="p-3">Price</th>
                                 <th class="p-3">Status</th>
@@ -39,9 +40,12 @@
                                             <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">No Img</div>
                                         @endif
                                     </td>
-                                    <td class="p-3 font-semibold">{{ $product->name }}</td>
+                                    <td class="p-3 font-semibold">
+                                        {{ $product->name }}
+                                    </td>
+                                    <td class="p-3 font-mono text-sm">{{ $product->barcode ?: '—' }}</td>
                                     <td class="p-3">{{ $product->category ? $product->category->name : 'N/A' }}</td>
-                                    <td class="p-3">{{ $product->price ? '$'.$product->price : '-' }}</td>
+                                    <td class="p-3">{{ $product->formattedPrice() ?: '-' }}</td>
                                     <td class="p-3">
                                         @if($product->is_active)
                                             <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Active</span>
@@ -60,7 +64,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="p-4 text-center text-gray-500">No products found.</td>
+                                    <td colspan="7" class="p-4 text-center text-gray-500">No products found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

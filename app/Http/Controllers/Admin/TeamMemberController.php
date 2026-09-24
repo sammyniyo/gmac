@@ -10,14 +10,19 @@ class TeamMemberController extends Controller
 {
     public function index()
     {
-        $members = TeamMember::orderBy('order')->latest()->paginate(10);
+        $members = TeamMember::query()
+            ->orderBy('order')
+            ->orderBy('name')
+            ->paginate(24);
 
         return view('admin.team-members.index', compact('members'));
     }
 
     public function create()
     {
-        return view('admin.team-members.create');
+        return view('admin.team-members.create', [
+            'nextOrder' => ((int) TeamMember::max('order')) + 1,
+        ]);
     }
 
     public function store(Request $request)

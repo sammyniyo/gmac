@@ -28,13 +28,7 @@
 
     <div class="container news-article__shell">
         <div class="news-article__visual fade-in">
-            @if($post->hasMedia('cover'))
-                <img src="{{ $post->getFirstMediaUrl('cover') }}" alt="{{ $post->title }}" class="news-article__cover">
-            @else
-                <div class="news-article__cover-placeholder" aria-hidden="true">
-                    <i class="fa-solid fa-mug-hot"></i>
-                </div>
-            @endif
+            <img src="{{ $post->displayImage() }}" alt="{{ $post->title }}" class="news-article__cover">
         </div>
 
         <div class="news-article__content rich-text fade-in">
@@ -68,11 +62,7 @@
             @foreach($recent as $rec)
                 <a href="{{ route('news.show', $rec->slug) }}" class="news-article__recent-card">
                     <span class="news-article__recent-thumb">
-                        @if($rec->hasMedia('cover'))
-                            <img src="{{ $rec->getFirstMediaUrl('cover', 'thumb') ?? $rec->getFirstMediaUrl('cover') }}" alt="{{ $rec->title }}">
-                        @else
-                            <span class="news-article__recent-ph" aria-hidden="true"><i class="fa-solid fa-newspaper"></i></span>
-                        @endif
+                        <img src="{{ $rec->displayImage() }}" alt="{{ $rec->title }}">
                     </span>
                     <span class="news-article__recent-meta">
                         <span class="news-article__recent-card-title">{{ $rec->title }}</span>
@@ -92,8 +82,8 @@
 <style>
     .news-article__hero {
         padding: 2rem 0 2.5rem;
-        background: linear-gradient(180deg, rgba(212, 162, 74, 0.08) 0%, transparent 100%);
-        border-bottom: 1px solid rgba(13, 9, 7, 0.06);
+        background: #f5f3f0;
+        border-bottom: 1px solid #e7e2db;
     }
 
     [data-theme="dark"] .news-article__hero {
@@ -139,12 +129,12 @@
     [data-theme="dark"] .news-article__date { color: var(--clr-gold, #e8c97a); }
 
     .news-article__title {
-        font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: clamp(2rem, 4.5vw, 3.25rem);
+        font-family: Poppins, ui-sans-serif, system-ui, sans-serif;
+        font-size: clamp(1.9rem, 4vw, 2.5rem);
         font-weight: 600;
-        line-height: 1.12;
+        line-height: 1.15;
         margin: 0 0 1rem;
-        color: var(--clr-deep-espresso, #1a0e08);
+        color: #2a1c14;
     }
 
     [data-theme="dark"] .news-article__title { color: var(--clr-parchment, #f6f0e6); }
@@ -195,7 +185,30 @@
         color: rgba(246, 240, 230, 0.88);
     }
 
-    .news-article__content p { margin-bottom: 1.5rem; }
+    .news-article__content p { margin-bottom: 1.5rem; word-spacing: 0.04em; }
+    .news-article__content h2,
+    .news-article__content h3 { font-family: Fraunces, 'Times New Roman', serif; color: #2a1c14; }
+    .news-article__content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 16px;
+        display: block;
+        margin: 0.4rem 0 0.6rem;
+    }
+    .news-article__content figure { margin: 1.6rem 0 2rem; }
+    .news-article__content figcaption {
+        margin-top: 0.45rem;
+        font-size: 0.82rem;
+        color: #6b5344;
+    }
+    .news-article__content blockquote {
+        margin: 1.4rem 0 1.8rem;
+        padding: 0.9rem 1.1rem;
+        border-left: 3px solid #b89a6a;
+        background: #f6f1ea;
+        color: #5c4a3c;
+    }
+    .news-article__content a { color: #7a6452; font-weight: 500; }
 
     .news-article__content h2,
     .news-article__content h3 {

@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
             GalleryItemSeeder::class,
             WashingStationSeeder::class,
             StatisticSeeder::class,
+            ShowcaseSeeder::class,
+            TeamMemberSeeder::class,
         ]);
     }
 }

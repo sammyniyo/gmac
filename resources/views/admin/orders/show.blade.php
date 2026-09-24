@@ -55,18 +55,23 @@
                             <tbody>
                                 @foreach($order->items as $item)
                                     <tr>
-                                        <td>{{ $item['name'] ?? '—' }}</td>
+                                        <td>
+                                            {{ $item['name'] ?? '—' }}
+                                            @if(!empty($item['barcode']))
+                                                <div class="text-xs text-muted-foreground font-mono">{{ $item['barcode'] }}</div>
+                                            @endif
+                                        </td>
                                         <td>{{ $item['qty'] ?? 0 }}</td>
                                         <td>
                                             @if(isset($item['price']) && $item['price'] !== null)
-                                                ${{ number_format((float) $item['price'], 2) }}
+                                                {{ \App\Models\Product::rwf((float) $item['price']) }}
                                             @else
                                                 <span class="text-muted-foreground">On request</span>
                                             @endif
                                         </td>
                                         <td>
                                             @if(isset($item['line']) && $item['line'] !== null)
-                                                ${{ number_format((float) $item['line'], 2) }}
+                                                {{ \App\Models\Product::rwf((float) $item['line']) }}
                                             @else
                                                 —
                                             @endif
@@ -77,11 +82,11 @@
                         </table>
                         <div class="mt-4 flex justify-end gap-8 border-t border-border pt-4 text-sm">
                             <span class="text-muted-foreground">Subtotal</span>
-                            <strong>${{ number_format($order->subtotal, 2) }}</strong>
+                            <strong>{{ \App\Models\Product::rwf((float) $order->subtotal) }}</strong>
                         </div>
                         <div class="mt-1 flex justify-end gap-8 text-base font-semibold">
                             <span>Total</span>
-                            <strong>${{ number_format($order->total, 2) }}</strong>
+                            <strong>{{ \App\Models\Product::rwf((float) $order->total) }}</strong>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|vendor|tests|artisan)(/|$) - [F,L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L,QSA]
+</IfModule>
+
+<Files ".env">
+    Require all denied
+</Files>
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
             setNavOpen(!panel.classList.contains('is-open'));
         });
         backdrop.addEventListener('click', () => setNavOpen(false));
+        var closeBtn = document.getElementById('navbar-close');
+        if (closeBtn) closeBtn.addEventListener('click', () => setNavOpen(false));
     }
 
     document.addEventListener('keydown', (e) => {
@@ -256,4 +258,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     observeReveal('.fade-in', 'visible');
     observeReveal('.reveal-on-scroll', 'is-visible');
+    observeReveal('.gh-reveal', 'is-visible');
 });

@@ -31,7 +31,7 @@
                                     <td class="font-mono text-sm font-medium">{{ $order->reference }}</td>
                                     <td>{{ $order->customer_name }}</td>
                                     <td class="text-muted-foreground text-sm">{{ $order->email }}</td>
-                                    <td>${{ number_format($order->total, 2) }}</td>
+                                    <td>{{ \App\Models\Product::rwf((float) $order->total) }}</td>
                                     <td>
                                         <span class="shadcn-badge shadcn-badge--{{ $order->status }}">{{ $order->status }}</span>
                                     </td>

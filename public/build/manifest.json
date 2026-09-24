@@ -1,0 +1,50 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-DRPm7HHk.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/frontend.css": {
+    "file": "assets/frontend-Bd60Db6K.css",
+    "src": "resources/css/frontend.css",
+    "isEntry": true,
+    "name": "frontend",
+    "names": [
+      "frontend.css"
+    ]
+  },
+  "resources/css/mobile.css": {
+    "file": "assets/mobile-CvTv1at1.css",
+    "src": "resources/css/mobile.css",
+    "isEntry": true,
+    "name": "mobile",
+    "names": [
+      "mobile.css"
+    ]
+  },
+  "resources/css/site.css": {
+    "file": "assets/site-P5sNd3Kc.css",
+    "src": "resources/css/site.css",
+    "isEntry": true,
+    "name": "site",
+    "names": [
+      "site.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DNeTszCU.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/frontend.js": {
+    "file": "assets/frontend-BZ02aVsa.js",
+    "name": "frontend",
+    "src": "resources/js/frontend.js",
+    "isEntry": true
+  }
+}

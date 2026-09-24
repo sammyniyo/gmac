@@ -1,41 +1,57 @@
 <x-mail::message>
-# New order received
+# New order request (no payment)
 
 **Reference:** {{ $order->reference }}
 
-**Customer:** {{ $order->customer_name }}  
-**Email:** {{ $order->email }}  
-**Phone:** {{ $order->phone }}  
+This is a request from the website, not an online purchase. Reply to the buyer using the details below.
+
+## Buyer
+
+- **Name:** {{ $order->customer_name }}
+- **Email:** {{ $order->email }}
+- **Phone:** {{ $order->phone }}
 @if($order->company)
-**Company:** {{ $order->company }}  
+- **Company:** {{ $order->company }}
 @endif
-@if($order->address)
-**Address:** {{ $order->address }}@if($order->city), {{ $order->city }}@endif @if($order->country)({{ $order->country }})@endif  
+@if($order->address || $order->city || $order->country)
+- **Address:** {{ trim(collect([$order->address, $order->city, $order->country])->filter()->implode(', ')) }}
 @endif
 
-**Subtotal:** ${{ number_format($order->subtotal, 2) }}  
-**Total:** ${{ number_format($order->total, 2) }}
-
-## Items
+## Lots requested
 
 @foreach($order->items as $item)
-- {{ $item['name'] ?? 'Product' }} × {{ $item['qty'] ?? 0 }}
-  @if(isset($item['price']) && $item['price'] !== null)
-    @ ${{ number_format((float) $item['price'], 2) }} each
+@php
+    $qty = (int) ($item['qty'] ?? 0);
+    $price = $item['price'] ?? null;
+    $line = $price !== null ? (float) $price * $qty : null;
+@endphp
+- **{{ $item['name'] ?? 'Product' }}** × {{ $qty }}
+  @if(!empty($item['barcode']))
+  · barcode {{ $item['barcode'] }}
+  @endif
+  @if($price !== null)
+  {{ \App\Models\Product::rwf((float) $price) }} each
+  @if($line !== null)
+  · line {{ \App\Models\Product::rwf($line) }}
+  @endif
   @else
-    (price on request)
+  (price on request)
   @endif
 @endforeach
 
+**Indicative subtotal:** {{ \App\Models\Product::rwf((float) $order->subtotal) }}
+
 @if($order->notes)
-**Notes from customer:**  
+## Notes from the buyer
+
 {{ $order->notes }}
 @endif
 
 <x-mail::button :url="route('admin.orders.show', $order, true)">
-View in admin
+Open in admin
 </x-mail::button>
 
-Thanks,<br>
+Reply to this email to write the buyer directly.
+
 {{ config('app.name') }}
 </x-mail::message>

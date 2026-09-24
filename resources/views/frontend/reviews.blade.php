@@ -9,6 +9,7 @@
     'title' => __('messages.reviews_page_heading'),
     'subtitle' => __('messages.reviews_page_subtitle'),
     'eyebrow' => 'GMAC Coffee',
+    'image' => \App\Support\FrontendShowcase::img('cherries'),
 ])
 
 <section class="reviews-page">
@@ -90,154 +91,57 @@
 </section>
 
 <style>
-.reviews-page { padding-bottom: 4rem; }
+.reviews-page { padding: 2.25rem 0 5rem; background: #f5f3f0; }
 .reviews-alert {
-    max-width: 720px;
-    margin: 0 auto 1.5rem;
+    margin: 0 0 1.25rem;
     padding: 0.85rem 1rem;
     border-radius: 12px;
-    background: rgba(45, 31, 21, 0.06);
-    border: 1px solid rgba(212, 162, 74, 0.35);
-    color: #2d1f15;
-    font-size: 0.95rem;
+    background: #efe8df;
+    color: #3d2918;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 .reviews-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 1.4rem;
     align-items: start;
-    margin-top: 0.5rem;
-}
-@media (max-width: 980px) {
-    .reviews-layout { grid-template-columns: 1fr; }
 }
 .reviews-form-card {
-    background: #fffdf9;
-    border-radius: 20px;
-    padding: 1.75rem 1.5rem;
-    border: 1px solid rgba(33, 22, 15, 0.08);
-}
-.reviews-kicker {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #9a7028;
-}
-.reviews-form-title {
-    font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
-    font-size: 1.75rem;
-    font-weight: 500;
-    margin: 0.35rem 0 0.5rem;
-    color: #21160f;
-}
-.reviews-form-lead {
-    font-size: 0.95rem;
-    color: rgba(33, 22, 15, 0.65);
-    margin: 0 0 1.25rem;
-    line-height: 1.6;
-}
-.reviews-form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-@media (max-width: 560px) {
-    .reviews-form-row { grid-template-columns: 1fr; }
-}
-.reviews-field { margin-bottom: 1rem; }
-.reviews-field label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 0.35rem;
-    color: #2d1f15;
-}
-.reviews-input, .reviews-textarea {
-    width: 100%;
-    border: 1px solid rgba(33, 22, 15, 0.15);
-    border-radius: 10px;
-    padding: 0.65rem 0.85rem;
-    font-size: 0.95rem;
     background: #fff;
+    border-radius: 22px;
+    padding: 1.6rem 1.5rem;
+    border: 1px solid #e7e2db;
+    box-shadow: 0 12px 36px rgba(42,28,20,.05);
 }
-.reviews-textarea { resize: vertical; min-height: 120px; }
-.reviews-error { display: block; color: #b91c1c; font-size: 0.8rem; margin-top: 0.25rem; }
-
-.reviews-moderation-note {
-    font-size: 0.8rem;
-    color: rgba(33, 22, 15, 0.55);
-    margin: 0 0 1rem;
-    line-height: 1.5;
+.reviews-kicker { font-size: 0.78rem; font-weight: 600; color: #9a7d4e; letter-spacing: 0; text-transform: none; }
+.reviews-form-title { font-size: 1.5rem; font-weight: 600; margin: 0.35rem 0 0.5rem; color: #2a1c14; }
+.reviews-form-lead { font-size: 0.92rem; color: #6b5344; margin: 0 0 1.15rem; line-height: 1.65; }
+.reviews-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.reviews-field { margin-bottom: 1rem; }
+.reviews-field label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 0.4rem; color: #3f3731; }
+.reviews-input, .reviews-textarea {
+    width: 100%; min-height: 46px; border: 1px solid #e7e2db; border-radius: 12px;
+    padding: 0.7rem 0.9rem; font-size: 0.95rem; background: #fff; color: #3f3731;
 }
-.reviews-submit {
-    width: 100%;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-}
-
-.reviews-list-wrap {
-    padding: 0.5rem 0;
-}
-.reviews-list-title {
-    font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
-    font-size: 1.35rem;
-    font-weight: 500;
-    margin: 0 0 1.25rem;
-    color: #21160f;
-}
-.reviews-empty {
-    color: rgba(33, 22, 15, 0.55);
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-.reviews-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-.reviews-item {
-    padding: 1.1rem 1.15rem;
-    background: rgba(255, 253, 249, 0.9);
-    border: 1px solid rgba(33, 22, 15, 0.08);
-    border-radius: 14px;
-}
-.reviews-item__stars { margin-bottom: 0.5rem; letter-spacing: 0.1em; }
-.reviews-item__stars .is-on { color: #d4a24a; }
-.reviews-item__stars .is-off { color: rgba(33, 22, 15, 0.15); }
-.reviews-item__body {
-    font-size: 0.95rem;
-    line-height: 1.65;
-    color: rgba(33, 22, 15, 0.85);
-    margin: 0 0 0.5rem;
-}
-.reviews-item__meta {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: rgba(33, 22, 15, 0.55);
-}
-[data-theme="dark"] .reviews-form-card {
-    background: #1b140f;
-    border-color: rgba(247, 241, 231, 0.1);
-}
-[data-theme="dark"] .reviews-form-title,
-[data-theme="dark"] .reviews-list-title { color: #f7f1e7; }
-[data-theme="dark"] .reviews-input,
-[data-theme="dark"] .reviews-textarea {
-    background: #100c09;
-    border-color: rgba(247, 241, 231, 0.12);
-    color: #f7f1e7;
-}
-[data-theme="dark"] .reviews-item {
-    background: rgba(27, 20, 15, 0.95);
-    border-color: rgba(247, 241, 231, 0.08);
+.reviews-textarea { resize: vertical; min-height: 130px; }
+.reviews-error { display: block; color: #9a3b2f; font-size: 0.78rem; margin-top: 0.25rem; }
+.reviews-moderation-note { font-size: 0.8rem; color: #7d736a; margin: 0 0 1rem; line-height: 1.5; }
+.reviews-submit { width: 100%; justify-content: center; border: none; cursor: pointer; min-height: 46px; }
+.reviews-list-wrap { display: grid; gap: 0.85rem; }
+.reviews-list-title { font-size: 1.25rem; font-weight: 600; margin: 0 0 0.2rem; color: #2a1c14; }
+.reviews-empty { color: #7d736a; font-size: 0.95rem; line-height: 1.6; }
+.reviews-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
+.reviews-item { padding: 1.1rem 1.15rem; background: #fff; border: 1px solid #e7e2db; border-radius: 16px; }
+.reviews-item__stars { margin-bottom: 0.5rem; }
+.reviews-item__stars .is-on { color: #b89a6a; }
+.reviews-item__stars .is-off { color: #e7e2db; }
+.reviews-item__body { font-size: 0.95rem; line-height: 1.65; color: #3f3731; margin: 0 0 0.5rem; }
+.reviews-item__meta { font-size: 0.82rem; font-weight: 600; color: #7d736a; }
+@media (max-width: 900px) {
+    .reviews-layout, .reviews-form-row { grid-template-columns: 1fr; }
 }
 </style>
 @endsection

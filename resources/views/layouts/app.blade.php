@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ \App\Models\Setting::where('key', 'company_name')->value('value') ?? config('app.name', 'GMAC Coffee') }}</title>
+        @include('partials.favicon')
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

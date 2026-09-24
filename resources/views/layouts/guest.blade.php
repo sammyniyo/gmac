@@ -1,64 +1,82 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ \App\Models\Setting::where('key', 'company_name')->value('value') ?? config('app.name', 'GMAC Coffee') }}</title>
+    @include('partials.favicon')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        html { background: #f7f2ea; }
+        body { font-family: Poppins, ui-sans-serif, system-ui, sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-[#f7f2ea] text-[#2a1c14] antialiased">
+@php
+    $companyName = \App\Models\Setting::where('key', 'company_name')->value('value') ?? 'GMAC Coffee';
+    $logo = \App\Models\Setting::where('key', 'site_logo')->value('value');
+    $panelImage = \App\Models\Setting::where('key', 'home_about_image')->value('value');
+    $phone = \App\Models\Setting::where('key', 'contact_phone')->value('value') ?: '+250 783 053 415';
+    $email = \App\Models\Setting::where('key', 'contact_email')->value('value') ?: 'info@gmac.coffee';
+    $about = \App\Models\Setting::where('key', 'about_short_text')->value('value')
+        ?: 'GMAC Coffee sources, processes, and exports specialty Rwandan coffee with full traceability from washing station to cup.';
+@endphp
 
-        <title>{{ \App\Models\Setting::where('key', 'company_name')->value('value') ?? config('app.name', 'GMAC Coffee') }}</title>
+<header class="sticky top-0 z-30 border-b border-[#e8ddd0] bg-white/90 backdrop-blur">
+    <div class="mx-auto flex h-[62px] w-11/12 max-w-[1320px] items-center justify-between">
+        <a href="{{ url('/') }}" class="inline-flex items-center gap-2.5 text-[#2a1c14] no-underline">
+            @if($logo)
+                <img src="{{ $logo }}" alt="{{ $companyName }}" class="h-9 w-auto object-contain">
+            @else
+                <img src="{{ asset('images/gmac-logo.png') }}" alt="{{ $companyName }}" class="h-9 w-auto object-contain">
+            @endif
+        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ url('/') }}" class="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[11px] border border-[#e8ddd0] bg-white text-[#6b5344] transition hover:border-[#c4a15a] hover:text-[#3d2918]" aria-label="Back to website">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>
+            </a>
+        </div>
+    </div>
+</header>
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<main class="mx-auto grid w-11/12 max-w-[1320px] grid-cols-1 items-stretch gap-8 py-8 lg:grid-cols-12 lg:gap-10 lg:py-10">
+    <aside class="relative hidden overflow-hidden rounded-2xl border border-[#e8ddd0] lg:col-span-7 lg:block xl:col-span-7">
+        @if($panelImage)
+            <img src="{{ $panelImage }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+        @else
+            <div class="absolute inset-0 bg-[#3d2918]"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(196,161,90,0.28),transparent_42%),radial-gradient(circle_at_80%_80%,rgba(61,41,24,0.5),transparent_50%)]"></div>
+        @endif
+        <div class="absolute inset-0 bg-gradient-to-br from-[#2a1c14]/85 via-[#3d2918]/55 to-[#5a3d28]/35"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#2a1c14]/90 via-transparent to-transparent"></div>
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="min-h-screen bg-slate-950 text-stone-900 antialiased">
-        @php
-            $companyName = \App\Models\Setting::where('key', 'company_name')->value('value') ?? 'GMAC Coffee';
-        @endphp
-
-        <div class="min-h-screen grid lg:grid-cols-[1.1fr_0.9fr]">
-            <div class="relative hidden lg:flex overflow-hidden bg-gradient-to-br from-emerald-950 via-slate-900 to-emerald-900">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.14),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(20,83,45,0.26),transparent_32%)]"></div>
-                <div class="relative z-10 flex h-full w-full flex-col justify-between p-12 text-stone-100">
-                    <div></div>
-
-                    <div class="max-w-xl">
-                        <p class="mb-4 text-sm font-bold uppercase tracking-[0.35em] text-amber-200">Admin Access</p>
-                        <h1 class="font-[Cormorant_Garamond] text-6xl leading-none text-stone-50">Welcome to GMAC Admin</h1>
-                        <p class="mt-6 max-w-lg text-base leading-8 text-stone-300">Sign in to manage your products, stories, team details, testimonials, and the main content shown across the website.</p>
-                        <p class="mt-3 max-w-lg text-sm leading-7 text-stone-400">A simple place to keep the GMAC Coffee website updated.</p>
-                    </div>
-
-                    <div class="grid max-w-xl grid-cols-3 gap-4 text-sm text-stone-300">
-                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
-                            <div class="text-2xl font-bold text-emerald-200">01</div>
-                            <div class="mt-1">Products</div>
-                        </div>
-                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
-                            <div class="text-2xl font-bold text-emerald-200">02</div>
-                            <div class="mt-1">Story & team</div>
-                        </div>
-                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
-                            <div class="text-2xl font-bold text-emerald-200">03</div>
-                            <div class="mt-1">Site content</div>
-                        </div>
-                    </div>
-                </div>
+        <div class="relative flex min-h-[40rem] flex-col justify-between p-9 text-white xl:p-12">
+            <div>
+                <p class="text-sm font-medium text-white/70">{{ $companyName }}</p>
+                <h2 class="mt-4 max-w-xl text-[1.75rem] font-semibold leading-tight xl:text-[2rem]">Premium Rwandan coffee, from station to export.</h2>
+                <p class="mt-4 max-w-xl text-sm leading-7 text-white/80">{{ $about }}</p>
             </div>
 
-            <div class="flex min-h-screen items-center justify-center bg-gradient-to-b from-stone-100 to-emerald-50 px-6 py-10">
-                <div class="w-full max-w-md">
-                    <div class="mb-8 text-center lg:hidden">
-                        <div class="text-xs font-bold uppercase tracking-[0.32em] text-emerald-800">{{ $companyName }}</div>
-                    </div>
-
-                    <div class="overflow-hidden rounded-[2rem] border border-stone-200 bg-white/95 p-8 shadow-[0_30px_80px_rgba(28,25,23,0.12)] backdrop-blur">
-                        {{ $slot }}
-                    </div>
-                </div>
+            <div>
+                <ul class="space-y-2 text-sm text-white/80">
+                    <li>Phone: {{ $phone }}</li>
+                    <li>{{ $email }}</li>
+                    <li>KK 372 St, Kigali, Kicukiro, Rwanda</li>
+                </ul>
+                <p class="mt-8 text-sm font-medium text-white/70">{{ $companyName }}</p>
             </div>
         </div>
-    </body>
+    </aside>
+
+    <section class="flex min-w-0 flex-col justify-center lg:col-span-5">
+        <div class="mx-auto w-full max-w-xl">
+            {{ $slot }}
+        </div>
+    </section>
+</main>
+</body>
 </html>

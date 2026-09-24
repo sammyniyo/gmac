@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Support\FrontendShowcase;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
 class CartService
@@ -14,12 +16,67 @@ class CartService
      */
     public function items(): array
     {
-        return Session::get(self::SESSION_KEY, []);
+        $cart = Session::get(self::SESSION_KEY, []);
+        if ($cart === []) {
+            return [];
+        }
+
+        $ids = collect($cart)->pluck('product_id')->filter()->map(fn ($id) => (int) $id)->all();
+        $products = Product::whereIn('id', $ids)->where('is_active', true)->get()->keyBy('id');
+
+        $kept = [];
+        foreach ($cart as $key => $row) {
+            $product = $products->get((int) ($row['product_id'] ?? 0));
+            if (! $product) {
+                continue;
+            }
+
+            $kept[$key] = [
+                'product_id' => $product->id,
+                'slug' => $product->slug,
+                'name' => $product->name,
+                'barcode' => $product->barcode,
+                'price' => $product->price !== null ? (float) $product->price : null,
+                'qty' => max(1, min(500, (int) ($row['qty'] ?? 1))),
+            ];
+        }
+
+        if ($kept !== $cart) {
+            Session::put(self::SESSION_KEY, $kept);
+        }
+
+        return $kept;
     }
 
     public function count(): int
     {
         return (int) collect($this->items())->sum('qty');
+    }
+
+    public function presented(): Collection
+    {
+        $rows = $this->items();
+        $products = Product::query()
+            ->whereIn('id', collect($rows)->pluck('product_id'))
+            ->get()
+            ->keyBy('id');
+
+        return collect($rows)->map(function (array $row) use ($products) {
+            $product = $products->get($row['product_id']);
+            $barcode = $row['barcode'] ?? $product?->barcode;
+
+            return array_merge($row, [
+                'product' => $product,
+                'line' => $row['price'] !== null ? round((float) $row['price'] * (int) $row['qty'], 2) : null,
+                'image' => $product?->displayImage() ?? FrontendShowcase::productImage($row['slug'] ?? null),
+                'pack' => $product?->usesPackShot() ?? false,
+                'size' => $product?->packSize(),
+                'color' => $product?->packColorLabel(),
+                'color_key' => $product?->packColor(),
+                'roast' => $product?->packRoast(),
+                'barcode' => $barcode,
+            ]);
+        })->values();
     }
 
     public function add(Product $product, int $qty = 1): void
@@ -37,6 +94,7 @@ class CartService
                 'product_id' => $product->id,
                 'slug' => $product->slug,
                 'name' => $product->name,
+                'barcode' => $product->barcode,
                 'price' => $product->price !== null ? (float) $product->price : null,
                 'qty' => $qty,
             ];
@@ -100,6 +158,7 @@ class CartService
                 'product_id' => (int) $row['product_id'],
                 'slug' => $row['slug'],
                 'name' => $row['name'],
+                'barcode' => $row['barcode'] ?? null,
                 'price' => $row['price'],
                 'qty' => (int) $row['qty'],
                 'line' => $line,

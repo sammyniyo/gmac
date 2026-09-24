@@ -30,13 +30,18 @@ class ProductController extends Controller
             'product_category_id' => 'required|exists:product_categories,id',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
+            'barcode' => 'nullable|string|max:32|unique:products,barcode',
             'price' => 'nullable|numeric|min:0',
             'features' => 'nullable|array',
             'is_active' => 'boolean',
             'image' => 'nullable|image|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $slug = Str::slug($validated['name']);
+        if (Product::where('slug', $slug)->exists()) {
+            $slug .= '-'.($validated['barcode'] ?? Str::random(5));
+        }
+        $validated['slug'] = $slug;
         $validated['is_active'] = $request->has('is_active');
         
         // Handle features JSON structure
@@ -67,13 +72,13 @@ class ProductController extends Controller
             'product_category_id' => 'required|exists:product_categories,id',
             'short_description' => 'nullable|string',
             'description' => 'nullable|string',
+            'barcode' => 'nullable|string|max:32|unique:products,barcode,'.$product->id,
             'price' => 'nullable|numeric|min:0',
             'features' => 'nullable|array',
             'is_active' => 'boolean',
             'image' => 'nullable|image|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
         $validated['is_active'] = $request->has('is_active');
 
         if ($request->has('features_input')) {

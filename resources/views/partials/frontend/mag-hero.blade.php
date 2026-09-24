@@ -30,26 +30,20 @@
 
         <div class="mag-hero__visual" aria-hidden="true">
             <div class="mag-hero__stack">
+                @php
+                    $fallbackStack = $isGallery
+                        ? [\App\Support\FrontendShowcase::img('cherries'), \App\Support\FrontendShowcase::img('green'), \App\Support\FrontendShowcase::img('bowl')]
+                        : [\App\Support\FrontendShowcase::img('station'), \App\Support\FrontendShowcase::img('cherries'), \App\Support\FrontendShowcase::img('beans')];
+                @endphp
                 @for ($i = 0; $i < 3; $i++)
                     @php
                         $piece = $stack->get($i);
-                        $imgUrl = null;
-                        if ($piece) {
-                            if ($isGallery) {
-                                $imgUrl = $piece->getFirstMediaUrl('image', 'thumb') ?: $piece->getFirstMediaUrl('image');
-                            } else {
-                                $imgUrl = $piece->hasMedia('cover')
-                                    ? ($piece->getFirstMediaUrl('cover', 'thumb') ?: $piece->getFirstMediaUrl('cover'))
-                                    : null;
-                            }
-                        }
+                        $imgUrl = $piece && method_exists($piece, 'displayImage')
+                            ? $piece->displayImage()
+                            : $fallbackStack[$i];
                     @endphp
                     <div class="mag-hero__polaroid mag-hero__polaroid--{{ $i + 1 }}">
-                        @if ($imgUrl)
-                            <img src="{{ $imgUrl }}" alt="" decoding="async" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
-                        @else
-                            <div class="mag-hero__polaroid-fallback mag-hero__polaroid-fallback--{{ ($i % 3) + 1 }}"></div>
-                        @endif
+                        <img src="{{ $imgUrl }}" alt="" decoding="async" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
                     </div>
                 @endfor
             </div>

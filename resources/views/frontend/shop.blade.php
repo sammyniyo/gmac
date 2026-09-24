@@ -5,9 +5,10 @@
 
 @section('content')
 @include('partials.frontend.page-hero', [
-    'title'   => __('messages.products'),
-    'subtitle'=> __('messages.slogan'),
-    'eyebrow' => 'GMAC Coffee',
+    'title'   => __('messages.nav_shop'),
+    'subtitle'=> 'Official roasted bags with GS1 barcodes — packed in Kigali, priced in Rwandan francs.',
+    'eyebrow' => 'Coffee',
+    'image' => \App\Support\FrontendShowcase::img('cherries'),
 ])
 
 {{-- ══════════════════════════════════════════
@@ -15,27 +16,6 @@
 ══════════════════════════════════════════ --}}
 <section class="sp-section">
     <div class="container">
-        <div class="sp-intro gh-reveal">
-            <div class="sp-intro__kicker">Coffee Selection</div>
-            <h2 class="sp-intro__title">Cleanly presented <em>green coffee.</em></h2>
-            <p class="sp-intro__text">Browse the demo products, check the price, then follow the simple buying steps below.</p>
-        </div>
-
-        <div class="sp-steps gh-reveal">
-            <div class="sp-step">
-                <strong>1</strong>
-                <span>{{ __('messages.shop_step_1') }}</span>
-            </div>
-            <div class="sp-step">
-                <strong>2</strong>
-                <span>{{ __('messages.shop_step_2') }}</span>
-            </div>
-            <div class="sp-step">
-                <strong>3</strong>
-                <span>{{ __('messages.shop_step_3') }}</span>
-            </div>
-        </div>
-
         {{-- ── Toolbar: count + filters ─────────────────────────── --}}
         <div class="sp-toolbar gh-reveal">
             <div class="sp-toolbar__left">
@@ -71,41 +51,34 @@
             >
                 {{-- Image --}}
                 <a href="{{ route('products.show', $product->slug) }}" class="sp-card__img-wrap" tabindex="-1" aria-hidden="true">
-                    @if($product->hasMedia('cover'))
-                        <img
-                            src="{{ $product->getFirstMediaUrl('cover', 'thumb') ?: $product->getFirstMediaUrl('cover') }}"
-                            alt="{{ $product->name }}"
-                            class="sp-card__img"
-                            loading="lazy"
-                        >
-                    @else
-                        <div class="sp-card__ph" aria-hidden="true">
-                            <i class="fa-solid fa-mug-hot"></i>
-                        </div>
-                    @endif
-
-                    {{-- Hover overlay --}}
-                    <div class="sp-card__overlay" aria-hidden="true">
-                        <span class="sp-card__overlay-label">{{ __('messages.details') }}</span>
-                    </div>
-
-                    {{-- Category badge on image --}}
-                    <div class="sp-card__badge">{{ $product->category->name ?? 'Specialty' }}</div>
+                    <img
+                        src="{{ $product->displayImage() }}"
+                        alt="{{ $product->name }}"
+                        class="sp-card__img{{ $product->usesPackShot() ? ' is-pack' : '' }}"
+                        loading="lazy"
+                    >
+                    <div class="sp-card__badge">{{ $product->packSize() }}</div>
                 </a>
 
-                {{-- Body --}}
                 <div class="sp-card__body">
-                    <div class="sp-card__type">Green Coffee</div>
+                    <div class="sp-card__meta">
+                        <span class="sp-card__swatch is-{{ $product->packColor() }}" aria-hidden="true"></span>
+                        <span>{{ $product->packColorLabel() }}</span>
+                        @if($product->packRoast())
+                            <span class="sp-card__sep" aria-hidden="true"></span>
+                            <span>{{ $product->packRoast() }}</span>
+                        @endif
+                    </div>
                     <h3 class="sp-card__name">
                         <a href="{{ route('products.show', $product->slug) }}">{{ $product->name }}</a>
                     </h3>
-                    <p class="sp-card__excerpt">
-                        {{ $product->short_description ?? Str::limit(strip_tags($product->description), 100) }}
-                    </p>
+                    @if($product->barcode)
+                        <p class="g-barcode">{{ $product->barcode }}</p>
+                    @endif
 
                     <div class="sp-card__foot">
                         @if($product->price)
-                            <span class="sp-card__price">${{ number_format($product->price, 2) }}</span>
+                            <span class="sp-card__price">{{ $product->formattedPrice() }}</span>
                         @else
                             <span class="sp-card__price sp-card__price--inquiry">{{ __('messages.price_on_request') }}</span>
                         @endif
@@ -116,7 +89,7 @@
                                 <button type="submit" class="sp-card__add">{{ __('messages.add_to_cart') }}</button>
                             </form>
                             <a href="{{ route('products.show', $product->slug) }}" class="sp-card__cta">
-                                {{ __('messages.read_more') }}
+                                {{ __('messages.details') }}
                                 <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
                             </a>
                         </div>
@@ -168,9 +141,9 @@
     --gh-ink:      #21160f;
     --gh-parchment:#efe2cf;
     --gh-cream:    #f5ebe0;
-    --gh-gold:     var(--clr-gold, #c9963f);
-    --gh-gold-dk:  #8a6320;
-    --gh-gold-lt:  #d8b76b;
+    --gh-gold:     #7a6452;
+    --gh-gold-dk:  #5c4a3c;
+    --gh-gold-lt:  #8d7560;
     --gh-display:  'Cormorant Garamond', Georgia, serif;
     --gh-body:     'DM Sans', var(--font-body, sans-serif);
     --gh-ease:     cubic-bezier(0.16, 1, 0.3, 1);
@@ -206,8 +179,8 @@
     transition: background 0.22s, color 0.22s, border-color 0.22s, transform 0.22s var(--gh-ease);
 }
 .gh-btn:hover { transform: translateY(-2px); }
-.gh-btn--gold { background: var(--gh-gold); color: var(--gh-ink); }
-.gh-btn--gold:hover { background: var(--gh-gold-lt); color: var(--gh-ink); }
+.gh-btn--gold { background: #7a6452; color: #fff; }
+.gh-btn--gold:hover { background: #8d7560; color: #fff; }
 .gh-btn--outline-light { background: transparent; color: var(--gh-parchment); border: 1px solid rgba(246,240,230,0.25); }
 .gh-btn--outline-light:hover { border-color: var(--gh-gold-lt); color: var(--gh-gold-lt); }
 
@@ -216,9 +189,7 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .sp-section {
     padding: 3rem 0 5rem;
-    background:
-        radial-gradient(800px 340px at 15% 0%, rgba(201,150,63,0.08), transparent 60%),
-        linear-gradient(180deg, #fdfaf5 0%, #f5ebe0 100%);
+    background: #f5f3f0;
     position: relative;
 }
 [data-theme="dark"] .sp-section { background: var(--gh-cream); }
@@ -234,9 +205,9 @@
     align-items: center;
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
-    background: rgba(201,150,63,0.1);
-    border: 1px solid rgba(201,150,63,0.16);
-    color: var(--gh-gold-dk);
+    background: #efe8df;
+    border: 1px solid #e7e2db;
+    color: #5c4a3c;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.16em;
@@ -364,7 +335,7 @@
     position: absolute;
     bottom: -1px; left: 0; right: 0;
     height: 2px;
-    background: var(--gh-gold);
+    background: #7a6452;
     transform: scaleX(0);
     transition: transform 0.28s var(--gh-ease);
 }
@@ -376,9 +347,9 @@
     box-shadow: 0 6px 20px rgba(26,16,8,0.07);
 }
 .sp-filter.is-active {
-    background: rgba(201,150,63,0.16);
-    border-color: rgba(201,150,63,0.26);
-    color: var(--gh-gold-dk);
+    background: #efe8df;
+    border-color: transparent;
+    color: #5c4a3c;
     box-shadow: none;
 }
 .sp-filter.is-active::after { transform: scaleX(1); }
@@ -443,9 +414,9 @@
     transition: transform 0.40s var(--gh-ease), box-shadow 0.40s var(--gh-ease), opacity 0.3s ease;
 }
 .sp-card:hover {
-    transform: translateY(-7px);
-    box-shadow: 0 24px 48px rgba(26,16,8,0.12);
-    border-color: rgba(201,150,63,0.18);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(63, 55, 49, 0.10);
+    border-color: #e7e2db;
 }
 [data-theme="dark"] .sp-card {
     background: rgba(246,251,248,0.04);
@@ -458,20 +429,23 @@
     position: relative;
     height: 260px;
     overflow: hidden;
-    background: linear-gradient(180deg, #efe3d0 0%, #e2d4be 100%);
+    background: #f7f4f0;
     text-decoration: none;
     flex-shrink: 0;
 }
 .sp-card__img {
     width: 100%; height: 100%;
     object-fit: cover; display: block;
-    transition: transform 0.65s var(--gh-ease), filter 0.4s ease;
-    filter: saturate(0.92);
+    transition: transform 0.65s var(--gh-ease);
 }
-.sp-card:hover .sp-card__img {
-    transform: scale(1.06);
-    filter: saturate(1.05);
+.sp-card__img.is-pack {
+    object-fit: contain;
+    object-position: center 32%;
+    padding: 0.7rem 0.7rem 0.35rem;
+    box-sizing: border-box;
+    background: #f7f4f0;
 }
+.sp-card:hover .sp-card__img { transform: scale(1.03); }
 .sp-card__ph {
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
@@ -480,43 +454,20 @@
     background: linear-gradient(160deg, #2d1a0e 0%, #1a0e08 55%, #0d0907 100%);
 }
 
-/* Overlay on hover */
-.sp-card__overlay {
-    position: absolute; inset: 0;
-    background: rgba(26,16,8,0);
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.35s ease;
-}
-.sp-card:hover .sp-card__overlay { background: rgba(26,16,8,0.35); }
-.sp-card__overlay-label {
-    font-family: var(--gh-body);
-    font-size: 0.68rem; font-weight: 500;
-    letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--gh-parchment);
-    border: 1px solid rgba(246,240,230,0.55);
-    padding: 9px 22px;
-    border-radius: 999px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s var(--gh-ease);
-}
-.sp-card:hover .sp-card__overlay-label { opacity: 1; transform: none; }
-
-/* Category badge on image */
 .sp-card__badge {
     position: absolute;
-    top: 16px; left: 16px;
-    background: rgba(255,255,255,0.9);
-    border: 1px solid rgba(201,150,63,0.18);
-    padding: 6px 12px;
+    top: 14px; left: 14px;
+    background: #fff;
+    border: 1px solid #e7e2db;
+    padding: 6px 11px;
     border-radius: 999px;
     font-family: var(--gh-body);
-    font-size: 0.60rem; font-weight: 600;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--gh-gold-dk);
+    font-size: 0.68rem; font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    color: #5c4a3c;
     z-index: 2;
 }
-[data-theme="dark"] .sp-card__badge { background: #1a1008; color: var(--gh-gold-lt); }
 
 /* Body */
 .sp-card__body {
@@ -524,20 +475,31 @@
     display: flex; flex-direction: column; flex: 1;
 }
 
-.sp-card__type {
-    display: inline-flex;
+.sp-card__meta {
+    display: flex;
     align-items: center;
-    align-self: flex-start;
-    margin-bottom: 0.7rem;
-    padding: 0.32rem 0.7rem;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.65rem;
+    color: #7a6452;
+    font-size: 0.74rem;
+    font-weight: 600;
+}
+.sp-card__swatch {
+    width: 12px;
+    height: 12px;
     border-radius: 999px;
-    background: rgba(22, 118, 80, 0.1);
-    border: 1px solid rgba(22, 118, 80, 0.16);
-    color: #167650;
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    border: 1px solid rgba(63, 55, 49, 0.12);
+    flex-shrink: 0;
+}
+.sp-card__swatch.is-red { background: #c0392b; }
+.sp-card__swatch.is-chocolate { background: #c4a574; }
+.sp-card__swatch.is-green { background: #2f7a4a; }
+.sp-card__sep {
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: #c9bfb4;
 }
 .sp-card__name {
     font-family: var(--gh-display);
@@ -548,8 +510,7 @@
 }
 [data-theme="dark"] .sp-card__name { color: var(--clr-text); }
 .sp-card__name a { color: inherit; text-decoration: none; transition: color 0.2s; }
-.sp-card__name a:hover { color: var(--gh-gold-dk); }
-[data-theme="dark"] .sp-card__name a:hover { color: var(--gh-gold-lt); }
+.sp-card__name a:hover { color: #7a6452; }
 
 .sp-card__excerpt {
     font-family: var(--gh-body);
@@ -583,21 +544,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.55rem 1rem;
+    min-height: 38px;
+    padding: 0.55rem 1.05rem;
     font-family: var(--gh-body);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: none;
     border: none;
     border-radius: 999px;
     cursor: pointer;
-    background: linear-gradient(135deg, var(--gh-gold) 0%, #c9933a 100%);
+    background: #7a6452;
     color: #fff;
-    box-shadow: 0 8px 20px rgba(184, 137, 61, 0.28);
-    transition: transform 0.2s var(--gh-ease), box-shadow 0.2s;
+    transition: background 0.2s, transform 0.2s var(--gh-ease);
 }
-.sp-card__add:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(184, 137, 61, 0.35); }
+.sp-card__add:hover { background: #8d7560; }
 @media (min-width: 480px) {
     .sp-card__foot {
         flex-direction: row;
@@ -625,18 +586,16 @@
 .sp-card__cta {
     display: inline-flex; align-items: center; gap: 6px;
     font-family: var(--gh-body);
-    font-size: 0.68rem; font-weight: 500;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--gh-gold-dk);
+    font-size: 0.8rem; font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #7a6452;
     text-decoration: none;
-    border-bottom: 1px solid rgba(138,95,20,0.28);
     padding-bottom: 1px;
-    transition: color 0.2s, border-color 0.2s, gap 0.2s;
+    transition: color 0.2s, gap 0.2s;
     white-space: nowrap;
 }
-.sp-card__cta:hover { color: var(--gh-gold-dk); border-color: var(--gh-gold-dk); gap: 9px; }
-[data-theme="dark"] .sp-card__cta { color: var(--gh-gold-lt); border-color: rgba(232,201,122,0.28); }
-[data-theme="dark"] .sp-card__cta:hover { color: var(--gh-gold-lt); border-color: var(--gh-gold-lt); }
+.sp-card__cta:hover { color: #5c4a3c; gap: 9px; }
 
 /* ── Empty / no-results ─────────────────────────────────────────── */
 .sp-empty {
@@ -678,8 +637,8 @@
     max-width: 760px;
     margin: 0 auto;
     padding: 2.5rem 2rem;
-    background: linear-gradient(135deg, rgba(201,150,63,0.1) 0%, rgba(13,9,7,0.03) 100%);
-    border: 1px solid rgba(201,150,63,0.16);
+    background: #efe8df;
+    border: 1px solid #e7e2db;
     border-radius: 30px;
 }
 
@@ -689,7 +648,7 @@
     font-weight: 700;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--gh-gold-dk);
+    color: #7a6452;
     margin-bottom: 1rem;
 }
 
@@ -704,7 +663,7 @@
 
 .shop-cta__h2 em {
     font-style: italic;
-    color: var(--gh-gold-dk);
+    color: #7a6452;
 }
 
 .shop-cta__sub {
@@ -723,15 +682,15 @@
 }
 
 .shop-cta__link {
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gh-gold-dk);
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #7a6452;
 }
 
 .shop-cta__link:hover {
-    color: var(--gh-gold);
+    color: #5c4a3c;
 }
 
 [data-theme="dark"] .sp-step {
@@ -753,13 +712,23 @@
     .sp-steps { grid-template-columns: 1fr; }
     .sp-toolbar { flex-direction: column; align-items: flex-start; }
     .sp-toolbar__right { width: 100%; }
-    .sp-filters { gap: 6px; }
-    .sp-section { padding: 52px 0 72px; }
+    .sp-filters {
+        gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        margin-inline: -1.15rem;
+        padding: 0.15rem 1.15rem 0.4rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .sp-filters::-webkit-scrollbar { display: none; }
+    .sp-filter { flex: 0 0 auto; min-height: 44px; }
+    .sp-section { padding: 40px 0 56px; }
     .sp-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
 }
 @media (max-width: 520px) {
     .sp-grid { grid-template-columns: 1fr; }
-    .sp-card__img-wrap { height: 220px; }
+    .sp-card__img-wrap { height: 210px; }
     .shop-cta__inner { padding: 2rem 1.25rem; }
 }
 </style>

@@ -4,11 +4,11 @@
 @section('meta_description', 'The latest updates, harvest news, and community events from GMAC Coffee and the Rwandan coffee industry.')
 
 @section('content')
-@include('partials.frontend.mag-hero', [
-    'variant' => 'news',
+@include('partials.frontend.page-hero', [
     'title' => __('messages.news'),
     'subtitle' => __('messages.news_hero_subtitle'),
-    'mosaic' => $heroPosts,
+    'eyebrow' => 'Stories',
+    'image' => \App\Support\FrontendShowcase::img('farm'),
 ])
 
 <div class="container py-6">
@@ -21,14 +21,10 @@
                 @endphp
                 <article class="news-mag__card {{ $isLead ? 'news-mag__card--lead' : '' }} fade-in">
                     <a href="{{ route('news.show', $post->slug) }}" class="news-mag__media">
-                        @if($post->hasMedia('cover'))
-                            <img src="{{ $post->getFirstMediaUrl('cover', 'thumb') ?? $post->getFirstMediaUrl('cover') }}"
-                                 alt="{{ $post->title }}"
-                                 loading="{{ $loop->iteration < 4 ? 'eager' : 'lazy' }}"
-                                 decoding="async">
-                        @else
-                            <span class="news-mag__placeholder" aria-hidden="true"><i class="fa-solid fa-newspaper"></i></span>
-                        @endif
+                        <img src="{{ $post->displayImage() }}"
+                             alt="{{ $post->title }}"
+                             loading="{{ $loop->iteration < 4 ? 'eager' : 'lazy' }}"
+                             decoding="async">
                         <span class="news-mag__media-veil" aria-hidden="true"></span>
                     </a>
                     <div class="news-mag__body">
@@ -54,7 +50,7 @@
         </div>
 
         <div class="news-pagination">
-            {{ $posts->links() }}
+            {{ $posts->onEachSide(1)->links('partials.frontend.pagination') }}
         </div>
     </div>
 </div>
@@ -254,55 +250,6 @@
         padding: 3rem 1rem;
         color: var(--clr-text-muted, rgba(26, 14, 8, 0.5));
         font-size: 1.05rem;
-    }
-
-    .news-pagination {
-        margin-top: 2.5rem;
-        display: flex;
-        justify-content: center;
-    }
-
-    .news-pagination nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.35rem;
-    }
-
-    .news-pagination a,
-    .news-pagination span {
-        min-width: 2.5rem;
-        height: 2.5rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 0.65rem;
-        border-radius: 10px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-decoration: none;
-        border: 1px solid rgba(13, 9, 7, 0.1);
-        color: rgba(26, 14, 8, 0.65);
-        background: rgba(255, 255, 255, 0.85);
-        transition: background 0.2s, border-color 0.2s, color 0.2s;
-    }
-
-    [data-theme="dark"] .news-pagination a,
-    [data-theme="dark"] .news-pagination span {
-        background: rgba(22, 14, 10, 0.85);
-        border-color: rgba(201, 150, 63, 0.2);
-        color: rgba(246, 240, 230, 0.75);
-    }
-
-    .news-pagination a:hover {
-        border-color: var(--clr-gold, #d4a24a);
-        color: var(--clr-gold-dk, #7a5218);
-    }
-
-    .news-pagination span[aria-current="page"] {
-        background: linear-gradient(135deg, rgba(212, 162, 74, 0.35), rgba(212, 162, 74, 0.12));
-        border-color: rgba(201, 150, 63, 0.45);
-        color: var(--clr-ink, #1a0e08);
     }
 
     @media (max-width: 1100px) {

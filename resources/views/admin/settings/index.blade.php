@@ -78,11 +78,11 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="mb-4">
                                     <label for="social_facebook" class="block text-gray-700 font-medium mb-2">Facebook URL</label>
-                                    <input type="url" name="social_facebook" id="social_facebook" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['social_facebook'] ?? '' }}" placeholder="https://facebook.com/...">
+                                    <input type="url" name="social_facebook" id="social_facebook" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['social_facebook'] ?? 'https://www.facebook.com/profile.php?id=100088696975817' }}" placeholder="https://facebook.com/...">
                                 </div>
                                 <div class="mb-4">
                                     <label for="social_instagram" class="block text-gray-700 font-medium mb-2">Instagram URL</label>
-                                    <input type="url" name="social_instagram" id="social_instagram" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['social_instagram'] ?? '' }}" placeholder="https://instagram.com/...">
+                                    <input type="url" name="social_instagram" id="social_instagram" class="w-full border-gray-300 rounded-md shadow-sm" value="{{ $settings['social_instagram'] ?? 'https://www.instagram.com/gmac.coffee/' }}" placeholder="https://instagram.com/...">
                                 </div>
                                 <div class="mb-4">
                                     <label for="social_twitter" class="block text-gray-700 font-medium mb-2">Twitter/X URL</label>

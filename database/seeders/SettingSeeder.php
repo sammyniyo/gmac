@@ -18,9 +18,10 @@ class SettingSeeder extends Seeder
             ['key' => 'contact_email', 'value' => 'info@gmac.coffee'],
             ['key' => 'contact_phone', 'value' => '+250-783 053 415'],
             ['key' => 'contact_address', 'value' => 'KK 372 St, Kigali, Kicukiro, Rwanda'],
-            ['key' => 'facebook_url', 'value' => '#'],
-            ['key' => 'twitter_url', 'value' => '#'],
-            ['key' => 'instagram_url', 'value' => '#'],
+            ['key' => 'facebook_url', 'value' => 'https://www.facebook.com/profile.php?id=100088696975817'],
+            ['key' => 'instagram_url', 'value' => 'https://www.instagram.com/gmac.coffee/'],
+            ['key' => 'social_facebook', 'value' => 'https://www.facebook.com/profile.php?id=100088696975817'],
+            ['key' => 'social_instagram', 'value' => 'https://www.instagram.com/gmac.coffee/'],
         ];
 
         foreach ($settings as $setting) {

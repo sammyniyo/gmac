@@ -23,7 +23,9 @@ Route::group([
     Route::get('/washing-stations', [FrontendController::class, 'stations'])->name('stations');
     Route::get('/team', [FrontendController::class, 'team'])->name('team');
     Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
-    Route::post('/contact/send', [FrontendController::class, 'sendContact'])->name('contact.send');
+    Route::post('/contact/send', [FrontendController::class, 'sendContact'])
+        ->middleware('throttle:contact')
+        ->name('contact.send');
 
     Route::get('/reviews', [FrontendController::class, 'reviews'])->name('reviews');
     Route::post('/reviews', [FrontendController::class, 'submitFeedback'])->name('reviews.submit');
@@ -34,8 +36,14 @@ Route::group([
     Route::delete('/cart/{product:slug}', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout', [CheckoutController::class, 'store'])
+        ->middleware('throttle:checkout')
+        ->name('checkout.store');
     Route::get('/order/thanks/{reference}', [CheckoutController::class, 'thanks'])->name('order.thanks');
+    Route::get('/order/find', [CheckoutController::class, 'find'])->name('order.find');
+    Route::post('/order/find', [CheckoutController::class, 'lookup'])
+        ->middleware('throttle:order-lookup')
+        ->name('order.lookup');
 });
 Route::post('/subscribe', [FrontendController::class, 'subscribe'])->name('subscribe');
 

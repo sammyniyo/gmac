@@ -12,10 +12,21 @@ class CartController extends Controller
 
     public function index()
     {
+        $items = $this->cart->presented();
+        $exclude = $items->pluck('product_id');
+
+        $suggestions = Product::query()
+            ->where('is_active', true)
+            ->when($exclude->isNotEmpty(), fn ($query) => $query->whereNotIn('id', $exclude))
+            ->orderBy('id')
+            ->take(3)
+            ->get();
+
         return view('frontend.cart', [
-            'items' => $this->cart->items(),
+            'items' => $items,
             'subtotal' => $this->cart->subtotal(),
             'count' => $this->cart->count(),
+            'suggestions' => $suggestions,
         ]);
     }
 

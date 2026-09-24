@@ -4,45 +4,41 @@
 @section('meta_description', 'Explore our state-of-the-art washing stations in Rwanda where our specialty coffee is processed with care.')
 
 @section('content')
+@php
+    $farmerTotal = (int) $stations->sum(fn ($station) => (int) ($station->farmers_working ?? 0));
+    $areaTotal = $stations->sum(function ($station) {
+        return (float) preg_replace('/[^\d.]/', '', (string) ($station->total_area_under_production ?? ''));
+    });
+@endphp
+
 @include('partials.frontend.page-hero', [
     'title' => __('messages.our_stations'),
-    'subtitle' => 'The places where our cherries are received, processed, and prepared with care for quality-focused buyers.',
+    'subtitle' => 'Two stations in Rwanda’s Eastern Province — Karenge in Rwamagana and Gasange in Gatsibo.',
     'eyebrow' => 'GMAC Coffee',
+    'image' => \App\Support\FrontendShowcase::img('farm'),
 ])
 
 <section class="stations-page">
     <div class="container">
-        <div class="stations-intro fade-in">
-            <div class="stations-kicker">Origin &amp; Processing</div>
-            <h2 class="stations-intro-title">Discover the places where our cherries are processed with <em>care and full traceability.</em></h2>
-            <p class="stations-intro-text">Each station reflects our commitment to cleaner processing, stronger farmer relationships, and the distinctive character of Rwandan coffee.</p>
-        </div>
-
         <div class="stations-summary fade-in">
             <div class="stations-summary__item">
                 <strong>{{ $stations->count() }}</strong>
-                <span>Managed stations</span>
+                <span>Washing stations</span>
             </div>
             <div class="stations-summary__item">
-                <strong>Traceable</strong>
-                <span>Farm-linked sourcing</span>
+                <strong>{{ number_format($farmerTotal) }}</strong>
+                <span>Farmers at the stations</span>
             </div>
             <div class="stations-summary__item">
-                <strong>Specialty</strong>
-                <span>Washed and experimental lots</span>
+                <strong>{{ $areaTotal > 0 ? rtrim(rtrim(number_format($areaTotal, 1, '.', ''), '0'), '.').' ha' : '—' }}</strong>
+                <span>Area under production</span>
             </div>
         </div>
 
         @forelse($stations as $index => $station)
             <article class="station-block fade-in {{ $index % 2 !== 0 ? 'reverse' : '' }}">
                 <div class="station-visuals">
-                    @if($station->hasMedia('cover'))
-                        <img src="{{ $station->getFirstMediaUrl('cover') }}" alt="{{ $station->name }}" class="station-image shadow-lg">
-                    @else
-                        <div class="station-placeholder shadow-lg">
-                            <i class="fa-solid fa-industry"></i>
-                        </div>
-                    @endif
+                    <img src="{{ $station->displayImage() }}" alt="{{ $station->name }}" class="station-image shadow-lg">
 
                     @if($station->hasMedia('gallery'))
                         <div class="station-mini-gallery mt-1">
@@ -61,34 +57,70 @@
                     <div class="station-location"><i class="fa-solid fa-location-dot text-gold mr-1"></i> {{ $station->location }}</div>
 
                     <div class="station-specs-grid">
-                        <div class="spec-item">
-                            <span class="spec-label">Altitude</span>
-                            <span class="spec-value">{{ $station->altitude ?? 'N/A' }}</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Soil type</span>
-                            <span class="spec-value">{{ $station->type_of_soil ?? 'N/A' }}</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Variety</span>
-                            <span class="spec-value">{{ $station->coffee_variety ?? 'N/A' }}</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Farmers</span>
-                            <span class="spec-value">{{ $station->farmers_working ?? '0' }}+</span>
-                        </div>
+                        @if($station->altitude)
+                            <div class="spec-item">
+                                <span class="spec-label">Altitude</span>
+                                <span class="spec-value">{{ $station->altitude }}</span>
+                            </div>
+                        @endif
+                        @if($station->type_of_soil)
+                            <div class="spec-item">
+                                <span class="spec-label">Soil type</span>
+                                <span class="spec-value">{{ $station->type_of_soil }}</span>
+                            </div>
+                        @endif
+                        @if($station->coffee_variety)
+                            <div class="spec-item">
+                                <span class="spec-label">Variety</span>
+                                <span class="spec-value">{{ $station->coffee_variety }}</span>
+                            </div>
+                        @endif
+                        @if($station->farmers_working)
+                            <div class="spec-item">
+                                <span class="spec-label">Farmers</span>
+                                <span class="spec-value">{{ number_format((int) $station->farmers_working) }}</span>
+                            </div>
+                        @endif
+                        @if($station->total_area_under_production)
+                            <div class="spec-item">
+                                <span class="spec-label">Area</span>
+                                <span class="spec-value">{{ $station->total_area_under_production }}</span>
+                            </div>
+                        @endif
+                        @if($station->harvest_period)
+                            <div class="spec-item">
+                                <span class="spec-label">Harvest</span>
+                                <span class="spec-value">{{ $station->harvest_period }}</span>
+                            </div>
+                        @endif
                         @if($station->cupping_score)
                             <div class="spec-item">
-                                <span class="spec-label">Cupping Score</span>
-                                <span class="spec-value text-gold">{{ $station->cupping_score }}</span>
+                                <span class="spec-label">Cupping score</span>
+                                <span class="spec-value">{{ $station->cupping_score }}</span>
+                            </div>
+                        @endif
+                        @if($station->certification)
+                            <div class="spec-item">
+                                <span class="spec-label">Certification</span>
+                                <span class="spec-value">{{ $station->certification }}</span>
                             </div>
                         @endif
                     </div>
 
                     <div class="station-description">
-                        <h4>Processing &amp; Traceability</h4>
-                        <p>{{ $station->processing ?? 'Traditional washed process with precise moisture control.' }}</p>
-                        <p class="station-description__trace">{{ $station->traceability ?? 'Fully traceable to the farm level.' }}</p>
+                        @if($station->processing)
+                            <h4>Processing</h4>
+                            <p>{{ $station->processing }}</p>
+                        @endif
+                        @if($station->other_coffee_available)
+                            <p><strong>Other coffee:</strong> {{ $station->other_coffee_available }}</p>
+                        @endif
+                        @if($station->traceability)
+                            <p class="station-description__trace">{{ $station->traceability }}</p>
+                        @endif
+                        @if($station->environment)
+                            <p>{{ $station->environment }}</p>
+                        @endif
                     </div>
                 </div>
             </article>
@@ -110,54 +142,51 @@
 @push('scripts')
 <style>
     .stations-page {
-        padding: 3rem 0 5.5rem;
+        padding: 2.5rem 0 5rem;
     }
 
     .stations-intro {
-        max-width: 780px;
-        margin: 0 auto 2.75rem;
-        text-align: center;
+        max-width: 720px;
+        margin: 0 0 2rem;
+        text-align: left;
     }
 
     .stations-kicker {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.45rem 0.95rem;
-        border-radius: 999px;
-        background: rgba(138, 99, 32, 0.1);
-        border: 1px solid rgba(138, 99, 32, 0.16);
-        color: #8a6320;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
+        display: block;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: #9a7d4e;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: none;
+        margin-bottom: 0.55rem;
     }
 
     .stations-intro-title {
-        margin: 0 0 0.9rem;
-        font-size: clamp(2.2rem, 4vw, 3.5rem);
-        line-height: 1.05;
-        color: #21160f;
+        margin: 0 0 0.7rem;
+        font-size: clamp(1.7rem, 3vw, 2.2rem);
+        line-height: 1.2;
+        color: #2a1c14;
     }
 
     .stations-intro-title em {
-        color: var(--clr-gold, #c9963f);
-        font-style: italic;
+        color: #7a6452;
+        font-style: normal;
     }
 
     .stations-intro-text {
         max-width: 58ch;
-        margin: 0 auto;
-        color: rgba(24,49,38,0.74);
-        font-size: 1rem;
-        line-height: 1.8;
+        margin: 0;
+        color: #6b5344;
+        font-size: 0.98rem;
+        line-height: 1.75;
     }
 
     .stations-summary {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         gap: 1rem;
         margin-bottom: 1.5rem;
     }
@@ -194,13 +223,15 @@
         grid-template-columns: 1fr 1.2fr;
         gap: 2.25rem;
         align-items: start;
-        padding: 2rem;
-        background:
-            radial-gradient(360px 160px at 100% 0%, rgba(201,150,63,0.08), transparent 60%),
-            linear-gradient(180deg, #fdfaf5 0%, #f5ebe0 100%);
-        border: 1px solid rgba(201,150,63,0.12);
-        border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(10,26,18,0.08);
+        padding: 1.75rem;
+        background: var(--clr-white);
+        border: 1px solid rgba(26, 36, 32, 0.08);
+        border-radius: 24px;
+        box-shadow: 0 12px 36px rgba(26, 51, 44, 0.06);
+    }
+
+    .station-block + .station-block {
+        margin-top: 2.5rem;
     }
     
     .station-block.reverse {
@@ -212,18 +243,16 @@
     }
 
     .station-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.45rem 0.9rem;
-        border-radius: 999px;
-        background: rgba(201, 150, 63, 0.1);
-        border: 1px solid rgba(201, 150, 63, 0.16);
-        color: var(--clr-gold-hover);
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
+        display: block;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: #9a7d4e;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: none;
+        margin-bottom: 0.55rem;
     }
     
     .station-image {
@@ -270,7 +299,7 @@
     
     .station-name {
         font-size: clamp(2rem, 3vw, 2.8rem);
-        color: #21160f;
+        color: var(--clr-text-main);
         margin-bottom: 0.5rem;
     }
     
@@ -303,7 +332,7 @@
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.14em;
-        color: #8a6320;
+        color: var(--clr-gold-hover);
         margin-bottom: 0.25rem;
         font-weight: 700;
     }
@@ -311,7 +340,7 @@
     .spec-value {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #1a0e08;
+        color: var(--clr-text-main);
     }
     
     [data-theme='dark'] .spec-value { color: var(--clr-white); }
@@ -326,17 +355,19 @@
 
     .station-description h4 {
         margin-bottom: 0.5rem;
-        color: #1a0e08;
+        color: var(--clr-text-main);
         font-size: 1.1rem;
     }
 
     .station-description p {
-        color: rgba(26,16,8,0.62);
+        color: var(--clr-text-muted);
         line-height: 1.75;
+        margin: 0 0 0.7rem;
     }
+    .station-description p:last-child { margin-bottom: 0; }
+    .station-description strong { color: #3f3731; font-weight: 600; }
 
     .station-description__trace {
-        margin-top: 0.6rem;
         font-style: italic;
     }
 

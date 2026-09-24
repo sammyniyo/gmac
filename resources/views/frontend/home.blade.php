@@ -6,9 +6,19 @@
 @section('content')
 
 @php
+    if ($heroSlides->isEmpty()) {
+        $heroSlides = collect(\App\Support\FrontendShowcase::heroSlides())->map(fn (array $row) => (object) [
+            'title' => $row['title'],
+            'subtitle' => $row['subtitle'],
+            'image_url' => $row['image'],
+            'image_position' => $row['position'] ?? 'center 40%',
+            'button_text' => $row['button_text'],
+            'button_href' => LaravelLocalization::localizeUrl(url($row['button_link'])),
+        ]);
+    }
     $firstHero = $heroSlides->first();
     $heroPrimaryLabel = ($firstHero && filled($firstHero->button_text ?? null)) ? $firstHero->button_text : __('messages.discover');
-    $heroPrimaryHref = $firstHero->button_href ?? LaravelLocalization::localizeUrl(url('/products'));
+    $heroPrimaryHref = $firstHero->button_href ?? LaravelLocalization::localizeUrl(url('/shop'));
 @endphp
 
 <section class="gh-hero">
@@ -22,9 +32,6 @@
         data-secondary-label="{{ e(__('messages.contact')) }}"
         data-secondary-href="{{ e(LaravelLocalization::localizeUrl(url('/contact'))) }}"
     >
-        @if($heroSlides->isEmpty())
-            <div class="gh-hero__ambient-fallback" aria-hidden="true"></div>
-        @else
         <div class="gh-hero__track" aria-live="polite">
             @foreach($heroSlides as $s)
                 <div
@@ -35,52 +42,47 @@
                     data-primary-label="{{ e(filled($s->button_text ?? null) ? $s->button_text : __('messages.discover')) }}"
                     data-primary-href="{{ e($s->button_href) }}"
                 >
-                    <img class="gh-hero__slide-img" src="{{ $s->image_url }}" alt="{{ e($s->title ?? $heroTitle) }}">
+                    <img
+                        class="gh-hero__slide-img"
+                        src="{{ $s->image_url }}"
+                        alt="{{ e($s->title ?? $heroTitle) }}"
+                        style="object-position: {{ $s->image_position ?? 'center 40%' }};"
+                        @if($loop->first) fetchpriority="high" @else loading="lazy" @endif
+                    >
                 </div>
             @endforeach
         </div>
-        @endif
 
         <div class="gh-hero__overlay"></div>
 
         <div class="container gh-hero__inner">
             <div class="gh-hero__copy">
-                <div class="gh-kicker">{{ $tagline }}</div>
-
+                <div class="gh-hero__badge">
+                    <span>{{ $tagline ?: 'GMAC Coffee' }}</span>
+                </div>
                 <h1 class="gh-hero__h1">
                     <span id="gh-hero-title" class="gh-hero__text">{!! nl2br(e($heroTitle)) !!}</span>
-                    <em id="gh-hero-subtitle" class="gh-hero__text gh-hero__text--sub">{{ $heroSub }}</em>
                 </h1>
-
-                <p class="gh-hero__body">{{ $aboutShort }}</p>
-
+                <p id="gh-hero-subtitle" class="gh-hero__lead">{{ $heroSub }}</p>
                 <div class="gh-hero__actions" id="gh-hero-actions">
                     <a href="{{ $heroPrimaryHref }}" id="gh-hero-cta-primary" class="gh-btn gh-btn--gold">
                         {{ $heroPrimaryLabel }}
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     </a>
                     <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" id="gh-hero-cta-secondary" class="gh-btn gh-btn--ghost">
                         {{ __('messages.contact') }}
                     </a>
                 </div>
-
-                <div class="gh-hero__badges">
-                    @foreach($heroBadges as $badgeLabel)
-                        <span class="gh-badge">{{ $badgeLabel }}</span>
-                    @endforeach
-                </div>
             </div>
         </div>
 
         @if($heroSlides->count() > 1)
-            <div class="gh-hero__controls" aria-label="Hero slider controls">
-                <button type="button" class="gh-hero__arrow" data-prev aria-label="Previous image">
-                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                </button>
-                <button type="button" class="gh-hero__arrow" data-next aria-label="Next image">
-                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-                </button>
-            </div>
-
+            <button type="button" class="gh-hero__nav gh-hero__nav--prev" data-prev aria-label="Previous slide">
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="gh-hero__nav gh-hero__nav--next" data-next aria-label="Next slide">
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </button>
             <div class="gh-hero__dots" role="tablist" aria-label="Hero slider dots">
                 @foreach($heroSlides as $s)
                     <button
@@ -97,93 +99,122 @@
     </div>
 </section>
 
-<section class="home-section home-section--about">
+<section class="home-stats">
     <div class="container">
-        <div class="home-about gh-reveal">
-            <div class="home-about__media">
-                <img src="{{ $brandStoryImage }}" alt="{{ __('messages.home_about_image_alt') }}">
-            </div>
-            <div class="home-about__content">
-                <div class="home-kicker">{{ __('messages.history') }}</div>
-                <h2 class="home-title">{{ $aboutTitleBefore }}<em>{{ $aboutTitleEm }}</em></h2>
-                <p class="home-copy">{{ $aboutShort }}</p>
-                <p class="home-copy">{{ $aboutParagraph2 }}</p>
-                <a href="{{ LaravelLocalization::localizeUrl(url('/history')) }}" class="home-link">
-                    {{ __('messages.read_more') }}
-                    <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="home-section home-section--why">
-    <div class="container">
-        <div class="home-heading gh-reveal">
-            <div class="home-kicker">{{ __('messages.why_gmac') }}</div>
-            <h2 class="home-title home-title--center">Why people choose <em>GMAC Coffee.</em></h2>
-            <p class="home-copy home-copy--center">{{ $whyLead }}</p>
-        </div>
-
-        <div class="home-why">
-            <article class="home-card gh-reveal" style="--reveal-delay:0.05s">
-                <div class="home-card__icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></div>
-                <h3 class="home-card__title">{{ __('messages.sustainable') }}</h3>
-                <p class="home-card__body">{{ __('messages.sustainable_desc') }}</p>
-            </article>
-            <article class="home-card gh-reveal" style="--reveal-delay:0.12s">
-                <div class="home-card__icon"><i class="fa-solid fa-award" aria-hidden="true"></i></div>
-                <h3 class="home-card__title">{{ __('messages.premium') }}</h3>
-                <p class="home-card__body">{{ __('messages.premium_desc') }}</p>
-            </article>
-            <article class="home-card gh-reveal" style="--reveal-delay:0.19s">
-                <div class="home-card__icon"><i class="fa-solid fa-globe-africa" aria-hidden="true"></i></div>
-                <h3 class="home-card__title">{{ __('messages.global') }}</h3>
-                <p class="home-card__body">{{ __('messages.global_desc') }}</p>
-            </article>
-        </div>
-    </div>
-</section>
-
-@if(count($stats) > 0)
-<section class="home-section home-section--stats">
-    <div class="container">
-        <div class="home-stats">
-            @foreach($stats as $index => $stat)
-                <div class="home-stat gh-reveal" style="--reveal-delay:{{ $index * 0.08 }}s">
-                    @if($stat->icon)
-                        <div class="home-stat__icon"><i class="{{ $stat->icon }}" aria-hidden="true"></i></div>
-                    @endif
-                    <div class="home-stat__num">{{ $stat->number }}</div>
-                    <div class="home-stat__label">{{ $stat->title }}</div>
+        <div class="home-stats__grid">
+            @foreach($stats as $stat)
+                <div class="home-stat gh-reveal">
+                    <strong>{{ $stat->number }}</strong>
+                    <span>{{ $stat->title }}</span>
                 </div>
             @endforeach
         </div>
     </div>
 </section>
-@endif
 
-@if($testimonials->isNotEmpty())
-<section class="home-section home-section--reviews">
+<section class="home-section home-section--portal">
+    <div class="container home-portal">
+        <div class="home-portal__left gh-reveal">
+            <p class="home-kicker">{{ __('messages.history') }}</p>
+            <h2 class="home-title">{{ $aboutTitleBefore }} {{ $aboutTitleEm }}</h2>
+            <ul class="home-portal__list">
+                <li>
+                    <i class="fa-solid fa-leaf" aria-hidden="true"></i>
+                    <span>{{ __('messages.sustainable') }} — {{ __('messages.sustainable_desc') }}</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-award" aria-hidden="true"></i>
+                    <span>{{ __('messages.premium') }} — {{ __('messages.premium_desc') }}</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-globe-africa" aria-hidden="true"></i>
+                    <span>{{ __('messages.global') }} — {{ __('messages.global_desc') }}</span>
+                </li>
+            </ul>
+            <div class="home-portal__copy">
+                <p>{{ $aboutShort }}</p>
+                <p>{{ $aboutParagraph2 }}</p>
+                <a href="{{ LaravelLocalization::localizeUrl(url('/history')) }}" class="home-link">
+                    {{ __('messages.read_more') }}
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+        <div class="home-portal__right gh-reveal">
+            <figure class="home-portal__frame">
+                <img src="{{ $brandStoryImage }}" alt="GMAC Coffee at origin">
+            </figure>
+        </div>
+    </div>
+</section>
+
+<section class="home-section home-section--process">
     <div class="container">
         <div class="home-heading gh-reveal">
-            <div class="home-kicker">{{ $reviewsKicker }}</div>
-            <h2 class="home-title home-title--center">{{ $reviewsTitle }}<em>{{ $reviewsTitleEm }}</em></h2>
-            <p class="home-copy home-copy--center">{{ $reviewsLead }}</p>
+            <p class="home-kicker">From seedling to cup</p>
+            <h2 class="home-title">Five steps we never skip</h2>
+            <p class="home-copy">Quality at GMAC is a sequence: seedlings, the farm, harvest, processing, and a cupping table that still tells the hill it came from.</p>
         </div>
-
-        <div class="home-reviews">
-            @foreach($testimonials as $review)
-                <article class="home-review gh-reveal" style="--reveal-delay:{{ $loop->index * 0.08 }}s">
-                    <div class="home-review__stars" aria-hidden="true">
-                        @foreach(range(1, max(1, (int) ($review->rating ?? 5))) as $star)
-                            <i class="fa-solid fa-star"></i>
-                        @endforeach
+        <div class="home-process">
+            @foreach($processSteps as $step)
+                <article class="home-process__item gh-reveal">
+                    @if(!empty($step['image']))
+                        <div class="home-process__media">
+                            <img src="{{ \App\Support\FrontendShowcase::img($step['image']) }}" alt="{{ $step['title'] }}">
+                        </div>
+                    @endif
+                    <div class="home-process__body">
+                        <span class="home-process__num">{{ $step['step'] }}</span>
+                        <h3>{{ $step['title'] }}</h3>
+                        <p>{{ $step['text'] }}</p>
                     </div>
-                    <p class="home-review__quote">"{{ $review->quote }}"</p>
-                    <div class="home-review__meta">
-                        <div class="home-review__name">{{ $review->name }}</div>
-                        <div class="home-review__role">{{ $review->role }} · {{ $review->company }}</div>
+                </article>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+@if($featuredProducts->count() > 0)
+<section class="home-section">
+    <div class="container">
+        <div class="home-heading home-heading--row gh-reveal">
+            <div>
+                <p class="home-kicker">{{ __('messages.featured_products') }}</p>
+                <h2 class="home-title">Retail roasted bags</h2>
+                <p class="home-copy">{{ $whyLead }}</p>
+            </div>
+            <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}" class="home-link">Browse the shop <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <div class="home-products">
+            @foreach($featuredProducts->take(3) as $product)
+                <article class="home-product gh-reveal">
+                    <a href="{{ route('products.show', $product->slug) }}" class="home-product__media">
+                        <img src="{{ $product->displayImage() }}" alt="{{ $product->name }}" class="{{ $product->usesPackShot() ? 'is-pack' : '' }}">
+                    </a>
+                    <div class="home-product__body">
+                        <div class="home-product__pack">
+                            <span class="home-product__swatch is-{{ $product->packColor() }}" aria-hidden="true"></span>
+                            <span>{{ $product->packSize() }} · {{ $product->packColorLabel() }}{{ $product->packRoast() ? ' · '.$product->packRoast() : '' }}</span>
+                        </div>
+                        <h3 class="home-product__title">
+                            <a href="{{ route('products.show', $product->slug) }}">{{ $product->name }}</a>
+                        </h3>
+                        @if($product->barcode)
+                            <p class="g-barcode">{{ $product->barcode }}</p>
+                        @endif
+                        <div class="home-product__meta">
+                            @if($product->price)
+                                <span class="home-product__price">{{ $product->formattedPrice() }}</span>
+                            @endif
+                            <div class="home-product__actions">
+                                <form action="{{ route('cart.add', $product->slug) }}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="qty" value="1">
+                                    <button type="submit" class="sp-card__add">{{ __('messages.add_to_cart') }}</button>
+                                </form>
+                                <a href="{{ route('products.show', $product->slug) }}" class="home-link">{{ __('messages.details') }}</a>
+                            </div>
+                        </div>
                     </div>
                 </article>
             @endforeach
@@ -192,37 +223,25 @@
 </section>
 @endif
 
-@if($featuredProducts->count() > 0)
-<section class="home-section home-section--products">
-    <div class="container">
-        <div class="home-heading home-heading--split gh-reveal">
-            <div>
-                <div class="home-kicker">{{ __('messages.featured_products') }}</div>
-                <h2 class="home-title">Our featured <em>selection.</em></h2>
-            </div>
-            <a href="{{ LaravelLocalization::localizeUrl(url('/products')) }}" class="home-link">
-                {{ __('messages.products') }}
-                <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-            </a>
+@if($testimonials->isNotEmpty())
+<section class="home-section">
+    <div class="container home-faq">
+        <div class="gh-reveal">
+            <p class="home-kicker">{{ $reviewsKicker }}</p>
+            <h2 class="home-title">{{ $reviewsTitle }} {{ $reviewsTitleEm }}</h2>
+            <p class="home-copy">{{ $reviewsLead }}</p>
         </div>
-
-        <div class="home-products">
-            @foreach($featuredProducts->take(3) as $product)
-                <article class="home-product gh-reveal" style="--reveal-delay:{{ $loop->index * 0.08 }}s">
-                    <a href="{{ route('products.show', $product->slug) }}" class="home-product__media">
-                        @if($product->hasMedia('products'))
-                            <img src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name }}">
-                        @else
-                            <div class="home-product__placeholder"><i class="fa-solid fa-mug-hot" aria-hidden="true"></i></div>
-                        @endif
-                    </a>
-                    <div class="home-product__body">
-                        <span class="home-product__category">{{ $product->category->name }}</span>
-                        <h3 class="home-product__title">
-                            <a href="{{ route('products.show', $product->slug) }}">{{ $product->name }}</a>
-                        </h3>
-                        <p class="home-product__text">{{ Str::limit(strip_tags($product->description), 90) }}</p>
+        <div class="home-reviews">
+            @foreach($testimonials as $review)
+                <article class="home-review gh-reveal">
+                    <div class="home-review__stars" aria-hidden="true">
+                        @for($i = 0; $i < (int) ($review->rating ?? 5); $i++)
+                            <i class="fa-solid fa-star"></i>
+                        @endfor
                     </div>
+                    <p class="home-review__quote">“{{ $review->quote }}”</p>
+                    <div class="home-review__name">{{ $review->name }}</div>
+                    <div class="home-review__role">{{ $review->role }} · {{ $review->company }}</div>
                 </article>
             @endforeach
         </div>
@@ -233,12 +252,12 @@
 <section class="home-section home-section--cta">
     <div class="container">
         <div class="home-cta gh-reveal">
-            <div class="home-kicker">{{ $ctaKicker }}</div>
-            <h2 class="home-title home-title--center">{{ $ctaTitle }}<em>{{ $ctaTitleEm }}</em></h2>
-            <p class="home-copy home-copy--center">{{ $ctaLead }}</p>
+            <p class="home-kicker">{{ $ctaKicker }}</p>
+            <h2 class="home-title">{{ $ctaTitle }} {{ $ctaTitleEm }}</h2>
+            <p class="home-copy">{{ $ctaLead }}</p>
             <div class="home-cta__actions">
-                <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}" class="gh-btn gh-btn--gold">Shop Coffee</a>
-                <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" class="gh-btn gh-btn--dark">Contact Us</a>
+                <a href="{{ LaravelLocalization::localizeUrl(url('/shop')) }}" class="gh-btn gh-btn--gold">Shop coffee</a>
+                <a href="{{ LaravelLocalization::localizeUrl(url('/contact')) }}" class="gh-btn gh-btn--ghost home-cta__ghost">{{ __('messages.contact') }}</a>
             </div>
         </div>
     </div>
@@ -248,746 +267,280 @@
 
 @push('scripts')
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
-
-:root {
-    --gh-forest: #2d1f15;
-    --gh-ink: #21160f;
-    --gh-parchment: #f7f1e7;
-    --gh-cream: #f6f0e7;
-    --gh-surface: #fffdf9;
-    --gh-line: rgba(33, 22, 15, 0.08);
-    --gh-gold: #d4a24a;
-    --gh-gold-dk: #9a7028;
-    --gh-gold-lt: #e8c97a;
-    --gh-display:  'Cormorant Garamond', Georgia, serif;
-    --gh-body:     'DM Sans', var(--font-body, sans-serif);
-    --gh-ease:     cubic-bezier(0.16, 1, 0.3, 1);
-}
-[data-theme="dark"] {
-    --gh-parchment: #17110d;
-    --gh-cream: #100c09;
-    --gh-surface: #1b140f;
-    --gh-line: rgba(247, 241, 231, 0.08);
-    --gh-ink: #f7f1e7;
-}
-
-.gh-reveal {
-    opacity: 0;
-    transform: translateY(28px) scale(0.99);
-    filter: blur(2px);
-    transition: opacity 0.7s var(--gh-ease), transform 0.7s var(--gh-ease), filter 0.7s var(--gh-ease);
-    transition-delay: var(--reveal-delay, 0s);
-}
-.gh-reveal.is-visible { opacity: 1; transform: none; filter: none; }
-
-@media (prefers-reduced-motion: reduce) {
-    .gh-reveal {
-        opacity: 1;
-        transform: none;
-        filter: none;
-        transition: none;
-    }
-}
-
+.gh-reveal { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+.gh-reveal.is-visible { opacity: 1; transform: none; }
 .gh-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
     justify-content: center;
-    padding: 0.95rem 1.55rem;
-    font-family: var(--gh-body);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0.7rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
     text-decoration: none;
-    border-radius: 999px;
     border: 1px solid transparent;
-    cursor: pointer;
-    transition: background 0.22s, color 0.22s, border-color 0.22s, transform 0.22s var(--gh-ease), box-shadow 0.22s;
 }
-.gh-btn:hover { transform: translateY(-2px); }
-.gh-btn--gold {
-    background: linear-gradient(135deg, var(--gh-gold) 0%, #e8b84e 55%, #c9933a 100%);
-    color: #ffffff;
-    box-shadow: 0 14px 36px rgba(212, 162, 74, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
-}
-.gh-btn--gold:hover { color: #ffffff; box-shadow: 0 18px 44px rgba(212, 162, 74, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.18) inset; }
-.gh-btn--dark {
-    background: #2d1f15;
-    color: #ffffff;
-}
-.gh-btn--dark:hover { color: #ffffff; background: #21160f; }
-.gh-btn--ghost {
-    background: rgba(255,255,255,0.12);
-    color: #ffffff;
-    border-color: rgba(255,255,255,0.28);
-    backdrop-filter: blur(10px);
-}
-.gh-btn--ghost:hover { color: #ffffff; border-color: rgba(255,255,255,0.45); }
+.gh-btn--gold { background: #7a6452; color: #fff; }
+.gh-btn--ghost { background: #fff; color: #3f3731; border-color: rgba(255,255,255,.7); }
 
-.gh-hero {
-    position: relative;
-    min-height: min(88vh, 820px);
-    overflow: hidden;
-    background: #20150f;
+.gh-hero { position: relative; min-height: min(78vh, 720px); overflow: hidden; background: #5c4a3c; }
+.gh-hero__slider, .gh-hero__track, .gh-hero__slide { position: absolute; inset: 0; }
+.gh-hero__slide { opacity: 0; transition: opacity .8s ease; }
+.gh-hero__slide.is-active { opacity: 1; z-index: 1; }
+.gh-hero__slide-img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; display: block; transform: scale(1.04); }
+.gh-hero__slide.is-active .gh-hero__slide-img { animation: ghKen 7.5s ease-out forwards; }
+@keyframes ghKen { from { transform: scale(1.08); } to { transform: scale(1); } }
+.gh-hero__copy.is-text-animating .gh-hero__badge,
+.gh-hero__copy.is-text-animating .gh-hero__h1,
+.gh-hero__copy.is-text-animating .gh-hero__lead,
+.gh-hero__copy.is-text-animating .gh-hero__actions {
+    animation: ghIn .7s ease both;
 }
-
+.gh-hero__copy.is-text-animating .gh-hero__h1 { animation-delay: .08s; }
+.gh-hero__copy.is-text-animating .gh-hero__lead { animation-delay: .16s; }
+.gh-hero__copy.is-text-animating .gh-hero__actions { animation-delay: .24s; }
+@keyframes ghIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.gh-hero__nav {
+    position: absolute; top: 50%; z-index: 5; transform: translateY(-50%);
+    width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.28);
+    background: rgba(255,255,255,.12); color: #fff; border-radius: 999px;
+    cursor: pointer; backdrop-filter: blur(8px);
+}
+.gh-hero__nav--prev { left: 1.25rem; }
+.gh-hero__nav--next { right: 1.25rem; }
+.gh-hero__nav:hover { background: rgba(255,255,255,.22); }
 .gh-hero__ambient-fallback {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background:
-        radial-gradient(ellipse 85% 55% at 18% 28%, rgba(212, 162, 74, 0.18), transparent 52%),
-        linear-gradient(145deg, #2a1d15 0%, #3d2a1c 38%, #1a120d 100%);
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #3d2918 0%, #5a3d28 50%, #2a1c14 100%);
 }
-
-.gh-hero__slider,
-.gh-hero__track,
-.gh-hero__slide {
-    position: absolute;
-    inset: 0;
-}
-
-.gh-hero__h1 {
-    font-family: var(--gh-display);
-    font-size: clamp(3rem, 6vw, 5.6rem);
-    font-weight: 300;
-    line-height: 0.98;
-    color: #ffffff;
-    margin: 0 0 1.1rem;
-    max-width: 10ch;
-}
-.gh-hero__h1 em {
-    display: block;
-    font-style: normal;
-    font-family: var(--gh-body);
-    font-size: clamp(1rem, 1.4vw, 1.2rem);
-    font-weight: 400;
-    line-height: 1.6;
-    color: rgba(255,255,255,0.84);
-    margin-top: 0.85rem;
-    max-width: 34ch;
-}
-
-.gh-hero__text {
-    display: inline-block;
-    will-change: transform, opacity, filter;
-}
-.gh-hero__copy.is-text-animating .gh-hero__text {
-    animation: gh-hero-text-in 0.78s var(--gh-ease) both;
-}
-.gh-hero__copy.is-text-animating .gh-hero__text--sub {
-    animation-delay: 0.08s;
-}
-@keyframes gh-hero-text-in {
-    0% { opacity: 0; transform: translateY(14px); filter: blur(6px); }
-    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-
-.gh-hero__inner {
-    position: relative;
-    z-index: 2;
-    min-height: min(88vh, 820px);
-    display: flex;
-    align-items: center;
-}
-
-.gh-hero__copy {
-    max-width: 640px;
-    padding: calc(var(--gnav-total-h, 100px) + 2rem) 0 5rem;
-}
-
-@keyframes gh-kicker-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(212, 162, 74, 0); border-color: rgba(255,255,255,0.16); }
-    50% { box-shadow: 0 0 28px rgba(212, 162, 74, 0.2); border-color: rgba(232, 201, 122, 0.35); }
-}
-
-.gh-kicker {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.45rem 0.9rem;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.16);
-    color: rgba(255,255,255,0.86);
-    font-family: var(--gh-body);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .gh-kicker { animation: gh-kicker-pulse 6s ease-in-out infinite; }
-}
-
-.gh-hero__body {
-    font-family: var(--gh-body);
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.8;
-    color: rgba(255,255,255,0.78);
-    max-width: 52ch;
-    margin-bottom: 1.8rem;
-}
-
-.gh-hero__actions {
-    display: flex;
-    gap: 0.9rem;
-    flex-wrap: wrap;
-}
-
-.gh-hero__badges {
-    display: flex;
-    gap: 0.7rem;
-    flex-wrap: wrap;
-    margin-top: 1.25rem;
-}
-.gh-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.45rem 0.8rem;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.1);
-    border-radius: 999px;
-    font-family: var(--gh-body);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.82);
-}
-
+.gh-hero__ambient-fallback .gh-hero__slide-img { position: absolute; inset: 0; }
 .gh-hero__overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background:
-        radial-gradient(ellipse 80% 50% at 20% 30%, rgba(212, 162, 74, 0.12), transparent 55%),
-        linear-gradient(90deg, rgba(20,14,10,0.85) 0%, rgba(20,14,10,0.48) 42%, rgba(20,14,10,0.15) 100%),
-        linear-gradient(180deg, rgba(20,14,10,0.25) 0%, rgba(20,14,10,0.68) 100%);
-    pointer-events: none;
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, rgba(28,16,10,.18) 0%, rgba(28,16,10,.42) 42%, rgba(28,16,10,.78) 100%);
 }
-
-.gh-hero__slide {
-    opacity: 0;
-    transform: scale(1.06);
-    transition: opacity 0.65s var(--gh-ease), transform 8s cubic-bezier(0.25, 0.1, 0.25, 1);
-    will-change: opacity, transform;
+.gh-hero__inner {
+    position: relative; z-index: 2;
+    min-height: min(78vh, 720px);
+    display: flex; align-items: flex-end;
+    padding: 5.5rem 0 8.5rem;
 }
-.gh-hero__slide.is-active {
-    opacity: 1;
-    transform: scale(1.0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .gh-hero__slide {
-        transition: opacity 0.35s ease;
-        transform: none;
-    }
-    .gh-hero__slide.is-active { transform: none; }
-}
-.gh-hero__slide-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.gh-hero__controls {
-    position: absolute;
-    right: 2rem;
-    bottom: 2rem;
-    z-index: 4;
-    display: flex;
-    gap: 0.65rem;
-}
-.gh-hero__arrow {
-    width: 46px;
-    height: 46px;
+.gh-hero__copy { max-width: 40rem; color: #fff; }
+.gh-hero__badge {
+    display: inline-flex; align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.4rem 0.85rem;
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.24);
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(10px);
-    color: #ffffff;
-    cursor: pointer;
-    transition: transform 0.2s var(--gh-ease), background 0.2s, border-color 0.2s;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.18);
+    color: rgba(255,255,255,.88);
+    font-size: 0.78rem; font-weight: 500;
 }
-.gh-hero__arrow:hover {
-    transform: translateY(-2px);
-    background: rgba(255,255,255,0.2);
-    border-color: rgba(255,255,255,0.4);
+.gh-hero__h1 {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: clamp(2.6rem, 5.4vw, 4.2rem);
+    font-weight: 500; line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: #fff; margin: 0 0 0.85rem;
 }
-
+.gh-hero__lead { color: rgba(255,255,255,.78); font-size: 1.02rem; line-height: 1.7; margin: 0 0 1.4rem; }
+.gh-hero__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 .gh-hero__dots {
-    position: absolute;
-    left: 50%;
-    bottom: 2rem;
-    transform: translateX(-50%);
-    z-index: 4;
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.65rem 0.85rem;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.16);
-    backdrop-filter: blur(10px);
+    position: absolute; left: 1.5rem; bottom: 6.5rem; z-index: 4;
+    display: flex; gap: 0.4rem;
 }
 .gh-hero__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    border: none;
-    background: rgba(255,255,255,0.45);
-    cursor: pointer;
-    transition: transform 0.2s var(--gh-ease), background 0.2s, width 0.2s;
+    width: 18px; height: 3px; border: none; border-radius: 99px;
+    background: rgba(255,255,255,.35); cursor: pointer;
 }
-.gh-hero__dot.is-active {
-    width: 24px;
-    background: var(--gh-gold-lt);
-}
-.gh-hero__dot:hover { transform: translateY(-1px); }
-
-@media (max-width: 900px) {
-    .gh-hero,
-    .gh-hero__inner {
-        min-height: 78vh;
-    }
-
-    .gh-hero__copy {
-        padding: calc(var(--gnav-total-h, 100px) + 1rem) 0 6rem;
-    }
-
-    .gh-hero__h1 {
-        max-width: none;
-    }
-
-    .gh-hero__controls {
-        right: 1rem;
-        bottom: 1rem;
-    }
-
-    .gh-hero__dots {
-        bottom: 1rem;
-    }
-}
-
-.home-section {
-    padding: 5.5rem 0;
-    background: var(--gh-cream);
-}
-
-.home-section--why,
-.home-section--products,
-.home-section--reviews {
-    background:
-        radial-gradient(900px 400px at 0% 0%, rgba(212, 162, 74, 0.06), transparent 55%),
-        #fbf8f3;
-}
-
-.home-section--stats {
-    padding-top: 0;
-}
-
-.home-kicker {
-    color: var(--gh-gold-dk);
-    font-family: var(--gh-body);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 0.9rem;
-}
-
-.home-title {
-    font-family: var(--gh-display);
-    font-size: clamp(2.2rem, 4vw, 3.6rem);
-    font-weight: 300;
-    line-height: 1.05;
-    color: var(--gh-ink);
-    margin: 0 0 1rem;
-}
-
-.home-title em {
-    color: var(--gh-gold-dk);
-    font-style: italic;
-}
-
-.home-title--center,
-.home-copy--center {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.home-copy {
-    font-family: var(--gh-body);
-    font-size: 1rem;
-    line-height: 1.8;
-    color: rgba(24, 49, 38, 0.72);
-    max-width: 60ch;
-}
-
-.home-heading {
-    max-width: 760px;
-    margin: 0 auto 2.5rem;
-}
-
-.home-heading--split {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: 1.25rem;
-}
-
-.home-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    color: var(--gh-gold-dk);
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-}
-
-.home-about {
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 2.5rem;
-    align-items: center;
-    background: var(--gh-surface);
-    border: 1px solid var(--gh-line);
-    border-radius: 28px;
-    padding: 1.4rem;
-    box-shadow: 0 18px 40px rgba(33, 22, 15, 0.05);
-    transition: box-shadow 0.4s var(--gh-ease), border-color 0.4s, transform 0.4s var(--gh-ease);
-}
-
-.home-about:hover {
-    box-shadow: 0 28px 56px rgba(33, 22, 15, 0.09);
-    border-color: rgba(212, 162, 74, 0.18);
-}
-
-.home-about__media {
-    overflow: hidden;
-    border-radius: 22px;
-}
-
-.home-about__media img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 22px;
-    display: block;
-    transition: transform 0.7s var(--gh-ease);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .home-about:hover .home-about__media img { transform: scale(1.04); }
-}
-
-.home-why {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.2rem;
-}
-
-.home-card {
-    background: var(--gh-surface);
-    border: 1px solid var(--gh-line);
-    border-radius: 24px;
-    padding: 2rem 1.6rem;
-    box-shadow: 0 16px 36px rgba(33, 22, 15, 0.04);
-    transition: transform 0.35s var(--gh-ease), box-shadow 0.35s var(--gh-ease), border-color 0.35s;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .home-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 28px 52px rgba(33, 22, 15, 0.1);
-        border-color: rgba(212, 162, 74, 0.2);
-    }
-}
-
-.home-card__icon {
-    width: 52px;
-    height: 52px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 16px;
-    background: rgba(184, 137, 61, 0.12);
-    color: var(--gh-gold-dk);
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-}
-
-.home-card__title {
-    font-family: var(--gh-display);
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: var(--gh-ink);
-    margin: 0 0 0.7rem;
-}
-
-.home-card__body {
-    font-family: var(--gh-body);
-    font-size: 0.95rem;
-    line-height: 1.75;
-    color: rgba(24, 49, 38, 0.72);
-    margin: 0;
-}
+.gh-hero__dot.is-active { background: #b08d4a; width: 28px; }
 
 .home-stats {
+    position: relative;
+    z-index: 4;
+    padding: 0;
+    background: #fff;
+    border-bottom: 1px solid #e7e2db;
+}
+.home-stats__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    background: #2d1f15;
-    border-radius: 28px;
-    padding: 1.25rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
 }
-
-.home-reviews {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-}
-
-.home-review {
-    background: var(--gh-surface);
-    border: 1px solid var(--gh-line);
-    border-radius: 24px;
-    padding: 1.7rem 1.5rem;
-    box-shadow: 0 16px 36px rgba(33, 22, 15, 0.04);
-    transition: transform 0.35s var(--gh-ease), box-shadow 0.35s var(--gh-ease), border-color 0.35s;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .home-review:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 24px 48px rgba(33, 22, 15, 0.08);
-        border-color: rgba(212, 162, 74, 0.18);
-    }
-}
-
-.home-review__stars {
-    display: flex;
-    gap: 0.35rem;
-    margin-bottom: 1rem;
-    color: var(--gh-gold);
-    font-size: 0.85rem;
-}
-
-.home-review__quote {
-    margin: 0 0 1.1rem;
-    font-size: 0.98rem;
-    line-height: 1.8;
-    color: rgba(24, 49, 38, 0.76);
-}
-
-.home-review__name {
-    font-family: var(--gh-display);
-    font-size: 1.25rem;
-    color: var(--gh-ink);
-}
-
-.home-review__role {
-    margin-top: 0.2rem;
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gh-gold-dk);
-}
-
 .home-stat {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 1.7rem 1.2rem;
+    background: none;
+    border: 0;
+    border-right: 1px solid #e7e2db;
+    border-radius: 0;
+    padding: 1.4rem 1.2rem;
+    box-shadow: none;
     text-align: center;
 }
-
-.home-stat__icon {
-    font-size: 1.3rem;
-    color: var(--gh-gold-lt);
-    margin-bottom: 0.7rem;
+.home-stat:last-child { border-right: 0; }
+.home-stat strong {
+    display: block;
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: #3f3731;
+    letter-spacing: -0.03em;
 }
+.home-stat span { display: block; margin-top: 0.25rem; color: #7d736a; font-size: 0.8rem; }
 
-.home-stat__num {
-    font-family: var(--gh-display);
-    font-size: clamp(2.3rem, 4vw, 3.3rem);
-    color: #ffffff;
-    line-height: 1;
-    margin-bottom: 0.45rem;
-}
-
-.home-stat__label {
-    color: rgba(255,255,255,0.72);
+.home-section { padding: 5rem 0; background: #f5f3f0; }
+.home-kicker {
+    color: #9a7d4e;
     font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    font-weight: 500;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
+    margin: 0 0 0.7rem;
 }
-
-.home-products {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.4rem;
+.home-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: clamp(2rem, 3.4vw, 2.7rem);
+    font-weight: 500;
+    color: #3f3731;
+    margin: 0 0 0.8rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
 }
+.home-copy { color: #6b5344; line-height: 1.75; max-width: 54ch; }
+.home-link { display: inline-flex; align-items: center; gap: 0.4rem; color: #3d2918; font-size: 0.88rem; font-weight: 600; text-decoration: none; }
+.home-heading--row { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
 
-.home-product {
-    background: var(--gh-surface);
-    border: 1px solid var(--gh-line);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 16px 36px rgba(33, 22, 15, 0.04);
-    transition: transform 0.35s var(--gh-ease), box-shadow 0.35s var(--gh-ease), border-color 0.35s;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .home-product:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 28px 56px rgba(33, 22, 15, 0.11);
-        border-color: rgba(212, 162, 74, 0.22);
-    }
-}
-
-.home-product__media {
-    display: block;
-    background: #d9e4dc;
-}
-
-.home-product__media img,
-.home-product__placeholder {
-    width: 100%;
-    height: 240px;
-    display: block;
-    object-fit: cover;
-    transition: transform 0.65s var(--gh-ease);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .home-product:hover .home-product__media img { transform: scale(1.06); }
-}
-
-.home-product__placeholder {
-    display: flex;
+.home-portal { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 1.05fr); gap: 3.25rem; align-items: stretch; }
+.home-portal__left { display: flex; flex-direction: column; justify-content: center; }
+.home-portal__left .home-title { margin-bottom: 1.15rem; }
+.home-portal__list { list-style: none; padding: 0; margin: 0 0 1.35rem; display: grid; gap: 0.85rem; }
+.home-portal__list li { display: flex; gap: 0.8rem; align-items: flex-start; color: #6b5344; line-height: 1.55; font-size: 0.95rem; }
+.home-portal__list i {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--gh-gold);
-    font-size: 3rem;
-}
-
-.home-product__body {
-    padding: 1.4rem;
-}
-
-.home-product__category {
-    display: inline-block;
-    margin-bottom: 0.7rem;
-    color: var(--gh-gold-dk);
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+    border-radius: 999px;
+    background: #efe8df;
+    color: #9a7d4e;
     font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
 }
-
-.home-product__title {
-    font-family: var(--gh-display);
-    font-size: 1.55rem;
-    font-weight: 400;
-    color: var(--gh-ink);
-    margin: 0 0 0.55rem;
-}
-
-.home-product__title a {
-    color: inherit;
-    text-decoration: none;
-}
-
-.home-product__text {
+.home-portal__copy p { color: #6b5344; line-height: 1.75; margin: 0 0 0.85rem; max-width: 48ch; }
+.home-portal__copy p:last-of-type { margin-bottom: 1rem; }
+.home-portal__frame {
     margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.75;
-    color: rgba(24, 49, 38, 0.72);
+    height: 100%;
+    min-height: 420px;
+    background: #efe8df;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 18px 44px rgba(42, 28, 20, 0.08);
 }
+.home-portal__frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; display: block; }
+
+.home-process { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.15rem; margin-top: 2.2rem; }
+.home-process__item {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e7e2db;
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    min-height: 100%;
+    box-shadow: 0 10px 28px rgba(42,28,20,.06);
+}
+.home-process__media { height: 176px; margin: 0; overflow: hidden; flex-shrink: 0; }
+.home-process__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; border-radius: 0; }
+.home-process__body { padding: 1.05rem 1.1rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
+.home-process__num {
+    display: block;
+    color: #9a7d4e;
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-weight: 500;
+    font-size: 0.92rem;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.45rem;
+}
+.home-process__item h3 { margin: 0 0 0.4rem; font-size: 1.12rem; color: #3f3731; }
+.home-process__item p { margin: 0; color: #6b5344; font-size: 0.88rem; line-height: 1.6; }
+
+.home-products, .home-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
+.home-product, .home-review {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    overflow: hidden;
+}
+.home-product__media { display: block; overflow: hidden; }
+.home-product__media img, .home-product__placeholder { width: 100%; height: 280px; object-fit: cover; display: block; transition: transform .6s ease; }
+.home-product:hover .home-product__media img { transform: scale(1.04); }
+.home-product__placeholder { background: #efe6d8; display: flex; align-items: center; justify-content: center; color: #c4a15a; font-size: 2rem; }
+.home-product__body { padding: 1.1rem 1.15rem 1.25rem; }
+.home-review { padding: 1.2rem 1.15rem 1.3rem; }
+.home-product__pack { display: flex; align-items: center; gap: 0.4rem; color: #7a6452; font-size: 0.74rem; font-weight: 600; }
+.home-product__swatch { width: 12px; height: 12px; border-radius: 999px; border: 1px solid rgba(63,55,49,.12); flex-shrink: 0; }
+.home-product__swatch.is-red { background: #c0392b; }
+.home-product__swatch.is-chocolate { background: #c4a574; }
+.home-product__swatch.is-green { background: #2f7a4a; }
+.home-product__title { font-family: 'Fraunces', 'Times New Roman', serif; font-size: 1.35rem; font-weight: 500; margin: 0.4rem 0 0.5rem; }
+.home-product__title a { color: inherit; text-decoration: none; }
+.home-review__quote { color: #6b5344; font-size: 0.95rem; line-height: 1.65; margin: 0 0 0.8rem; }
+.home-product__meta { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+.home-product__actions { display: flex; align-items: center; gap: 0.7rem; }
+.home-product__price { font-weight: 600; color: #3f3731; }
+.home-product .sp-card__add {
+    min-height: 38px;
+    padding: 0.5rem 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: #7a6452;
+    color: #fff;
+    font: 500 0.8rem/1 Poppins, sans-serif;
+    cursor: pointer;
+}
+.home-product .sp-card__add:hover { background: #8d7560; }
+.home-product__actions form { margin: 0; }
+.home-review__stars { color: #b89a6a; font-size: 0.72rem; letter-spacing: 0.12em; margin-bottom: 0.65rem; }
+.home-review__quote { font-family: 'Fraunces', 'Times New Roman', serif; font-size: 1.15rem; font-style: italic; color: #3f3731; }
+.home-review__name { font-weight: 600; }
+.home-review__role { color: #7d736a; font-size: 0.75rem; margin-top: 0.2rem; }
 
 .home-cta {
     background:
-        radial-gradient(ellipse 100% 80% at 50% 0%, rgba(212, 162, 74, 0.15), transparent 55%),
-        linear-gradient(165deg, #3a281c 0%, #2d1f15 45%, #1f1510 100%);
-    border-radius: 30px;
-    padding: 3.2rem 2rem;
+        radial-gradient(circle at 20% 20%, rgba(228,201,138,.16), transparent 28%),
+        #5c4a3c;
+    color: #fff;
+    border-radius: 24px;
+    padding: 4.2rem 1.8rem;
     text-align: center;
-    box-shadow: 0 32px 64px rgba(33, 22, 15, 0.2);
-    border: 1px solid rgba(212, 162, 74, 0.12);
 }
+.home-section--cta { padding: 3.5rem 0 4.5rem; background: #f5f3f0; }
+.home-section--cta .home-kicker { color: #e4c98a; }
+.home-section--cta .home-title, .home-section--cta .home-copy { color: #fff; margin-left: auto; margin-right: auto; }
+.home-cta__actions { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.2rem; }
+.home-cta__ghost { background: transparent !important; color: #fff !important; border-color: rgba(255,255,255,.28) !important; }
 
-.home-section--cta .home-kicker,
-.home-section--cta .home-title,
-.home-section--cta .home-copy {
-    color: #ffffff;
+@media (max-width: 1180px) {
+    .home-process { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-
-.home-section--cta .home-title em {
-    color: var(--gh-gold-lt);
-}
-
-.home-section--cta .home-copy {
-    max-width: 54ch;
-    color: rgba(255,255,255,0.76);
-}
-
-.home-cta__actions {
-    display: flex;
-    gap: 0.9rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-@media (max-width: 980px) {
-    .home-about,
-    .home-products,
-    .home-why,
-    .home-reviews {
-        grid-template-columns: 1fr;
-    }
-
-    .home-heading--split {
-        grid-template-columns: 1fr;
-        align-items: start;
-    }
-}
-
-@media (max-width: 640px) {
-    .home-section {
-        padding: 4rem 0;
-    }
-
-    .home-about {
-        padding: 1rem;
-    }
-
-    .home-cta {
-        padding: 2.4rem 1.2rem;
-    }
+@media (max-width: 900px) {
+    .home-portal, .home-products, .home-reviews, .home-process { grid-template-columns: 1fr; }
+    .home-stats__grid { grid-template-columns: 1fr 1fr; }
+    .home-stat { border-right: 0; border-bottom: 1px solid #e7e2db; }
+    .home-portal__frame { min-height: 280px; height: 320px; }
+    .gh-hero__inner { padding: 4.5rem 0 4.5rem; }
 }
 </style>
-
 <script>
 (function() {
     var els = document.querySelectorAll('.gh-reveal');
     var io  = new IntersectionObserver(function(entries) {
         entries.forEach(function(e) {
-            if (e.isIntersecting) {
-                e.target.classList.add('is-visible');
-                io.unobserve(e.target);
-            }
+            if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
         });
     }, { threshold: 0.1 });
     els.forEach(function(el) { io.observe(el); });

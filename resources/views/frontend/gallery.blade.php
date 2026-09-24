@@ -4,11 +4,11 @@
 @section('meta_description', 'A visual journey through our coffee farms, washing stations, and processing facilities in Rwanda.')
 
 @section('content')
-@include('partials.frontend.mag-hero', [
-    'variant' => 'gallery',
+@include('partials.frontend.page-hero', [
     'title' => __('messages.gallery'),
     'subtitle' => __('messages.gallery_hero_subtitle'),
-    'mosaic' => $items->take(6),
+    'eyebrow' => 'Stories',
+    'image' => \App\Support\FrontendShowcase::img('farm'),
 ])
 
 <div class="container py-6">
@@ -19,7 +19,7 @@
         <div class="gallery-bento" id="gallery-bento" role="list">
             @forelse($items as $item)
                 @php
-                    $full = $item->getFirstMediaUrl('image');
+                    $full = $item->displayImage();
                     $thumb = $item->getFirstMediaUrl('image', 'thumb') ?: $full;
                     $mod = $bentoMods[$loop->index % count($bentoMods)];
                 @endphp

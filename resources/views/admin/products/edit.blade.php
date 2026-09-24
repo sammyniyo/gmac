@@ -34,8 +34,14 @@
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="price" class="block text-gray-700 font-bold mb-2">Price ($)</label>
-                                    <input type="number" step="0.01" name="price" id="price" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="{{ old('price', $product->price) }}">
+                                    <label for="barcode" class="block text-gray-700 font-bold mb-2">Barcode (GTIN)</label>
+                                    <input type="text" name="barcode" id="barcode" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="{{ old('barcode', $product->barcode) }}" maxlength="32">
+                                    @error('barcode') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="price" class="block text-gray-700 font-bold mb-2">Price (RWF)</label>
+                                    <input type="number" step="1" name="price" id="price" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="{{ old('price', $product->price) }}">
                                     @error('price') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
 
