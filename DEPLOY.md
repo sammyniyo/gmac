@@ -38,6 +38,19 @@ php artisan config:cache
 - English URLs have no `/en` prefix (`/history`, `/team`).
 - SMTP is `info@gmac.coffee` via `smtp.hostinger.com:465`. Put the mailbox password in `.env` as `MAIL_PASSWORD`, then `php artisan config:clear`.
 
-## MySQL later
+## MySQL and existing data
 
-Create a database in hPanel, then in `.env` set `DB_CONNECTION=mysql` and the `DB_*` values. Use `127.0.0.1` as the host from the site itself. Run `php artisan migrate --force --seed` again on an empty database.
+Local data lives in `database/database.sqlite` (backed up as `database.sqlite.bak`). A MySQL copy is exported to `database/data/gmac-from-sqlite.sql`.
+
+On Hostinger:
+
+1. Create database `u503615494_gmac` (user `u503615494_gmac`) in hPanel if it is not there yet.
+2. In `.env` set `DB_CONNECTION=mysql`, host `127.0.0.1`, and that database/user/password.
+3. Run:
+
+```bash
+php artisan migrate --force
+php artisan db:import-gmac-dump
+```
+
+Do not run `db:seed` after the import — that would duplicate catalog rows. `127.0.0.1` only works from the Hostinger site itself, not from your Mac.

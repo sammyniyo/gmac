@@ -26,7 +26,7 @@ chmod -R ug+rw bootstrap/cache storage database public/storage || true
 
 php artisan key:generate --force
 php artisan migrate --force
-php artisan db:seed --force
+php artisan db:import-gmac-dump
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
