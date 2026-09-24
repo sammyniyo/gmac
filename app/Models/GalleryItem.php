@@ -15,7 +15,7 @@ class GalleryItem extends Model implements HasMedia
 
     public function displayImage(): string
     {
-        $url = $this->getFirstMediaUrl('image');
+        $url = $this->existingMediaUrl('image');
         if ($url !== '') {
             return $url;
         }

@@ -91,7 +91,7 @@ class Product extends Model implements HasMedia
     public function displayImage(): string
     {
         foreach (['cover', 'products'] as $collection) {
-            $url = $this->getFirstMediaUrl($collection);
+            $url = $this->existingMediaUrl($collection);
             if ($url !== '') {
                 return $url;
             }

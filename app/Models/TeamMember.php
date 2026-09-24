@@ -43,6 +43,6 @@ class TeamMember extends Model implements HasMedia
 
     public function portraitUrl(): string
     {
-        return $this->getFirstMediaUrl('photos');
+        return $this->existingMediaUrl('photos');
     }
 }

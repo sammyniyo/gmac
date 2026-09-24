@@ -42,6 +42,20 @@ trait HasSafeMedia
         return $this->spatieGetFirstMediaUrl($collectionName, $conversionName);
     }
 
+    public function existingMediaUrl(string $collectionName = 'default'): string
+    {
+        if (! $this->mediaTableReady()) {
+            return '';
+        }
+
+        $media = $this->getFirstMedia($collectionName);
+        if (! $media || ! is_file($media->getPath())) {
+            return '';
+        }
+
+        return $media->getUrl();
+    }
+
     public function clearMediaCollection(string $collectionName = 'default'): static
     {
         if (!$this->mediaTableReady()) {

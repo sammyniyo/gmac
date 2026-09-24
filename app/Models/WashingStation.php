@@ -15,7 +15,7 @@ class WashingStation extends Model implements HasMedia
 
     public function displayImage(): string
     {
-        $url = $this->getFirstMediaUrl('cover');
+        $url = $this->existingMediaUrl('cover');
         if ($url !== '') {
             return $url;
         }

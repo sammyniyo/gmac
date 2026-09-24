@@ -21,20 +21,28 @@ class NewsPost extends Model implements HasMedia
 
     public function displayImage(): string
     {
-        $url = $this->getFirstMediaUrl('cover');
+        $url = $this->existingMediaUrl('cover');
         if ($url !== '') {
             return $url;
         }
 
-        if (filled($this->image_url)) {
+        if (filled($this->image_url) && $this->publicImageUrlIsUsable($this->image_url)) {
             return $this->image_url;
         }
 
         $fromBody = WordpressExport::firstImageSrc((string) $this->content);
-        if ($fromBody) {
+        if ($fromBody && $this->publicImageUrlIsUsable($fromBody)) {
             return $fromBody;
         }
 
         return FrontendShowcase::newsImage($this->slug);
+    }
+
+    private function publicImageUrlIsUsable(string $url): bool
+    {
+        $path = parse_url($url, PHP_URL_PATH) ?: $url;
+
+        return ! str_contains($path, '/storage/')
+            && ! str_contains($path, '/wp-content/');
     }
 }

@@ -20,7 +20,7 @@
             @forelse($items as $item)
                 @php
                     $full = $item->displayImage();
-                    $thumb = $item->getFirstMediaUrl('image', 'thumb') ?: $full;
+                    $thumb = $full;
                     $mod = $bentoMods[$loop->index % count($bentoMods)];
                 @endphp
                 <div class="gallery-bento__cell gallery-bento__cell--{{ $mod }}" role="listitem">
