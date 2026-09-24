@@ -63,14 +63,18 @@ class FrontendController extends Controller
             ->orderBy('order')
             ->get()
             ->map(function (HeroSlide $slide) use ($heroDefaults) {
-                $url = $slide->getFirstMediaUrl('slides');
-                if ($url === '') {
-                    return null;
-                }
-
                 $fallback = $heroDefaults->first(
                     fn (array $row) => mb_strtolower($row['title']) === mb_strtolower($slide->title)
                 );
+
+                $media = $slide->getFirstMedia('slides');
+                $url = ($media && is_file($media->getPath()))
+                    ? $media->getUrl()
+                    : (string) ($fallback['image'] ?? '');
+
+                if ($url === '') {
+                    return null;
+                }
 
                 return (object) [
                     'title' => $slide->title,
