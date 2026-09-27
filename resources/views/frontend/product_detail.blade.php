@@ -9,9 +9,7 @@
     $barcodeSvg = $barcode ? \App\Support\Ean13Barcode::svg($barcode, 2, 64) : null;
     $unitPrice = $product->price !== null ? (float) $product->price : null;
     $roast = $product->packRoast();
-    $aboutLead = 'A '.$product->packSize().' roasted Arabica bag in the '.$product->packColorLabel().' envelope'
-        .($roast ? ', finished as a '.strtolower($roast) : '')
-        .'. Packed in Niboye, Kigali by Green Mountain Arabica Coffee Ltd.';
+    $aboutLead = $product->offerLead();
 @endphp
 
 <section class="pd-page">
@@ -55,7 +53,7 @@
             </div>
 
             <div class="pd-info">
-                <p class="pd-kicker">{{ $product->packSize() }} · {{ $product->packColorLabel() }}@if($product->packRoast()) · {{ $product->packRoast() }}@endif</p>
+                <p class="pd-kicker">{{ $product->packSize() }} · {{ $product->packColorLabel() }}@if($product->packRoast()) · {{ $product->packRoast() }}@endif@if($product->isGreenLot()) · Price on request@endif</p>
                 <h1 class="pd-title">{{ $product->name }}</h1>
                 @if($unitPrice !== null)
                     <p class="pd-price" id="pd-unit-price" data-unit="{{ $unitPrice }}">{{ $product->formattedPrice() }}</p>
@@ -152,27 +150,38 @@
 
         <div class="pd-tabs">
             <div class="pd-tabs__nav" role="tablist">
-                <button type="button" class="pd-tab is-active" data-tab="about" role="tab" aria-selected="true">About this bag</button>
+                <button type="button" class="pd-tab is-active" data-tab="about" role="tab" aria-selected="true">{{ $product->isGreenLot() ? 'About this lot' : 'About this bag' }}</button>
                 <button type="button" class="pd-tab" data-tab="specs" role="tab" aria-selected="false">Details</button>
                 <button type="button" class="pd-tab" data-tab="origin" role="tab" aria-selected="false">Origin</button>
             </div>
             <div class="pd-tabs__panel is-active" data-panel="about">
                 <div class="pd-copy">
                     <p>{{ $aboutLead }}</p>
-                    <p>Pick the envelope colour first, then the size. Red is dark roast, chocolate is light roast, and each bag has its own official GS1 barcode for retail.</p>
-                    <p>There is no online payment. Add the bags you want, send the list to info@gmac.coffee, and we reply with availability and next steps.</p>
+                    @if($product->isRetailPack())
+                        <p>Pick the envelope colour first, then the size. Red is dark roast, chocolate is light roast, and each bag has its own official GS1 barcode for retail.</p>
+                        <p>There is no online payment. Add the bags you want, send the list to info@gmac.coffee, and we reply with availability and next steps.</p>
+                    @else
+                        <p>These green lots are offered for wholesale and export. Prices are not set yet. Ask for the current sample, grade, and shipping window.</p>
+                        <p>There is no online payment. Add the lots you want, send the list to info@gmac.coffee, and we reply with availability and next steps.</p>
+                    @endif
                 </div>
             </div>
             <div class="pd-tabs__panel" data-panel="specs" hidden>
                 <ul class="pd-specs">
-                    <li>Net weight {{ $product->packSize() }}</li>
-                    <li>{{ $product->packColorLabel() }} envelope</li>
-                    @if($roast)<li>{{ $roast }}</li>@endif
-                    <li>Arabica · roasted</li>
+                    @if($product->isRetailPack())
+                        <li>Net weight {{ $product->packSize() }}</li>
+                        <li>{{ $product->packColorLabel() }} envelope</li>
+                        @if($roast)<li>{{ $roast }}</li>@endif
+                        <li>Arabica · roasted</li>
+                    @else
+                        <li>{{ $product->packSize() }}</li>
+                        <li>{{ $product->packColorLabel() }}</li>
+                        <li>Arabica · green</li>
+                    @endif
                     <li>Origin Rwanda</li>
                     @if($barcode)<li>GTIN {{ $barcode }}</li>@endif
                 </ul>
-                <p class="pd-spec-line"><strong>Pack</strong> {{ $product->packSize() }} · {{ $product->packColorLabel() }}</p>
+                <p class="pd-spec-line"><strong>{{ $product->isRetailPack() ? 'Pack' : 'Lot' }}</strong> {{ $product->packSize() }} · {{ $product->packColorLabel() }}</p>
                 <p class="pd-spec-line"><strong>Price</strong> {{ $product->formattedPrice() ?? __('messages.price_on_request') }}</p>
                 <p class="pd-spec-line"><strong>Made by</strong> Green Mountain Arabica Coffee Ltd, Kigali</p>
                 @if($barcode)
@@ -180,7 +189,11 @@
                 @endif
             </div>
             <div class="pd-tabs__panel" data-panel="origin" hidden>
-                <p>Green Mountain Arabica Coffee Ltd packs this retail bag in Niboye Sector, Kicukiro District, Kigali, Rwanda. Cherry is received at Karenge, then washed, dried, milled, roasted, and packed with a registered GS1 barcode.</p>
+                @if($product->isRetailPack())
+                    <p>Green Mountain Arabica Coffee Ltd packs this retail bag in Niboye Sector, Kicukiro District, Kigali, Rwanda. Cherry is received at Karenge, then washed, dried, milled, roasted, and packed with a registered GS1 barcode.</p>
+                @else
+                    <p>Green Mountain Arabica Coffee Ltd prepares this green lot in Rwanda. Cherry is received at Karenge or Gasange, then processed, dried, milled, and graded for export.</p>
+                @endif
                 <p>Republic of Rwanda · Kigali City · Kicukiro District · Niboye Sector · info@gmac.coffee</p>
             </div>
         </div>
@@ -188,7 +201,7 @@
         @if($related->count() > 0)
             <div class="pd-related">
                 <div class="pd-related__head">
-                    <p class="pd-kicker">More bags</p>
+                    <p class="pd-kicker">{{ $product->isGreenLot() ? 'More lots' : 'More bags' }}</p>
                     <h2>You might also like</h2>
                 </div>
                 <div class="pd-related__grid">
@@ -199,6 +212,9 @@
                             </a>
                             <div class="pd-card__body">
                                 <span>{{ $rel->packSize() }} · {{ $rel->packColorLabel() }}</span>
+                                @if(! $rel->price)
+                                    <p class="pd-card__code">{{ __('messages.price_on_request') }}</p>
+                                @endif
                                 <h3><a href="{{ route('products.show', $rel->slug) }}">{{ $rel->name }}</a></h3>
                                 @if($rel->barcode)
                                     <p class="pd-card__code">{{ $rel->barcode }}</p>

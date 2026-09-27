@@ -160,7 +160,7 @@
                 <article class="home-process__item gh-reveal">
                     @if(!empty($step['image']))
                         <div class="home-process__media">
-                            <img src="{{ \App\Support\FrontendShowcase::img($step['image']) }}" alt="{{ $step['title'] }}">
+                            <img src="{{ \App\Support\FrontendShowcase::img($step['image']) }}" alt="{{ $step['title'] }}"@if($step['image'] === 'harvest') class="is-harvest"@endif>
                         </div>
                     @endif
                     <div class="home-process__body">
@@ -453,8 +453,9 @@
     min-height: 100%;
     box-shadow: 0 10px 28px rgba(42,28,20,.06);
 }
-.home-process__media { height: 176px; margin: 0; overflow: hidden; flex-shrink: 0; }
+.home-process__media { height: 176px; margin: 0; overflow: hidden; flex-shrink: 0; background: #f5f3f0; }
 .home-process__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; border-radius: 0; }
+.home-process__media img.is-harvest { object-fit: contain; object-position: center; background: #f5f3f0; }
 .home-process__body { padding: 1.05rem 1.1rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
 .home-process__num {
     display: block;
@@ -477,6 +478,7 @@
 }
 .home-product__media { display: block; overflow: hidden; }
 .home-product__media img, .home-product__placeholder { width: 100%; height: 280px; object-fit: cover; display: block; transition: transform .6s ease; }
+.home-product__media img.is-pack { object-fit: contain; background: #f7f4f0; }
 .home-product:hover .home-product__media img { transform: scale(1.04); }
 .home-product__placeholder { background: #efe6d8; display: flex; align-items: center; justify-content: center; color: #c4a15a; font-size: 2rem; }
 .home-product__body { padding: 1.1rem 1.15rem 1.25rem; }

@@ -20,10 +20,16 @@ class FrontendShowcase
             'pack_green' => 'gmac-pack-500g-green.jpg',
             'pack_red' => 'gmac-pack-red.png',
             'pack_chocolate' => 'gmac-pack-chocolate.png',
-            'cherries' => 'pexels-michael-burrows-7125703-1920x1280.jpg.jpeg',
+            'cherries' => 'gmac-roast-bowl-leaves.jpg',
             'green' => 'gmac-women-beds.jpg',
-            'bowl' => 'gmac-cupping-glasses.jpg',
-            'beans' => 'gmac-cupping-line.jpg',
+            'bowl' => 'gmac-roast-bowl.jpg',
+            'beans' => 'gmac-roast-bowl-scatter.jpg',
+            'shop_hero' => 'gmac-roast-bowl-leaves.jpg',
+            'roast_bowl' => 'gmac-roast-bowl.jpg',
+            'roast_bowl_scatter' => 'gmac-roast-bowl-scatter.jpg',
+            'green_sample' => 'gmac-green-sample.jpg',
+            'green_lemongrass' => 'gmac-green-lemongrass.jpg',
+            'green_lemongrass_label' => 'gmac-green-lemongrass-label.jpg',
             'green_sm' => 'gmac-parchment-photo.jpg',
             'cherries_sm' => 'gmac-women-beds.jpg',
             'station' => 'gmac-mill-machine.jpg',
@@ -32,9 +38,21 @@ class FrontendShowcase
             'team_steven' => 'team-rukaka-steven.jpg',
             'team_japhet' => 'team-habimana-japhet.jpg',
             'team_samuel' => 'team-samuel-niyomuhoza.jpg',
+            'team_david' => 'team-david-biziyaremye.jpg',
+            'team_divine' => 'team-divine-irakoze.jpg',
             'seedling' => 'RDU1642-1920x1280.jpg.jpeg',
-            'farm' => 'pexels-daniel-reche-718241-1556665-1920x1282.jpg.jpeg',
-            'harvest' => 'pexels-michael-burrows-7125547-950x633.jpg.jpeg',
+            'farm' => 'gmac-farm.jpg',
+            'harvest' => 'gmac-harvest.jpg',
+            'hand_picking' => 'gmac-hand-picking.jpg',
+            'hand_picking_detail' => 'gmac-hand-picking-detail.jpg',
+            'green_washed_a1' => 'gmac-green-fully-washed-a1.jpg',
+            'green_washed_a1_label' => 'gmac-green-fully-washed-a1-label.jpg',
+            'green_washed_commercial' => 'gmac-green-fully-washed-commercial.jpg',
+            'green_washed_commercial_label' => 'gmac-green-fully-washed-commercial-label.jpg',
+            'green_washed_low' => 'gmac-green-fully-washed-low.jpg',
+            'green_washed_low_label' => 'gmac-green-fully-washed-low-label.jpg',
+            'green_natural' => 'gmac-green-natural.jpg',
+            'green_natural_label' => 'gmac-green-natural-label.jpg',
         ];
 
         return asset('images/'.($files[$key] ?? $files['beans']));
@@ -82,12 +100,19 @@ class FrontendShowcase
         ];
     }
 
-    public static function productImage(?string $slug): string
+    public static function productImage(?string $slug, bool $labeled = false): string
     {
+        $key = strtolower((string) $slug);
+
         return match (true) {
-            str_contains((string) $slug, 'green') => self::img('pack_green'),
-            str_contains((string) $slug, 'chocolate') => self::img('pack_chocolate'),
-            str_contains((string) $slug, 'red') => self::img('pack_red'),
+            str_contains($key, 'lemongrass') => self::img($labeled ? 'green_lemongrass_label' : 'green_lemongrass'),
+            str_contains($key, 'natural-coffee') => self::img($labeled ? 'green_natural_label' : 'green_natural'),
+            str_contains($key, 'low-grade') => self::img($labeled ? 'green_washed_low_label' : 'green_washed_low'),
+            str_contains($key, 'commercial') => self::img($labeled ? 'green_washed_commercial_label' : 'green_washed_commercial'),
+            str_contains($key, 'grade-a1') => self::img($labeled ? 'green_washed_a1_label' : 'green_washed_a1'),
+            str_contains($key, 'green') => self::img('pack_green'),
+            str_contains($key, 'chocolate') => self::img('pack_chocolate'),
+            str_contains($key, 'red') => self::img('pack_red'),
             default => self::img('pack_red'),
         };
     }
@@ -100,9 +125,10 @@ class FrontendShowcase
             str_contains($key, 'seedling') => self::img('seedling'),
             str_contains($key, 'women') || str_contains($key, 'mutuelle') => self::img('women_beds'),
             str_contains($key, 'cupping') => self::img('cupping_session'),
-            str_contains($key, 'roast') => self::img('roaster'),
-            str_contains($key, 'sort') => self::img('women_beds'),
-            str_contains($key, 'gasange') || str_contains($key, 'ejo') || str_contains($key, 'harvest') => self::img('drying'),
+            str_contains($key, 'roast') => self::img('roast_bowl'),
+            str_contains($key, 'sort') || str_contains($key, 'hand-pick') || str_contains($key, 'hand_pick') => self::img('hand_picking'),
+            str_contains($key, 'harvest') => self::img('harvest'),
+            str_contains($key, 'gasange') || str_contains($key, 'ejo') => self::img('drying'),
             str_contains($key, 'wash') || str_contains($key, 'wet') || str_contains($key, 'natural') || str_contains($key, 'boot') || str_contains($key, 'hull') => self::img('mill'),
             default => self::img('cupping_table'),
         };
@@ -115,11 +141,17 @@ class FrontendShowcase
             'Scoring the session' => self::img('cupping_session'),
             'Cups on the line' => self::img('cupping_line'),
             'Cupping together' => self::img('cupping_table'),
-            'Sample roast' => self::img('roaster'),
+            'Sample roast' => self::img('roast_bowl'),
             'At the mill' => self::img('mill'),
             'Raised drying beds' => self::img('drying'),
             'Photographing parchment' => self::img('parchment'),
-            'Women on the beds' => self::img('women_beds'),
+            'Women on the beds' => self::img('hand_picking'),
+            'Hand picking' => self::img('hand_picking'),
+            'Sorting the lot' => self::img('hand_picking_detail'),
+            'Sorting on the raised beds' => self::img('hand_picking_detail'),
+            'The roast in the cup' => self::img('shop_hero'),
+            'Roasted bowl' => self::img('roast_bowl_scatter'),
+            'Green sample' => self::img('green_sample'),
             default => self::img('drying'),
         };
     }
@@ -140,6 +172,7 @@ class FrontendShowcase
             ['name' => '250g', 'slug' => 'pack-250g', 'description' => 'Retail roasted bags, 250 grams.'],
             ['name' => '500g', 'slug' => 'pack-500g', 'description' => 'Retail roasted bags, 500 grams.'],
             ['name' => '1kg', 'slug' => 'pack-1kg', 'description' => 'Retail roasted bags, 1 kilogram.'],
+            ['name' => 'Green coffee', 'slug' => 'green-coffee', 'description' => 'Export green lots. Price on request.'],
         ];
     }
 
@@ -232,6 +265,61 @@ class FrontendShowcase
                 'price' => 20000,
                 'order' => 9,
             ], $copy('1kg', 'red & white', '0679721369090')),
+            [
+                'slug' => 'fully-washed-grade-a1',
+                'barcode' => null,
+                'category' => 'green-coffee',
+                'name' => 'Fully Washed Grade A1',
+                'price' => null,
+                'order' => 10,
+                'short_description' => 'Specialty fully washed Arabica, Grade A1. Green export lot from Rwanda. Price on request.',
+                'description' => '<p>'.$company.' Fully washed Grade A1 green coffee for export and wholesale.</p><p>'.$origin.'</p><p>'.$contact.'</p><p>Price is not set yet — write to us for availability, sample, and terms.</p>',
+                'features' => ['Process fully washed', 'Grade A1', 'Green coffee', 'Origin Rwanda', 'Price on request'],
+            ],
+            [
+                'slug' => 'fully-washed-commercial-grade',
+                'barcode' => null,
+                'category' => 'green-coffee',
+                'name' => 'Fully Washed Commercial Grade',
+                'price' => null,
+                'order' => 11,
+                'short_description' => 'Fully washed commercial-grade Arabica. Green export lot from Rwanda. Price on request.',
+                'description' => '<p>'.$company.' Fully washed commercial grade green coffee for export and wholesale.</p><p>'.$origin.'</p><p>'.$contact.'</p><p>Price is not set yet — write to us for availability, sample, and terms.</p>',
+                'features' => ['Process fully washed', 'Commercial grade', 'Green coffee', 'Origin Rwanda', 'Price on request'],
+            ],
+            [
+                'slug' => 'fully-washed-low-grade',
+                'barcode' => null,
+                'category' => 'green-coffee',
+                'name' => 'Fully Washed Low Grade',
+                'price' => null,
+                'order' => 12,
+                'short_description' => 'Fully washed lower-grade Arabica. Green export lot from Rwanda. Price on request.',
+                'description' => '<p>'.$company.' Fully washed low grade green coffee for export and wholesale.</p><p>'.$origin.'</p><p>'.$contact.'</p><p>Price is not set yet — write to us for availability, sample, and terms.</p>',
+                'features' => ['Process fully washed', 'Low grade', 'Green coffee', 'Origin Rwanda', 'Price on request'],
+            ],
+            [
+                'slug' => 'natural-coffee',
+                'barcode' => null,
+                'category' => 'green-coffee',
+                'name' => 'Natural Coffee',
+                'price' => null,
+                'order' => 13,
+                'short_description' => 'Natural process Arabica. Green export lot from Rwanda. Price on request.',
+                'description' => '<p>'.$company.' Natural process green coffee for export and wholesale.</p><p>'.$origin.'</p><p>'.$contact.'</p><p>Price is not set yet — write to us for availability, sample, and terms.</p>',
+                'features' => ['Process natural', 'Green coffee', 'Origin Rwanda', 'Price on request'],
+            ],
+            [
+                'slug' => 'coffee-co-fermented-with-lemongrass',
+                'barcode' => null,
+                'category' => 'green-coffee',
+                'name' => 'Coffee Co-fermented with Lemongrass',
+                'price' => null,
+                'order' => 14,
+                'short_description' => 'Green coffee co-fermented with lemongrass. Experimental export lot from Rwanda. Price on request.',
+                'description' => '<p>'.$company.' Coffee co-fermented with lemongrass — a green experimental lot for wholesale and export.</p><p>'.$origin.'</p><p>'.$contact.'</p><p>Price is not set yet — write to us for availability, sample, and terms.</p>',
+                'features' => ['Process co-fermented', 'Lemongrass', 'Green coffee', 'Origin Rwanda', 'Price on request'],
+            ],
         ];
     }
 
@@ -247,6 +335,11 @@ class FrontendShowcase
             ['title' => 'Raised drying beds', 'category' => 'Origin'],
             ['title' => 'Photographing parchment', 'category' => 'Origin'],
             ['title' => 'Women on the beds', 'category' => 'Team'],
+            ['title' => 'Hand picking', 'category' => 'Quality'],
+            ['title' => 'Sorting the lot', 'category' => 'Quality'],
+            ['title' => 'The roast in the cup', 'category' => 'Roast'],
+            ['title' => 'Roasted bowl', 'category' => 'Roast'],
+            ['title' => 'Green sample', 'category' => 'Mill'],
         ];
     }
 
@@ -503,7 +596,7 @@ class FrontendShowcase
                 'quote' => 'More value from origin, and a fairer path for the women who grow it.',
                 'photo' => self::img('team_jeanne'),
                 'photo_file' => 'team-niyonsaba-jeanne.jpg',
-                'pose' => 'face',
+                'pose' => 'desk',
                 'focus' => 'Board, farmer partnerships, and the long view.',
             ],
             [
@@ -515,7 +608,7 @@ class FrontendShowcase
                 'quote' => 'The cup has to match the story we send with the bag.',
                 'photo' => self::img('team_steven'),
                 'photo_file' => 'team-rukaka-steven.jpg',
-                'pose' => 'face',
+                'pose' => 'desk',
                 'focus' => 'Operations, export, and buyer conversations.',
             ],
             [
@@ -527,7 +620,7 @@ class FrontendShowcase
                 'quote' => null,
                 'photo' => self::img('team_japhet'),
                 'photo_file' => 'team-habimana-japhet.jpg',
-                'pose' => 'face',
+                'pose' => 'desk-left',
                 'focus' => 'Brand, markets, and the offer list.',
             ],
             [
@@ -537,8 +630,9 @@ class FrontendShowcase
                 'phone' => null,
                 'bio' => 'David runs production at the station — cherry in, parchment out, and the lot notes that stay attached.',
                 'quote' => null,
-                'photo' => null,
-                'photo_file' => null,
+                'photo' => self::img('team_david'),
+                'photo_file' => 'team-david-biziyaremye.jpg',
+                'pose' => 'face',
                 'focus' => 'Mill, processing, and daily production.',
             ],
             [
@@ -571,8 +665,9 @@ class FrontendShowcase
                 'phone' => null,
                 'bio' => 'Divine supports finance day to day — invoices, records, and the paperwork behind every shipment.',
                 'quote' => null,
-                'photo' => null,
-                'photo_file' => null,
+                'photo' => self::img('team_divine'),
+                'photo_file' => 'team-divine-irakoze.jpg',
+                'pose' => 'face',
                 'focus' => 'Invoices, records, and follow-up.',
             ],
         ];
@@ -582,10 +677,10 @@ class FrontendShowcase
     {
         return [
             [
-                'image' => self::img('women_beds'),
-                'kicker' => 'On the beds',
+                'image' => self::img('hand_picking'),
+                'kicker' => 'Hand picking',
                 'title' => 'Women who turn the harvest',
-                'text' => 'Seasonal work on the raised beds is mostly women. They sort, turn, and watch moisture until the parchment is clean and stable.',
+                'text' => 'Seasonal work is mostly women. They hand-pick the lot, sort defects, and keep the parchment clean before it is bagged.',
             ],
             [
                 'image' => self::img('mill'),

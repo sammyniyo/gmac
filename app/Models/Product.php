@@ -37,36 +37,59 @@ class Product extends Model implements HasMedia
         return $this->price === null ? null : self::rwf((float) $this->price);
     }
 
+    public function isRetailPack(): bool
+    {
+        return in_array((string) $this->barcode, [
+            '0679721369612', '0679721369778', '0679721369955',
+            '0679721369544', '0679721369476', '0679721369300',
+            '0679721369230', '0679721369162', '0679721369090',
+        ], true);
+    }
+
+    public function isGreenLot(): bool
+    {
+        return ! $this->isRetailPack();
+    }
+
     public function usesPackShot(): bool
     {
-        return in_array($this->packColor(), ['green', 'red', 'chocolate'], true);
+        return $this->isRetailPack() || $this->isGreenLot();
     }
 
     public function packColor(): string
     {
+        if (! $this->isRetailPack()) {
+            return match (true) {
+                str_contains((string) $this->slug, 'lemongrass') => 'coferment',
+                str_contains((string) $this->slug, 'natural') => 'natural',
+                default => 'washed',
+            };
+        }
+
         return match ((string) $this->barcode) {
             '0679721369778', '0679721369476', '0679721369162' => 'green',
             '0679721369955', '0679721369544', '0679721369230' => 'chocolate',
-            '0679721369612', '0679721369300', '0679721369090' => 'red',
-            default => match (true) {
-                str_contains((string) $this->slug, 'green') => 'green',
-                str_contains((string) $this->slug, 'chocolate') => 'chocolate',
-                default => 'red',
-            },
+            default => 'red',
         };
     }
 
     public function packSize(): string
     {
+        if (! $this->isRetailPack()) {
+            return match (true) {
+                str_contains((string) $this->slug, 'grade-a1') => 'Grade A1',
+                str_contains((string) $this->slug, 'commercial') => 'Commercial',
+                str_contains((string) $this->slug, 'low-grade') => 'Low grade',
+                str_contains((string) $this->slug, 'natural') => 'Natural',
+                str_contains((string) $this->slug, 'lemongrass') => 'Lemongrass',
+                default => 'Green lot',
+            };
+        }
+
         return match ((string) $this->barcode) {
             '0679721369612', '0679721369778', '0679721369955' => '250g',
             '0679721369544', '0679721369476', '0679721369300' => '500g',
-            '0679721369230', '0679721369162', '0679721369090' => '1kg',
-            default => match (true) {
-                str_contains((string) $this->slug, '250g') => '250g',
-                str_contains((string) $this->slug, '1kg') => '1kg',
-                default => '500g',
-            },
+            default => '1kg',
         };
     }
 
@@ -75,17 +98,37 @@ class Product extends Model implements HasMedia
         return match ($this->packColor()) {
             'green' => 'Green & white',
             'chocolate' => 'Chocolate & white',
+            'natural' => 'Natural',
+            'washed' => 'Fully washed',
+            'coferment' => 'Co-fermented',
             default => 'Red & white',
         };
     }
 
     public function packRoast(): ?string
     {
+        if (! $this->isRetailPack()) {
+            return null;
+        }
+
         return match ($this->packColor()) {
             'red' => 'Dark roast',
             'chocolate' => 'Light roast',
             default => null,
         };
+    }
+
+    public function offerLead(): string
+    {
+        if ($this->isGreenLot()) {
+            return 'Green Arabica from Karenge and Gasange. Price on request — write to us for availability, sample, and export terms.';
+        }
+
+        $roast = $this->packRoast();
+
+        return 'A '.$this->packSize().' roasted Arabica bag in the '.$this->packColorLabel().' envelope'
+            .($roast ? ', finished as a '.strtolower($roast) : '')
+            .'. Packed in Niboye, Kigali by Green Mountain Arabica Coffee Ltd.';
     }
 
     public function displayImage(): string
@@ -97,10 +140,6 @@ class Product extends Model implements HasMedia
             }
         }
 
-        return FrontendShowcase::img(match ($this->packColor()) {
-            'green' => 'pack_green',
-            'chocolate' => 'pack_chocolate',
-            default => 'pack_red',
-        });
+        return FrontendShowcase::productImage($this->slug);
     }
 }

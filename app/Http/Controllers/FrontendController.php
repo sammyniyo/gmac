@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\NewsPost;
 use App\Models\GalleryItem;
 use App\Models\WashingStation;
@@ -122,13 +123,27 @@ class FrontendController extends Controller
 
         $heroBadges = $this->parseHomeHeroBadges($settings['home_hero_badges'] ?? null);
 
-        $featuredProducts = Product::where('is_active', true)
-            ->with('category')
-            ->orderBy('order')
-            ->get()
-            ->unique(fn (Product $product) => $product->product_category_id)
-            ->take(3)
-            ->values();
+        $featuredProducts = collect();
+        foreach (Product::where('is_active', true)->with('category')->orderBy('order')->get() as $product) {
+            if (! $product->isRetailPack()) {
+                continue;
+            }
+
+            $alreadyShown = $featuredProducts->contains(
+                fn (Product $row) => $row->packColor() === $product->packColor()
+                    || $row->product_category_id === $product->product_category_id
+            );
+
+            if ($alreadyShown) {
+                continue;
+            }
+
+            $featuredProducts->push($product);
+
+            if ($featuredProducts->count() === 3) {
+                break;
+            }
+        }
         $stats = Statistic::orderBy('order')->get();
         if ($stats->isEmpty()) {
             $stats = collect(FrontendShowcase::stats())->map(fn (array $row) => (object) $row);
@@ -242,9 +257,7 @@ class FrontendController extends Controller
     public function products()
     {
         $products = Product::where('is_active', true)->with('category')->orderBy('order')->get();
-        $categories = \App\Models\ProductCategory::whereHas('products', fn ($q) => $q->where('is_active', true))
-            ->orderBy('name')
-            ->get();
+        $categories = $this->shopCategories();
 
         return view('frontend.products', compact('products', 'categories'));
     }
@@ -252,11 +265,23 @@ class FrontendController extends Controller
     public function shop()
     {
         $products = Product::where('is_active', true)->with('category')->orderBy('order')->get();
-        $categories = \App\Models\ProductCategory::whereHas('products', fn ($q) => $q->where('is_active', true))
-            ->orderBy('name')
-            ->get();
+        $categories = $this->shopCategories();
 
         return view('frontend.shop', compact('products', 'categories'));
+    }
+
+    private function shopCategories()
+    {
+        return ProductCategory::whereHas('products', fn ($q) => $q->where('is_active', true))
+            ->get()
+            ->sortBy(fn (ProductCategory $category) => match ($category->slug) {
+                'pack-250g' => 1,
+                'pack-500g' => 2,
+                'pack-1kg' => 3,
+                'green-coffee' => 4,
+                default => 10,
+            })
+            ->values();
     }
 
     public function productDetail(Product $product)
@@ -265,26 +290,38 @@ class FrontendController extends Controller
         $product->load('category');
 
         $catalog = Product::where('is_active', true)->with('category')->orderBy('order')->get();
-        $variants = $catalog
-            ->filter(fn (Product $row) => $row->packColor() === $product->packColor())
-            ->unique(fn (Product $row) => $row->packSize())
-            ->values();
-        $colours = $catalog
-            ->filter(fn (Product $row) => $row->packSize() === $product->packSize())
-            ->unique(fn (Product $row) => $row->packColor())
-            ->values();
+        $variants = $product->isRetailPack()
+            ? $catalog
+                ->filter(fn (Product $row) => $row->isRetailPack() && $row->packColor() === $product->packColor())
+                ->unique(fn (Product $row) => $row->packSize())
+                ->values()
+            : collect();
+        $colours = $product->isRetailPack()
+            ? $catalog
+                ->filter(fn (Product $row) => $row->isRetailPack() && $row->packSize() === $product->packSize())
+                ->unique(fn (Product $row) => $row->packColor())
+                ->values()
+            : collect();
 
         $related = $catalog
             ->where('id', '!=', $product->id)
+            ->filter(fn (Product $row) => $row->isGreenLot() === $product->isGreenLot())
             ->take(4)
             ->values();
 
-        $gallery = collect([
-            ['src' => $product->displayImage(), 'label' => $product->name, 'pack' => $product->usesPackShot()],
-            ['src' => FrontendShowcase::img('cupping_line'), 'label' => 'The cupping table', 'pack' => false],
-            ['src' => FrontendShowcase::img('roaster'), 'label' => 'Sample roast', 'pack' => false],
-            ['src' => FrontendShowcase::img('cupping_glasses'), 'label' => 'Ready to taste', 'pack' => false],
-        ])->unique('src')->values();
+        $gallery = $product->isGreenLot()
+            ? collect([
+                ['src' => $product->displayImage(), 'label' => $product->name, 'pack' => true],
+                ['src' => FrontendShowcase::productImage($product->slug, true), 'label' => $product->name.' sample card', 'pack' => true],
+                ['src' => FrontendShowcase::img('mill'), 'label' => 'At the mill', 'pack' => false],
+                ['src' => FrontendShowcase::img('drying'), 'label' => 'Raised beds', 'pack' => false],
+            ])->unique('src')->values()
+            : collect([
+                ['src' => $product->displayImage(), 'label' => $product->name, 'pack' => $product->usesPackShot()],
+                ['src' => FrontendShowcase::img('cupping_line'), 'label' => 'The cupping table', 'pack' => false],
+                ['src' => FrontendShowcase::img('roaster'), 'label' => 'Sample roast', 'pack' => false],
+                ['src' => FrontendShowcase::img('cupping_glasses'), 'label' => 'Ready to taste', 'pack' => false],
+            ])->unique('src')->values();
 
         return view('frontend.product_detail', compact('product', 'variants', 'colours', 'related', 'gallery'));
     }
@@ -324,6 +361,16 @@ class FrontendController extends Controller
     public function gallery()
     {
         $items = GalleryItem::where('is_active', true)->orderBy('order')->get();
+        $titles = $items->pluck('title')->map(fn ($title) => mb_strtolower((string) $title));
+
+        foreach (FrontendShowcase::gallery() as $row) {
+            if ($titles->contains(mb_strtolower($row['title']))) {
+                continue;
+            }
+
+            $items->push(new GalleryItem($row));
+        }
+
         return view('frontend.gallery', compact('items'));
     }
 
@@ -359,7 +406,7 @@ class FrontendController extends Controller
                     'phone' => $member->phone,
                     'bio' => $member->bio ?: ($fallback['bio'] ?? null),
                     'quote' => $fallback['quote'] ?? null,
-                    'photo' => $member->portraitUrl() ?: ($fallback['photo'] ?? null),
+                    'photo' => $fallback['photo'] ?? ($member->portraitUrl() ?: null),
                     'focus' => $fallback['focus'] ?? null,
                     'pose' => $fallback['pose'] ?? 'face',
                     'initials' => $member->avatarInitials(),

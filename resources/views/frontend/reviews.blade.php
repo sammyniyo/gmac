@@ -9,7 +9,7 @@
     'title' => __('messages.reviews_page_heading'),
     'subtitle' => __('messages.reviews_page_subtitle'),
     'eyebrow' => 'GMAC Coffee',
-    'image' => \App\Support\FrontendShowcase::img('cherries'),
+    'image' => \App\Support\FrontendShowcase::img('roast_bowl_scatter'),
 ])
 
 <section class="reviews-page">

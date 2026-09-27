@@ -5,7 +5,7 @@
 
 @section('content')
 @php
-    $founderImage = asset('images/Jeanne.png');
+    $founderImage = \App\Support\FrontendShowcase::img('team_jeanne');
     $historyStats = [
         ['value' => '2012', 'label' => 'Incorporated'],
         ['value' => '1,200', 'label' => 'Partner farmers'],
@@ -268,7 +268,9 @@
         display: block;
         width: 100%;
         aspect-ratio: 4 / 5;
-        object-fit: cover;
+        object-fit: contain;
+        object-position: center;
+        background: #f5f3f0;
     }
 
     .history-founder__caption {

@@ -6,9 +6,9 @@
 @section('content')
 @include('partials.frontend.page-hero', [
     'title'   => __('messages.nav_shop'),
-    'subtitle'=> 'Official roasted bags with GS1 barcodes — packed in Kigali, priced in Rwandan francs.',
+    'subtitle'=> 'Retail roasted bags and green export lots from Karenge and Gasange.',
     'eyebrow' => 'Coffee',
-    'image' => \App\Support\FrontendShowcase::img('cherries'),
+    'image' => \App\Support\FrontendShowcase::img('shop_hero'),
 ])
 
 {{-- ══════════════════════════════════════════
@@ -62,7 +62,9 @@
 
                 <div class="sp-card__body">
                     <div class="sp-card__meta">
-                        <span class="sp-card__swatch is-{{ $product->packColor() }}" aria-hidden="true"></span>
+                        @if($product->isRetailPack())
+                            <span class="sp-card__swatch is-{{ $product->packColor() }}" aria-hidden="true"></span>
+                        @endif
                         <span>{{ $product->packColorLabel() }}</span>
                         @if($product->packRoast())
                             <span class="sp-card__sep" aria-hidden="true"></span>

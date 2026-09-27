@@ -8,7 +8,7 @@
     'title' => __('messages.products'),
     'subtitle' => 'Official roasted bags with GS1 barcodes — packed in Kigali, priced in Rwandan francs.',
     'eyebrow' => 'GMAC Coffee',
-    'image' => \App\Support\FrontendShowcase::img('pack_green'),
+    'image' => \App\Support\FrontendShowcase::img('roast_bowl'),
 ])
 
 <section class="pc-page">
@@ -32,7 +32,9 @@
                     </a>
                     <div class="pc-card__body">
                         <div class="pc-card__meta">
-                            <span class="pc-card__swatch is-{{ $product->packColor() }}" aria-hidden="true"></span>
+                            @if($product->isRetailPack())
+                                <span class="pc-card__swatch is-{{ $product->packColor() }}" aria-hidden="true"></span>
+                            @endif
                             <span>{{ $product->packColorLabel() }}</span>
                             @if($product->packRoast())
                                 <span class="pc-card__sep" aria-hidden="true"></span>

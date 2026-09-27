@@ -389,8 +389,8 @@
 }
 .tp-person__media {
     position: relative;
-    height: 220px;
-    background: #3d2e24;
+    height: 320px;
+    background: #f5f3f0;
 }
 .tp-person__zoom {
     display: block;
@@ -404,12 +404,16 @@
 .tp-person__media img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center 18%;
+    object-fit: contain;
+    object-position: center;
     display: block;
+    background: #f5f3f0;
 }
+.tp-person__media img.is-face,
 .tp-person__media img.is-body {
-    object-position: center 12%;
+    object-fit: contain;
+    object-position: center top;
+    padding: 0.6rem 0.6rem 0;
 }
 .tp-person__wash { opacity: 0.38; }
 .tp-mono {
@@ -549,10 +553,13 @@
 }
 .tp-lightbox[hidden] { display: none; }
 .tp-lightbox img {
-    max-width: min(520px, 92vw);
+    max-width: min(920px, 92vw);
     max-height: 86vh;
+    width: auto;
+    height: auto;
     border-radius: 18px;
-    object-fit: cover;
+    object-fit: contain;
+    background: #f5f3f0;
 }
 .tp-lightbox__close {
     position: absolute;
